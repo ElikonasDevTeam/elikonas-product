@@ -39,7 +39,9 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/provider") ||
     pathname.startsWith("/profile") ||
     pathname.startsWith("/onboarding") ||
-    pathname.startsWith("/ai-guide");
+    pathname.startsWith("/ai-guide") ||
+    pathname.startsWith("/musings") ||
+    pathname.startsWith("/notifications");
 
   if (!user && isDashboardRoute) {
     return NextResponse.redirect(new URL("/login", request.url));

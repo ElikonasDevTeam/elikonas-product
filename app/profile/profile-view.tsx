@@ -138,7 +138,7 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
   );
 }
 
-export function ProfileView({ user, edUnits }: { user: User; edUnits: EdUnit[] }) {
+export function ProfileView({ user, edUnits, unreadCount }: { user: User; edUnits: EdUnit[]; unreadCount: number }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -174,12 +174,20 @@ export function ProfileView({ user, edUnits }: { user: User; edUnits: EdUnit[] }
               <span className="border-b-2 border-white px-3 py-3.5 text-sm font-medium text-white">
                 My Profile
               </span>
-              <span className="px-3 py-3.5 text-sm font-medium text-white/40">
+              <Link href="/ai-guide" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
                 AI Guide
-              </span>
-              <span className="px-3 py-3.5 text-sm font-medium text-white/40">
+              </Link>
+              <Link href="/musings" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
                 Community
-              </span>
+              </Link>
+              <Link href="/notifications" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
+                Notifications
+                {unreadCount > 0 && (
+                  <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </Link>
             </div>
           </div>
         </nav>

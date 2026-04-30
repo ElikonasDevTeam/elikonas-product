@@ -16,11 +16,24 @@ export default async function ProfilePage() {
 
   if (!user) redirect("/login");
 
-  const { data: edUnits } = await supabase
-    .from("ed_units")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+  const [{ data: edUnits }, { count: unreadCount }] = await Promise.all([
+    supabase
+      .from("ed_units")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("notifications")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("read", false),
+  ]);
 
-  return <ProfileView user={user} edUnits={(edUnits ?? []) as EdUnit[]} />;
+  return (
+    <ProfileView
+      user={user}
+      edUnits={(edUnits ?? []) as EdUnit[]}
+      unreadCount={unreadCount ?? 0}
+    />
+  );
 }
