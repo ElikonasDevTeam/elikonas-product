@@ -249,11 +249,13 @@ export function MusingsView({
   currentUserId,
   authorName,
   unreadCount,
+  unreadTidingsCount,
 }: {
   initialMusings: MusingData[];
   currentUserId: string;
   authorName: string;
   unreadCount: number;
+  unreadTidingsCount: number;
 }) {
   const [musings, setMusings] = useState(initialMusings);
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -296,6 +298,14 @@ export function MusingsView({
             <span className="border-b-2 border-white px-3 py-3.5 text-sm font-medium text-white">
               Community
             </span>
+            <Link href="/tidings" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
+              ✉ Tidings
+              {unreadTidingsCount > 0 && (
+                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#177e89] px-1 text-[10px] font-bold text-white">
+                  {unreadTidingsCount > 99 ? "99+" : unreadTidingsCount}
+                </span>
+              )}
+            </Link>
             <Link href="/notifications" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
               Notifications
               {unreadCount > 0 && (

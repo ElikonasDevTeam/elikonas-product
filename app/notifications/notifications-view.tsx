@@ -136,9 +136,11 @@ function EmptyState() {
 export function NotificationsView({
   initialNotifications,
   unreadCount: initialUnreadCount,
+  unreadTidingsCount,
 }: {
   initialNotifications: NotificationData[];
   unreadCount: number;
+  unreadTidingsCount: number;
 }) {
   const [notifications, setNotifications] = useState(initialNotifications);
   const [isPending, startTransition] = useTransition();
@@ -176,6 +178,14 @@ export function NotificationsView({
             </Link>
             <Link href="/musings" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
               Community
+            </Link>
+            <Link href="/tidings" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
+              ✉ Tidings
+              {unreadTidingsCount > 0 && (
+                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#177e89] px-1 text-[10px] font-bold text-white">
+                  {unreadTidingsCount > 99 ? "99+" : unreadTidingsCount}
+                </span>
+              )}
             </Link>
             <span className="relative border-b-2 border-white px-3 py-3.5 text-sm font-medium text-white">
               Notifications

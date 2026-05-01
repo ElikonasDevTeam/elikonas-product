@@ -58,10 +58,18 @@ export async function signupAction(
     return { message: error.message };
   }
 
-  // If email confirmation is required, data.session will be null.
-  // Redirect to check-email so the user knows to confirm before logging in.
   if (!data.session) {
+    // Email confirmation required — user must confirm before they can authenticate.
+    // Profile will be synced in onboarding once they log in.
     redirect("/check-email");
+  }
+
+  // Immediate session (no email confirmation) — sync profile now.
+  if (data.user) {
+    await supabase.from("profiles").upsert(
+      { id: data.user.id, full_name: fullName, email: data.user.email ?? null },
+      { onConflict: "id" }
+    );
   }
 
   redirect("/onboarding");

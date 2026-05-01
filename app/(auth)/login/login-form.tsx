@@ -100,7 +100,7 @@ export function LoginForm() {
         error={fieldError("password")}
         labelRight={
           <Link
-            href="/reset-password"
+            href="/forgot-password"
             className="text-xs font-medium text-[#177e89] hover:text-[#084c61] transition-colors"
           >
             Forgot password?

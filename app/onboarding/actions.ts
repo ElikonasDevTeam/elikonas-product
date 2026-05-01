@@ -9,7 +9,10 @@ export async function saveOnboardingAction(
 ): Promise<{ message: string } | never> {
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.updateUser({
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.updateUser({
     data: {
       goal,
       interests,
@@ -17,9 +20,19 @@ export async function saveOnboardingAction(
     },
   });
 
-  if (error) {
+  if (error || !user) {
     return { message: "Something went wrong saving your preferences. Please try again." };
   }
+
+  // Sync profile now that we have a confirmed, authenticated user.
+  // This replaces the dropped auth.users trigger and is safe — errors here
+  // don't affect auth and the user can still proceed.
+  const meta = user.user_metadata ?? {};
+  const fullName: string | null = meta.full_name ?? null;
+  await supabase.from("profiles").upsert(
+    { id: user.id, full_name: fullName, email: user.email ?? null },
+    { onConflict: "id" }
+  );
 
   redirect("/profile");
 }

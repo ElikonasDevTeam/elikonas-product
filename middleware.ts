@@ -41,7 +41,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/ai-guide") ||
     pathname.startsWith("/musings") ||
-    pathname.startsWith("/notifications");
+    pathname.startsWith("/notifications") ||
+    pathname.startsWith("/tidings");
 
   if (!user && isDashboardRoute) {
     return NextResponse.redirect(new URL("/login", request.url));

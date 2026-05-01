@@ -103,7 +103,7 @@ function SuggestionCard({ course }: { course: SuggestedCourse }) {
   );
 }
 
-export function AiGuideView({ user, edUnits, unreadCount }: { user: User; edUnits: EdUnit[]; unreadCount: number }) {
+export function AiGuideView({ user, edUnits, unreadCount, unreadTidingsCount }: { user: User; edUnits: EdUnit[]; unreadCount: number; unreadTidingsCount: number }) {
   const meta = user.user_metadata ?? {};
   const fullName: string = meta.full_name || user.email || "Learner";
   const firstName = fullName.split(" ")[0];
@@ -258,6 +258,14 @@ export function AiGuideView({ user, edUnits, unreadCount }: { user: User; edUnit
             </span>
             <Link href="/musings" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
               Community
+            </Link>
+            <Link href="/tidings" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
+              ✉ Tidings
+              {unreadTidingsCount > 0 && (
+                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#177e89] px-1 text-[10px] font-bold text-white">
+                  {unreadTidingsCount > 99 ? "99+" : unreadTidingsCount}
+                </span>
+              )}
             </Link>
             <Link href="/notifications" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
               Notifications

@@ -1,0 +1,24 @@
+import type { Metadata } from "next";
+import { ForgotPasswordForm } from "./forgot-password-form";
+
+export const metadata: Metadata = {
+  title: "Reset password — Elikonas",
+};
+
+export default function ForgotPasswordPage() {
+  return (
+    <div className="w-full max-w-md px-4 py-12">
+      <div className="mb-8 text-center">
+        <img src="/images/logo-color.svg" alt="Elikonas" className="mx-auto h-10 w-auto" />
+        <h1 className="mt-6 text-2xl font-semibold text-[#323031]">Forgot your password?</h1>
+        <p className="mt-2 text-sm text-[#323031]/50">
+          Enter your email and we&apos;ll send you a reset link.
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-gray-100 bg-white px-8 py-8 shadow-sm">
+        <ForgotPasswordForm />
+      </div>
+    </div>
+  );
+}

@@ -47,6 +47,12 @@ export default async function NotificationsPage() {
 
   if (!user) redirect("/login");
 
+  const { count: unreadTidingsCount } = await supabase
+    .from("tidings_messages")
+    .select("*", { count: "exact", head: true })
+    .eq("recipient_id", user.id)
+    .eq("read", false);
+
   let notifications: NotificationData[] = [];
   let unreadCount = 0;
 
@@ -71,6 +77,7 @@ export default async function NotificationsPage() {
     <NotificationsView
       initialNotifications={notifications}
       unreadCount={unreadCount}
+      unreadTidingsCount={unreadTidingsCount ?? 0}
     />
   );
 }

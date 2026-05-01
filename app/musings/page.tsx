@@ -59,11 +59,18 @@ export default async function MusingsPage() {
   const meta = user.user_metadata ?? {};
   const authorName: string = meta.full_name || user.email || "Learner";
 
-  const { count: unreadCount } = await supabase
-    .from("notifications")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .eq("read", false);
+  const [{ count: unreadCount }, { count: unreadTidingsCount }] = await Promise.all([
+    supabase
+      .from("notifications")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("read", false),
+    supabase
+      .from("tidings_messages")
+      .select("*", { count: "exact", head: true })
+      .eq("recipient_id", user.id)
+      .eq("read", false),
+  ]);
 
   let musings: MusingData[] = [];
   try {
@@ -116,6 +123,7 @@ export default async function MusingsPage() {
       currentUserId={user.id}
       authorName={authorName}
       unreadCount={unreadCount ?? 0}
+      unreadTidingsCount={unreadTidingsCount ?? 0}
     />
   );
 }
