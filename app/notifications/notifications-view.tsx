@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { markReadAction, markAllReadAction } from "./actions";
 import type { NotificationType } from "@/types";
+import { NavUserMenu } from "@/app/components/nav-user-menu";
 
 export interface NotificationData {
   id: string;
@@ -137,10 +138,14 @@ export function NotificationsView({
   initialNotifications,
   unreadCount: initialUnreadCount,
   unreadTidingsCount,
+  pendingConnectionsCount,
+  currentUserName,
 }: {
   initialNotifications: NotificationData[];
   unreadCount: number;
   unreadTidingsCount: number;
+  pendingConnectionsCount: number;
+  currentUserName: string;
 }) {
   const [notifications, setNotifications] = useState(initialNotifications);
   const [isPending, startTransition] = useTransition();
@@ -190,7 +195,16 @@ export function NotificationsView({
             <span className="relative border-b-2 border-white px-3 py-3.5 text-sm font-medium text-white">
               Notifications
             </span>
+            <Link href="/people" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
+              People
+              {pendingConnectionsCount > 0 && (
+                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
+                  {pendingConnectionsCount > 99 ? "99+" : pendingConnectionsCount}
+                </span>
+              )}
+            </Link>
           </div>
+          <NavUserMenu userName={currentUserName} />
         </div>
       </nav>
 

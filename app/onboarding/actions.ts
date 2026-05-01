@@ -29,8 +29,9 @@ export async function saveOnboardingAction(
   // don't affect auth and the user can still proceed.
   const meta = user.user_metadata ?? {};
   const fullName: string | null = meta.full_name ?? null;
+  const savedInterests: string[] = Array.isArray(meta.interests) ? meta.interests : interests;
   await supabase.from("profiles").upsert(
-    { id: user.id, full_name: fullName, email: user.email ?? null },
+    { id: user.id, full_name: fullName, email: user.email ?? null, interests: savedInterests },
     { onConflict: "id" }
   );
 

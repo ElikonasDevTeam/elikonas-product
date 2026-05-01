@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { sendMessageAction, startThreadAction, markThreadReadAction } from "./actions";
+import { NavUserMenu } from "@/app/components/nav-user-menu";
 
 export interface ThreadData {
   id: string;
@@ -186,11 +187,13 @@ export function TidingsView({
   currentUserId,
   currentUserName,
   unreadNotificationsCount,
+  pendingConnectionsCount,
 }: {
   initialThreads: ThreadData[];
   currentUserId: string;
   currentUserName: string;
   unreadNotificationsCount: number;
+  pendingConnectionsCount: number;
 }) {
   const [threads, setThreads] = useState(initialThreads);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
@@ -412,7 +415,19 @@ export function TidingsView({
                 </span>
               )}
             </Link>
+            <Link
+              href="/people"
+              className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors"
+            >
+              People
+              {pendingConnectionsCount > 0 && (
+                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
+                  {pendingConnectionsCount > 99 ? "99+" : pendingConnectionsCount}
+                </span>
+              )}
+            </Link>
           </div>
+          <NavUserMenu userName={currentUserName} />
         </div>
       </nav>
 

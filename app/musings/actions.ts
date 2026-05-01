@@ -24,6 +24,9 @@ export async function postMusingAction(
   }
 
   const body = (formData.get("body") as string)?.trim();
+  const rawVisibility = formData.get("visibility") as string | null;
+  const visibility: "public" | "inner_circle" =
+    rawVisibility === "public" ? "public" : "inner_circle";
 
   if (!body || body.length < 10) {
     return { error: "Your musing needs a bit more — at least 10 characters." };
@@ -34,7 +37,7 @@ export async function postMusingAction(
   const author_tagline: string | null = meta.tagline ?? null;
   const hashtags = parseHashtags(body);
 
-  console.log("[postMusingAction] inserting for user:", user.id, "| hashtags:", hashtags);
+  console.log("[postMusingAction] inserting for user:", user.id, "| hashtags:", hashtags, "| visibility:", visibility);
 
   const { error: insertError } = await supabase.from("musings").insert({
     user_id: user.id,
@@ -42,6 +45,7 @@ export async function postMusingAction(
     author_tagline,
     hashtags,
     body,
+    visibility,
   });
 
   if (insertError) {

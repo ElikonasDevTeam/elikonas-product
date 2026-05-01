@@ -6,6 +6,7 @@ import type { User } from "@supabase/supabase-js";
 import type { EdUnit, EdUnitStatus } from "@/types";
 import { getSuggestionsForInterests, type SuggestedCourse } from "./course-catalog";
 import { addSuggestedCourseAction } from "./actions";
+import { NavUserMenu } from "@/app/components/nav-user-menu";
 
 interface Message {
   id: string;
@@ -103,7 +104,7 @@ function SuggestionCard({ course }: { course: SuggestedCourse }) {
   );
 }
 
-export function AiGuideView({ user, edUnits, unreadCount, unreadTidingsCount }: { user: User; edUnits: EdUnit[]; unreadCount: number; unreadTidingsCount: number }) {
+export function AiGuideView({ user, edUnits, unreadCount, unreadTidingsCount, pendingConnectionsCount }: { user: User; edUnits: EdUnit[]; unreadCount: number; unreadTidingsCount: number; pendingConnectionsCount: number }) {
   const meta = user.user_metadata ?? {};
   const fullName: string = meta.full_name || user.email || "Learner";
   const firstName = fullName.split(" ")[0];
@@ -275,7 +276,16 @@ export function AiGuideView({ user, edUnits, unreadCount, unreadTidingsCount }: 
                 </span>
               )}
             </Link>
+            <Link href="/people" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
+              People
+              {pendingConnectionsCount > 0 && (
+                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
+                  {pendingConnectionsCount > 99 ? "99+" : pendingConnectionsCount}
+                </span>
+              )}
+            </Link>
           </div>
+          <NavUserMenu userName={user.user_metadata?.full_name || user.email || "Learner"} />
         </div>
       </nav>
 

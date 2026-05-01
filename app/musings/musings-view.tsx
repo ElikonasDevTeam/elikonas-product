@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { postMusingAction, toggleLikeAction } from "./actions";
 import { CATEGORIES } from "@/types";
+import { NavUserMenu } from "@/app/components/nav-user-menu";
 
 export interface MusingData {
   id: string;
@@ -12,6 +13,7 @@ export interface MusingData {
   author_name: string;
   author_tagline: string | null;
   hashtags: string[];
+  visibility: "public" | "inner_circle";
   body: string;
   created_at: string;
   like_count: number;
@@ -183,6 +185,7 @@ function ComposeBox({
 }) {
   const [state, formAction, isPending] = useActionState(postMusingAction, null);
   const [body, setBody] = useState("");
+  const [visibility, setVisibility] = useState<"inner_circle" | "public">("inner_circle");
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -195,6 +198,7 @@ function ComposeBox({
 
   return (
     <form ref={formRef} action={formAction} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+      <input type="hidden" name="visibility" value={visibility} />
       <div className="flex gap-3">
         <Avatar name={authorName} />
         <div className="flex-1">
@@ -206,17 +210,50 @@ function ComposeBox({
             rows={3}
             className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-[#323031] placeholder-[#323031]/40 outline-none transition-all focus:border-[#177e89] focus:bg-white focus:ring-2 focus:ring-[#177e89]/20"
           />
-          <div className="mt-3 flex items-center justify-end gap-3">
-            {state?.error && (
-              <p className="text-xs text-red-500">{state.error}</p>
-            )}
-            <button
-              type="submit"
-              disabled={isPending || !body.trim()}
-              className="rounded-lg bg-[#084c61] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#177e89] disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {isPending ? "Posting…" : "Post musing"}
-            </button>
+          <div className="mt-3 flex items-center justify-between gap-3">
+            {/* Visibility toggle */}
+            <div className="flex items-center gap-1.5 text-xs text-[#323031]/50">
+              <span>Post to:</span>
+              <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-0.5">
+                <button
+                  type="button"
+                  onClick={() => setVisibility("inner_circle")}
+                  className={[
+                    "rounded-md px-2.5 py-1 text-xs font-medium transition-all",
+                    visibility === "inner_circle"
+                      ? "bg-white text-[#084c61] shadow-sm"
+                      : "text-[#323031]/50 hover:text-[#323031]/70",
+                  ].join(" ")}
+                >
+                  🔒 Inner circle
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVisibility("public")}
+                  className={[
+                    "rounded-md px-2.5 py-1 text-xs font-medium transition-all",
+                    visibility === "public"
+                      ? "bg-white text-[#084c61] shadow-sm"
+                      : "text-[#323031]/50 hover:text-[#323031]/70",
+                  ].join(" ")}
+                >
+                  🌐 Public
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {state?.error && (
+                <p className="text-xs text-red-500">{state.error}</p>
+              )}
+              <button
+                type="submit"
+                disabled={isPending || !body.trim()}
+                className="rounded-lg bg-[#084c61] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#177e89] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {isPending ? "Posting…" : "Post musing"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -250,12 +287,14 @@ export function MusingsView({
   authorName,
   unreadCount,
   unreadTidingsCount,
+  pendingConnectionsCount,
 }: {
   initialMusings: MusingData[];
   currentUserId: string;
   authorName: string;
   unreadCount: number;
   unreadTidingsCount: number;
+  pendingConnectionsCount: number;
 }) {
   const [musings, setMusings] = useState(initialMusings);
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -314,7 +353,16 @@ export function MusingsView({
                 </span>
               )}
             </Link>
+            <Link href="/people" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
+              People
+              {pendingConnectionsCount > 0 && (
+                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
+                  {pendingConnectionsCount > 99 ? "99+" : pendingConnectionsCount}
+                </span>
+              )}
+            </Link>
           </div>
+          <NavUserMenu userName={authorName} />
         </div>
       </nav>
 

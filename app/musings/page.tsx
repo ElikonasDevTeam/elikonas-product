@@ -59,7 +59,11 @@ export default async function MusingsPage() {
   const meta = user.user_metadata ?? {};
   const authorName: string = meta.full_name || user.email || "Learner";
 
-  const [{ count: unreadCount }, { count: unreadTidingsCount }] = await Promise.all([
+  const [
+    { count: unreadCount },
+    { count: unreadTidingsCount },
+    { count: pendingConnectionsCount },
+  ] = await Promise.all([
     supabase
       .from("notifications")
       .select("*", { count: "exact", head: true })
@@ -70,13 +74,18 @@ export default async function MusingsPage() {
       .select("*", { count: "exact", head: true })
       .eq("recipient_id", user.id)
       .eq("read", false),
+    supabase
+      .from("connections")
+      .select("*", { count: "exact", head: true })
+      .eq("addressee_id", user.id)
+      .eq("status", "pending"),
   ]);
 
   let musings: MusingData[] = [];
   try {
     const { data: rawMusings, error: musingsError } = await supabase
       .from("musings")
-      .select("id, user_id, author_name, author_tagline, hashtags, body, created_at")
+      .select("id, user_id, author_name, author_tagline, hashtags, body, visibility, created_at")
       .order("created_at", { ascending: false });
 
     if (musingsError) {
@@ -107,6 +116,7 @@ export default async function MusingsPage() {
         author_tagline: m.author_tagline ?? null,
         hashtags: Array.isArray(m.hashtags) ? m.hashtags : [],
         body: m.body,
+        visibility: (m.visibility === "public" ? "public" : "inner_circle") as "public" | "inner_circle",
         created_at: m.created_at,
         like_count: likeCountMap[m.id] ?? 0,
         is_liked: userLikedSet.has(m.id),
@@ -124,6 +134,7 @@ export default async function MusingsPage() {
       authorName={authorName}
       unreadCount={unreadCount ?? 0}
       unreadTidingsCount={unreadTidingsCount ?? 0}
+      pendingConnectionsCount={pendingConnectionsCount ?? 0}
     />
   );
 }

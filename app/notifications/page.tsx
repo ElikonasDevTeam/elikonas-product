@@ -47,11 +47,22 @@ export default async function NotificationsPage() {
 
   if (!user) redirect("/login");
 
-  const { count: unreadTidingsCount } = await supabase
-    .from("tidings_messages")
-    .select("*", { count: "exact", head: true })
-    .eq("recipient_id", user.id)
-    .eq("read", false);
+  const meta = user.user_metadata ?? {};
+  const currentUserName: string = meta.full_name || user.email || "Learner";
+
+  const [{ count: unreadTidingsCount }, { count: pendingConnectionsCount }] =
+    await Promise.all([
+      supabase
+        .from("tidings_messages")
+        .select("*", { count: "exact", head: true })
+        .eq("recipient_id", user.id)
+        .eq("read", false),
+      supabase
+        .from("connections")
+        .select("*", { count: "exact", head: true })
+        .eq("addressee_id", user.id)
+        .eq("status", "pending"),
+    ]);
 
   let notifications: NotificationData[] = [];
   let unreadCount = 0;
@@ -78,6 +89,8 @@ export default async function NotificationsPage() {
       initialNotifications={notifications}
       unreadCount={unreadCount}
       unreadTidingsCount={unreadTidingsCount ?? 0}
+      pendingConnectionsCount={pendingConnectionsCount ?? 0}
+      currentUserName={currentUserName}
     />
   );
 }

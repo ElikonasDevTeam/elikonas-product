@@ -16,24 +16,33 @@ export default async function AiGuidePage() {
 
   if (!user) redirect("/login");
 
-  const [{ data: edUnits }, { count: unreadCount }, { count: unreadTidingsCount }] =
-    await Promise.all([
-      supabase
-        .from("ed_units")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("notifications")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .eq("read", false),
-      supabase
-        .from("tidings_messages")
-        .select("*", { count: "exact", head: true })
-        .eq("recipient_id", user.id)
-        .eq("read", false),
-    ]);
+  const [
+    { data: edUnits },
+    { count: unreadCount },
+    { count: unreadTidingsCount },
+    { count: pendingConnectionsCount },
+  ] = await Promise.all([
+    supabase
+      .from("ed_units")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("notifications")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("read", false),
+    supabase
+      .from("tidings_messages")
+      .select("*", { count: "exact", head: true })
+      .eq("recipient_id", user.id)
+      .eq("read", false),
+    supabase
+      .from("connections")
+      .select("*", { count: "exact", head: true })
+      .eq("addressee_id", user.id)
+      .eq("status", "pending"),
+  ]);
 
   return (
     <AiGuideView
@@ -41,6 +50,7 @@ export default async function AiGuidePage() {
       edUnits={(edUnits ?? []) as EdUnit[]}
       unreadCount={unreadCount ?? 0}
       unreadTidingsCount={unreadTidingsCount ?? 0}
+      pendingConnectionsCount={pendingConnectionsCount ?? 0}
     />
   );
 }

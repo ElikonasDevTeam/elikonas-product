@@ -124,12 +124,14 @@ export default async function TidingsPage() {
 
   let threads: ThreadData[] = [];
   let unreadNotificationsCount = 0;
+  let pendingConnectionsCount = 0;
 
   try {
     const [
       { data: rawThreads, error: threadsError },
       { data: unreadMsgs },
       { count: notifCount },
+      { count: pendingConnCount },
     ] = await Promise.all([
       supabase
         .from("tidings_threads")
@@ -146,6 +148,11 @@ export default async function TidingsPage() {
         .select("*", { count: "exact", head: true })
         .eq("user_id", user.id)
         .eq("read", false),
+      supabase
+        .from("connections")
+        .select("*", { count: "exact", head: true })
+        .eq("addressee_id", user.id)
+        .eq("status", "pending"),
     ]);
 
     if (threadsError) {
@@ -153,6 +160,7 @@ export default async function TidingsPage() {
     }
 
     unreadNotificationsCount = notifCount ?? 0;
+    pendingConnectionsCount = pendingConnCount ?? 0;
 
     if (rawThreads && rawThreads.length > 0) {
       const otherIds = rawThreads.map((t) =>
@@ -196,6 +204,7 @@ export default async function TidingsPage() {
       currentUserId={user.id}
       currentUserName={currentUserName}
       unreadNotificationsCount={unreadNotificationsCount}
+      pendingConnectionsCount={pendingConnectionsCount}
     />
   );
 }
