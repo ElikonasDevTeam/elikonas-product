@@ -21,7 +21,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { PublicProfileView, type ConnectionStatus } from "./public-profile-view";
-import { DEFAULT_PRIVACY, type PrivacySettings } from "@/app/account/actions";
+import { DEFAULT_PRIVACY, type PrivacySettings } from "@/app/account/types";
 import type { EdUnit } from "@/types";
 
 export const metadata: Metadata = {

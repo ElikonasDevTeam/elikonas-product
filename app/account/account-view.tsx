@@ -3,11 +3,8 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { NavUserMenu } from "@/app/components/nav-user-menu";
-import {
-  updatePrivacySettingAction,
-  type PrivacyField,
-  type PrivacySettings,
-} from "./actions";
+import { updatePrivacySettingAction } from "./actions";
+import type { PrivacyField, PrivacySettings } from "./types";
 
 const PRIVACY_FIELDS: {
   field: PrivacyField;

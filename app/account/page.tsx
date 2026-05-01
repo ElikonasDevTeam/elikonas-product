@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AccountView } from "./account-view";
-import { DEFAULT_PRIVACY, type PrivacySettings } from "./actions";
+import { DEFAULT_PRIVACY, type PrivacySettings } from "./types";
 
 export const metadata: Metadata = {
   title: "Account Settings — Elikonas",

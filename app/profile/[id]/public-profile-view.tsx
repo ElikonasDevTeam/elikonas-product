@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { NavUserMenu } from "@/app/components/nav-user-menu";
 import { connectAction, acceptConnectionAction, declineConnectionAction } from "@/app/people/actions";
-import type { PrivacySettings } from "@/app/account/actions";
+import type { PrivacySettings } from "@/app/account/types";
 import type { EdUnit, EdUnitStatus } from "@/types";
 
 export type ConnectionStatus =
