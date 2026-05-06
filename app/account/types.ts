@@ -1,3 +1,5 @@
+export type Plan = "free" | "monthly" | "annual" | "founding_member";
+
 export type PrivacyField =
   | "show_interests"
   | "show_edunits_count"

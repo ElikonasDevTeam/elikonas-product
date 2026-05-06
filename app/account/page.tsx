@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AccountView } from "./account-view";
-import { DEFAULT_PRIVACY, type PrivacySettings } from "./types";
+import { DEFAULT_PRIVACY, type Plan, type PrivacySettings } from "./types";
 
 export const metadata: Metadata = {
   title: "Account Settings — Elikonas",
@@ -22,7 +22,15 @@ export default async function AccountPage({
 
   const meta = user.user_metadata ?? {};
   const currentUserName: string = meta.full_name || user.email || "Learner";
-  const isFoundingMember: boolean = meta.founding_member === true;
+
+  // Derive plan from metadata — webhook sets this on checkout completion
+  let plan: Plan = (meta.plan as Plan) ?? "free";
+  // founding_member flag is the source of truth for lifetime access
+  if (meta.founding_member === true) plan = "founding_member";
+
+  const planRenewalDate: string | null = (meta.plan_renewal_date as string) ?? null;
+  const planCanceling: boolean = meta.plan_canceling === true;
+  const planCancelAt: string | null = (meta.plan_cancel_at as string) ?? null;
 
   const { success, cancelled } = await searchParams;
 
@@ -70,7 +78,10 @@ export default async function AccountPage({
     <AccountView
       currentUserName={currentUserName}
       privacySettings={privacySettings}
-      isFoundingMember={isFoundingMember}
+      plan={plan}
+      planRenewalDate={planRenewalDate}
+      planCanceling={planCanceling}
+      planCancelAt={planCancelAt}
       showSuccessBanner={success === "true"}
       showCancelledBanner={cancelled === "true"}
       unreadCount={unreadCount ?? 0}
