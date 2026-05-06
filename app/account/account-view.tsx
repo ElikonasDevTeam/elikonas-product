@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { NavUserMenu } from "@/app/components/nav-user-menu";
-import { updatePrivacySettingAction } from "./actions";
+import { updatePrivacySettingAction, createCheckoutSessionAction } from "./actions";
 import type { PrivacyField, PrivacySettings } from "./types";
 
 const PRIVACY_FIELDS: {
@@ -70,15 +70,77 @@ function Toggle({
   );
 }
 
+function BillingSection({ isFoundingMember }: { isFoundingMember: boolean }) {
+  const [purchasing, startPurchase] = useTransition();
+
+  function handleBecomeMember() {
+    startPurchase(async () => {
+      const result = await createCheckoutSessionAction();
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    });
+  }
+
+  return (
+    <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="border-b border-gray-100 px-6 py-4">
+        <h2 className="text-sm font-semibold text-[#323031]">Billing</h2>
+        <p className="mt-0.5 text-xs text-[#323031]/50">
+          Your current plan and membership status.
+        </p>
+      </div>
+
+      <div className="px-6 py-5">
+        {isFoundingMember ? (
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ffc857]/20 text-xl">
+              ★
+            </div>
+            <div>
+              <p className="font-semibold text-[#323031]">Founding Member</p>
+              <p className="mt-0.5 text-sm text-[#323031]/50">
+                Lifetime access — thank you for being part of the founding community.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-semibold text-[#323031]">Free plan</p>
+              <p className="mt-0.5 text-sm text-[#323031]/50">
+                Become a Founding Member — lifetime access for $200, locked in forever.
+              </p>
+            </div>
+            <button
+              onClick={handleBecomeMember}
+              disabled={purchasing}
+              className="shrink-0 rounded-lg bg-[#084c61] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#177e89] disabled:opacity-60"
+            >
+              {purchasing ? "Redirecting…" : "Become a Founding Member"}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function AccountView({
   currentUserName,
   privacySettings: initialSettings,
+  isFoundingMember,
+  showSuccessBanner,
+  showCancelledBanner,
   unreadCount,
   unreadTidingsCount,
   pendingConnectionsCount,
 }: {
   currentUserName: string;
   privacySettings: PrivacySettings;
+  isFoundingMember: boolean;
+  showSuccessBanner: boolean;
+  showCancelledBanner: boolean;
   unreadCount: number;
   unreadTidingsCount: number;
   pendingConnectionsCount: number;
@@ -160,11 +222,30 @@ export function AccountView({
       </nav>
 
       <main className="mx-auto max-w-2xl px-4 py-8">
+        {showSuccessBanner && (
+          <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4">
+            <p className="font-semibold text-emerald-800">Welcome to the founding member community!</p>
+            <p className="mt-0.5 text-sm text-emerald-700">
+              Your lifetime access is now active. Thanks for supporting Elikonas.
+            </p>
+          </div>
+        )}
+        {showCancelledBanner && !showSuccessBanner && (
+          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
+            <p className="text-sm text-amber-800">Purchase cancelled — you can try again any time.</p>
+          </div>
+        )}
+
         <div className="mb-6">
           <h1 className="text-xl font-semibold text-[#323031]">Account Settings</h1>
           <p className="mt-0.5 text-sm text-[#323031]/50">
             Manage your profile visibility and preferences.
           </p>
+        </div>
+
+        {/* Billing card */}
+        <div className="mb-5">
+          <BillingSection isFoundingMember={isFoundingMember} />
         </div>
 
         {/* Privacy card */}

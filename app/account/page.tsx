@@ -8,7 +8,11 @@ export const metadata: Metadata = {
   title: "Account Settings — Elikonas",
 };
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string; cancelled?: string }>;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -18,6 +22,9 @@ export default async function AccountPage() {
 
   const meta = user.user_metadata ?? {};
   const currentUserName: string = meta.full_name || user.email || "Learner";
+  const isFoundingMember: boolean = meta.founding_member === true;
+
+  const { success, cancelled } = await searchParams;
 
   const [
     { count: unreadCount },
@@ -63,6 +70,9 @@ export default async function AccountPage() {
     <AccountView
       currentUserName={currentUserName}
       privacySettings={privacySettings}
+      isFoundingMember={isFoundingMember}
+      showSuccessBanner={success === "true"}
+      showCancelledBanner={cancelled === "true"}
       unreadCount={unreadCount ?? 0}
       unreadTidingsCount={unreadTidingsCount ?? 0}
       pendingConnectionsCount={pendingConnectionsCount ?? 0}

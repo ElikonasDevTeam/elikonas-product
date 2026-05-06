@@ -36,7 +36,7 @@ export async function signupAction(
     email,
     password,
     options: {
-      data: { full_name: fullName, founding_member: true },
+      data: { full_name: fullName },
       emailRedirectTo: `${siteUrl}/auth/callback`,
     },
   });

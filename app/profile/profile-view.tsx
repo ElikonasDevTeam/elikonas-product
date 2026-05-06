@@ -147,7 +147,7 @@ export function ProfileView({ user, edUnits, unreadCount, unreadTidingsCount, pe
   const fullName: string = meta.full_name || user.email || "Learner";
   const initials = getInitials(fullName);
   const interests: string[] = Array.isArray(meta.interests) ? meta.interests : [];
-  const isFoundingMember: boolean = meta.founding_member ?? true;
+  const isFoundingMember: boolean = meta.founding_member === true;
 
   const total = edUnits.length;
   const completed = edUnits.filter((u) => u.status === "completed").length;
