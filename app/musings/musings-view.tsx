@@ -337,6 +337,9 @@ export function MusingsView({
             <span className="border-b-2 border-white px-3 py-3.5 text-sm font-medium text-white">
               Community
             </span>
+            <Link href="/groups" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
+              Groups
+            </Link>
             <Link href="/tidings" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
               ✉ Tidings
               {unreadTidingsCount > 0 && (

@@ -628,6 +628,12 @@ export function AccountView({
               Community
             </Link>
             <Link
+              href="/groups"
+              className="px-3 py-3.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80"
+            >
+              Groups
+            </Link>
+            <Link
               href="/tidings"
               className="relative px-3 py-3.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80"
             >

@@ -44,7 +44,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/notifications") ||
     pathname.startsWith("/tidings") ||
     pathname.startsWith("/people") ||
-    pathname.startsWith("/account");
+    pathname.startsWith("/account") ||
+    pathname.startsWith("/groups");
 
   if (!user && isDashboardRoute) {
     return NextResponse.redirect(new URL("/login", request.url));

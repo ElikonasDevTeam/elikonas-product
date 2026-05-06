@@ -260,6 +260,9 @@ export function AiGuideView({ user, edUnits, unreadCount, unreadTidingsCount, pe
             <Link href="/musings" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
               Community
             </Link>
+            <Link href="/groups" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
+              Groups
+            </Link>
             <Link href="/tidings" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
               ✉ Tidings
               {unreadTidingsCount > 0 && (
