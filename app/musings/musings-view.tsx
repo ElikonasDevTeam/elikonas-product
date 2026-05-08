@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useOptimistic, useRef, useState, useTransition } from "react";
-import Link from "next/link";
 import { useActionState } from "react";
 import { postMusingAction, toggleLikeAction } from "./actions";
-import { CATEGORIES } from "@/types";
-import { NavUserMenu } from "@/app/components/nav-user-menu";
+import { AppShell } from "@/app/components/app-shell";
 
 export interface MusingData {
   id: string;
@@ -211,7 +209,6 @@ function ComposeBox({
             className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-[#323031] placeholder-[#323031]/40 outline-none transition-all focus:border-[#177e89] focus:bg-white focus:ring-2 focus:ring-[#177e89]/20"
           />
           <div className="mt-3 flex items-center justify-between gap-3">
-            {/* Visibility toggle */}
             <div className="flex items-center gap-1.5 text-xs text-[#323031]/50">
               <span>Post to:</span>
               <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-0.5">
@@ -279,8 +276,6 @@ function EmptyState({ label }: { label: string }) {
   );
 }
 
-const CATEGORY_FILTERS = ["All", ...CATEGORIES] as const;
-
 export function MusingsView({
   initialMusings,
   currentUserId,
@@ -288,6 +283,7 @@ export function MusingsView({
   unreadCount,
   unreadTidingsCount,
   pendingConnectionsCount,
+  topHashtags,
 }: {
   initialMusings: MusingData[];
   currentUserId: string;
@@ -295,9 +291,9 @@ export function MusingsView({
   unreadCount: number;
   unreadTidingsCount: number;
   pendingConnectionsCount: number;
+  topHashtags: string[];
 }) {
   const [musings, setMusings] = useState(initialMusings);
-  const [categoryFilter, setCategoryFilter] = useState("All");
   const [hashtagFilter, setHashtagFilter] = useState<string | null>(null);
 
   useEffect(() => {
@@ -308,105 +304,57 @@ export function MusingsView({
     setHashtagFilter((prev) => (prev === tag ? null : tag));
   }
 
-  function handleCategoryClick(cat: string) {
-    setCategoryFilter(cat);
-    setHashtagFilter(null);
-  }
-
-  const filtered = musings.filter((m) => {
-    if (hashtagFilter) return m.hashtags.includes(hashtagFilter);
-    if (categoryFilter !== "All") return m.hashtags.includes(categoryFilter.toLowerCase().replace(/[^a-z0-9]/g, ""));
-    return true;
-  });
-
-  const activeFilterLabel = hashtagFilter ?? categoryFilter;
+  const filtered = hashtagFilter
+    ? musings.filter((m) => m.hashtags.includes(hashtagFilter))
+    : musings;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
-      {/* Nav */}
-      <nav className="shrink-0 bg-[#084c61] px-6 py-0">
-        <div className="mx-auto flex max-w-6xl items-center gap-8">
-          <img src="/images/logo-white.svg" alt="Elikonas" className="h-8 w-auto py-3" />
-          <div className="flex items-end gap-1">
-            <Link href="/profile" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              My Profile
-            </Link>
-            <Link href="/ai-guide" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              AI Guide
-            </Link>
-            <span className="border-b-2 border-white px-3 py-3.5 text-sm font-medium text-white">
-              Community
-            </span>
-            <Link href="/groups" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              Groups
-            </Link>
-            <Link href="/tidings" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              ✉ Tidings
-              {unreadTidingsCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#177e89] px-1 text-[10px] font-bold text-white">
-                  {unreadTidingsCount > 99 ? "99+" : unreadTidingsCount}
-                </span>
-              )}
-            </Link>
-            <Link href="/notifications" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              Notifications
-              {unreadCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
-              )}
-            </Link>
-            <Link href="/people" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              People
-              {pendingConnectionsCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
-                  {pendingConnectionsCount > 99 ? "99+" : pendingConnectionsCount}
-                </span>
-              )}
-            </Link>
-          </div>
-          <NavUserMenu userName={authorName} />
-        </div>
-      </nav>
-
-      {/* Body */}
+    <AppShell
+      currentUserName={authorName}
+      unreadCount={unreadCount}
+      unreadTidingsCount={unreadTidingsCount}
+      pendingConnectionsCount={pendingConnectionsCount}
+      activePage="musings"
+      fullHeight
+    >
       <div className="flex flex-1 overflow-hidden bg-gray-50">
         <div className="mx-auto flex w-full max-w-2xl flex-col overflow-hidden px-4 py-6">
 
-          {/* Compose */}
           <ComposeBox authorName={authorName} onPosted={() => {}} />
 
-          {/* Filter tabs */}
+          {/* Hashtag filter chips */}
           <div className="mt-5 flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-            {CATEGORY_FILTERS.map((f) => (
+            <button
+              onClick={() => setHashtagFilter(null)}
+              className={[
+                "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors",
+                !hashtagFilter
+                  ? "bg-[#084c61] text-white"
+                  : "bg-white text-[#323031]/60 hover:bg-gray-100",
+              ].join(" ")}
+            >
+              All
+            </button>
+            {topHashtags.map((tag) => (
               <button
-                key={f}
-                onClick={() => handleCategoryClick(f)}
+                key={tag}
+                onClick={() => setHashtagFilter(hashtagFilter === tag ? null : tag)}
                 className={[
                   "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors",
-                  !hashtagFilter && categoryFilter === f
+                  hashtagFilter === tag
                     ? "bg-[#084c61] text-white"
                     : "bg-white text-[#323031]/60 hover:bg-gray-100",
                 ].join(" ")}
               >
-                {f}
+                #{tag}
               </button>
             ))}
-            {hashtagFilter && (
-              <button
-                onClick={() => setHashtagFilter(null)}
-                className="shrink-0 flex items-center gap-1 rounded-full bg-[#177e89] px-3.5 py-1.5 text-xs font-medium text-white"
-              >
-                #{hashtagFilter}
-                <span className="ml-0.5 opacity-70">×</span>
-              </button>
-            )}
           </div>
 
           {/* Feed */}
           <div className="mt-4 flex flex-1 flex-col gap-3 overflow-y-auto pb-6">
             {filtered.length === 0 ? (
-              <EmptyState label={activeFilterLabel} />
+              <EmptyState label={hashtagFilter ?? "All"} />
             ) : (
               filtered.map((m) => (
                 <MusingCard
@@ -420,6 +368,6 @@ export function MusingsView({
           </div>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }

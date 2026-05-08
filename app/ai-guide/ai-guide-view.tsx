@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import type { EdUnit, EdUnitStatus } from "@/types";
 import { getSuggestionsForInterests, type SuggestedCourse } from "./course-catalog";
 import { addSuggestedCourseAction } from "./actions";
-import { NavUserMenu } from "@/app/components/nav-user-menu";
+import { AppShell } from "@/app/components/app-shell";
 
 interface Message {
   id: string;
@@ -245,53 +244,14 @@ export function AiGuideView({ user, edUnits, unreadCount, unreadTidingsCount, pe
   const showTyping = isStreaming && lastMessage?.role === "assistant" && lastMessage.content === "";
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
-      {/* Nav */}
-      <nav className="shrink-0 bg-[#084c61] px-6 py-0">
-        <div className="mx-auto flex max-w-6xl items-center gap-8">
-          <img src="/images/logo-white.svg" alt="Elikonas" className="h-8 w-auto py-3" />
-          <div className="flex items-end gap-1">
-            <Link href="/profile" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              My Profile
-            </Link>
-            <span className="border-b-2 border-white px-3 py-3.5 text-sm font-medium text-white">
-              AI Guide
-            </span>
-            <Link href="/musings" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              Community
-            </Link>
-            <Link href="/groups" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              Groups
-            </Link>
-            <Link href="/tidings" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              ✉ Tidings
-              {unreadTidingsCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#177e89] px-1 text-[10px] font-bold text-white">
-                  {unreadTidingsCount > 99 ? "99+" : unreadTidingsCount}
-                </span>
-              )}
-            </Link>
-            <Link href="/notifications" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              Notifications
-              {unreadCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
-              )}
-            </Link>
-            <Link href="/people" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              People
-              {pendingConnectionsCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
-                  {pendingConnectionsCount > 99 ? "99+" : pendingConnectionsCount}
-                </span>
-              )}
-            </Link>
-          </div>
-          <NavUserMenu userName={user.user_metadata?.full_name || user.email || "Learner"} />
-        </div>
-      </nav>
-
+    <AppShell
+      currentUserName={fullName}
+      unreadCount={unreadCount}
+      unreadTidingsCount={unreadTidingsCount}
+      pendingConnectionsCount={pendingConnectionsCount}
+      activePage="ai-guide"
+      fullHeight={true}
+    >
       {/* Body */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
@@ -434,6 +394,6 @@ export function AiGuideView({ user, edUnits, unreadCount, unreadTidingsCount, pe
           </div>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }

@@ -127,6 +127,19 @@ export default async function MusingsPage() {
     console.error("[musings/page] unexpected error:", err);
   }
 
+  // Compute top 10 hashtags by frequency across all fetched musings.
+  // SQL equivalent: SELECT unnest(hashtags) tag, count(*) FROM musings GROUP BY tag ORDER BY count DESC LIMIT 10
+  const tagCounts = new Map<string, number>();
+  for (const m of musings) {
+    for (const tag of m.hashtags) {
+      if (tag) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+    }
+  }
+  const topHashtags = [...tagCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([tag]) => tag);
+
   return (
     <MusingsView
       initialMusings={musings}
@@ -135,6 +148,7 @@ export default async function MusingsPage() {
       unreadCount={unreadCount ?? 0}
       unreadTidingsCount={unreadTidingsCount ?? 0}
       pendingConnectionsCount={pendingConnectionsCount ?? 0}
+      topHashtags={topHashtags}
     />
   );
 }

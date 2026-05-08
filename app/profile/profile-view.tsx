@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
-import { NavUserMenu } from "@/app/components/nav-user-menu";
+import { AppShell } from "@/app/components/app-shell";
 import type { EdUnit, EdUnitStatus } from "@/types";
 import { AddLearningModal } from "./add-learning-modal";
 
@@ -166,53 +166,13 @@ export function ProfileView({ user, edUnits, unreadCount, unreadTidingsCount, pe
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
-        {/* Nav */}
-        <nav className="bg-[#084c61] px-6 py-0">
-          <div className="mx-auto flex max-w-4xl items-center gap-8">
-            <img src="/images/logo-white.svg" alt="Elikonas" className="h-8 w-auto py-3" />
-            <div className="flex h-full items-end gap-1">
-              <span className="border-b-2 border-white px-3 py-3.5 text-sm font-medium text-white">
-                My Profile
-              </span>
-              <Link href="/ai-guide" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-                AI Guide
-              </Link>
-              <Link href="/musings" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-                Community
-              </Link>
-              <Link href="/groups" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-                Groups
-              </Link>
-              <Link href="/tidings" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-                ✉ Tidings
-                {unreadTidingsCount > 0 && (
-                  <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#177e89] px-1 text-[10px] font-bold text-white">
-                    {unreadTidingsCount > 99 ? "99+" : unreadTidingsCount}
-                  </span>
-                )}
-              </Link>
-              <Link href="/notifications" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-                Notifications
-                {unreadCount > 0 && (
-                  <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
-                    {unreadCount > 99 ? "99+" : unreadCount}
-                  </span>
-                )}
-              </Link>
-              <Link href="/people" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-                People
-                {pendingConnectionsCount > 0 && (
-                  <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
-                    {pendingConnectionsCount > 99 ? "99+" : pendingConnectionsCount}
-                  </span>
-                )}
-              </Link>
-            </div>
-            <NavUserMenu userName={fullName} />
-          </div>
-        </nav>
-
+      <AppShell
+        currentUserName={fullName}
+        unreadCount={unreadCount}
+        unreadTidingsCount={unreadTidingsCount}
+        pendingConnectionsCount={pendingConnectionsCount}
+        activePage="profile"
+      >
         <main className="mx-auto max-w-4xl px-6 py-8 space-y-5">
           {/* Profile card */}
           <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
@@ -297,7 +257,7 @@ export function ProfileView({ user, edUnits, unreadCount, unreadTidingsCount, pe
             )}
           </div>
         </main>
-      </div>
+      </AppShell>
 
       {modalOpen && <AddLearningModal onClose={() => setModalOpen(false)} />}
     </>

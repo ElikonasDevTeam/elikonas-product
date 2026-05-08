@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { NavUserMenu } from "@/app/components/nav-user-menu";
+import { AppShell } from "@/app/components/app-shell";
 import { connectAction, acceptConnectionAction, declineConnectionAction } from "@/app/people/actions";
 import type { PrivacySettings } from "@/app/account/types";
 import type { EdUnit, EdUnitStatus } from "@/types";
@@ -251,74 +251,13 @@ export function PublicProfileView({
   } = privacySettings;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Nav */}
-      <nav className="bg-[#084c61] px-6 py-0">
-        <div className="mx-auto flex max-w-4xl items-center gap-8">
-          <img src="/images/logo-white.svg" alt="Elikonas" className="h-8 w-auto py-3" />
-          <div className="flex items-end gap-1">
-            <Link
-              href="/profile"
-              className="px-3 py-3.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80"
-            >
-              My Profile
-            </Link>
-            <Link
-              href="/ai-guide"
-              className="px-3 py-3.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80"
-            >
-              AI Guide
-            </Link>
-            <Link
-              href="/musings"
-              className="px-3 py-3.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80"
-            >
-              Community
-            </Link>
-            <Link
-              href="/groups"
-              className="px-3 py-3.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80"
-            >
-              Groups
-            </Link>
-            <Link
-              href="/tidings"
-              className="relative px-3 py-3.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80"
-            >
-              ✉ Tidings
-              {unreadTidingsCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#177e89] px-1 text-[10px] font-bold text-white">
-                  {unreadTidingsCount > 99 ? "99+" : unreadTidingsCount}
-                </span>
-              )}
-            </Link>
-            <Link
-              href="/notifications"
-              className="relative px-3 py-3.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80"
-            >
-              Notifications
-              {unreadCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
-              )}
-            </Link>
-            <Link
-              href="/people"
-              className="relative px-3 py-3.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80"
-            >
-              People
-              {pendingConnectionsCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
-                  {pendingConnectionsCount > 99 ? "99+" : pendingConnectionsCount}
-                </span>
-              )}
-            </Link>
-          </div>
-          <NavUserMenu userName={currentUserName} />
-        </div>
-      </nav>
-
+    <AppShell
+      currentUserName={currentUserName}
+      unreadCount={unreadCount}
+      unreadTidingsCount={unreadTidingsCount}
+      pendingConnectionsCount={pendingConnectionsCount}
+      activePage="public-profile"
+    >
       <main className="mx-auto max-w-4xl space-y-5 px-6 py-8">
         {/* Profile card */}
         <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
@@ -398,6 +337,6 @@ export function PublicProfileView({
           </div>
         )}
       </main>
-    </div>
+    </AppShell>
   );
 }

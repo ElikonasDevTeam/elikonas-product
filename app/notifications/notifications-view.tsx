@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { markReadAction, markAllReadAction } from "./actions";
 import type { NotificationType } from "@/types";
-import { NavUserMenu } from "@/app/components/nav-user-menu";
+import { AppShell } from "@/app/components/app-shell";
 
 export interface NotificationData {
   id: string;
@@ -169,48 +168,13 @@ export function NotificationsView({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Nav */}
-      <nav className="bg-[#084c61] px-6 py-0">
-        <div className="mx-auto flex max-w-4xl items-center gap-8">
-          <img src="/images/logo-white.svg" alt="Elikonas" className="h-8 w-auto py-3" />
-          <div className="flex items-end gap-1">
-            <Link href="/profile" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              My Profile
-            </Link>
-            <Link href="/ai-guide" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              AI Guide
-            </Link>
-            <Link href="/musings" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              Community
-            </Link>
-            <Link href="/groups" className="px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              Groups
-            </Link>
-            <Link href="/tidings" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              ✉ Tidings
-              {unreadTidingsCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#177e89] px-1 text-[10px] font-bold text-white">
-                  {unreadTidingsCount > 99 ? "99+" : unreadTidingsCount}
-                </span>
-              )}
-            </Link>
-            <span className="relative border-b-2 border-white px-3 py-3.5 text-sm font-medium text-white">
-              Notifications
-            </span>
-            <Link href="/people" className="relative px-3 py-3.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors">
-              People
-              {pendingConnectionsCount > 0 && (
-                <span className="absolute right-0.5 top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
-                  {pendingConnectionsCount > 99 ? "99+" : pendingConnectionsCount}
-                </span>
-              )}
-            </Link>
-          </div>
-          <NavUserMenu userName={currentUserName} />
-        </div>
-      </nav>
-
+    <AppShell
+      currentUserName={currentUserName}
+      unreadCount={initialUnreadCount}
+      unreadTidingsCount={unreadTidingsCount}
+      pendingConnectionsCount={pendingConnectionsCount}
+      activePage="notifications"
+    >
       <main className="mx-auto max-w-2xl px-4 py-8">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between">
@@ -248,6 +212,6 @@ export function NotificationsView({
           </div>
         )}
       </main>
-    </div>
+    </AppShell>
   );
 }
