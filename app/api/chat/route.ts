@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { anthropic, CLAUDE_MODEL } from "@/lib/anthropic/client";
+import { searchCatalog } from "@/lib/catalog/search";
 import type { EdUnit } from "@/types";
 
 const GOAL_LABELS: Record<string, string> = {
@@ -102,6 +103,26 @@ export async function POST(request: NextRequest) {
       (edUnits ?? []) as EdUnit[]
     );
     anthropicMessages = messages;
+  }
+
+  // Inject catalog context into the system prompt
+  try {
+    const lastUserContent = isInit
+      ? ""
+      : anthropicMessages.filter((m) => m.role === "user").at(-1)?.content ?? "";
+    const catalogCourses = await searchCatalog(lastUserContent, interests, 5);
+    if (catalogCourses.length > 0) {
+      const lines = catalogCourses.map((c) => {
+        const parts: string[] = [`"${c.title}" by ${c.provider}`, c.topic];
+        if (c.duration_estimate) parts.push(c.duration_estimate);
+        if (c.cost) parts.push(c.cost);
+        if (c.url) parts.push(c.url);
+        return `• ${parts.join(" — ")}`;
+      });
+      systemPrompt += `\n\nRELEVANT COURSES FROM THE ELIKONAS CATALOG:\nWhen recommending specific courses, prefer these currently available options — use their exact titles and providers:\n${lines.join("\n")}`;
+    }
+  } catch (err) {
+    console.error("[chat/route] catalog search error (non-fatal):", err);
   }
 
   const encoder = new TextEncoder();

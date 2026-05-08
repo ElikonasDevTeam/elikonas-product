@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { EdUnit } from "@/types";
+import type { CatalogCourse } from "@/lib/catalog/search";
 import { AiGuideView } from "./ai-guide-view";
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export default async function AiGuidePage() {
   if (!user) redirect("/login");
 
   const [
-    { data: edUnits },
+    { data: edUnitsData },
     { count: unreadCount },
     { count: unreadTidingsCount },
     { count: pendingConnectionsCount },
@@ -44,10 +45,27 @@ export default async function AiGuidePage() {
       .eq("status", "pending"),
   ]);
 
+  const edUnits = (edUnitsData ?? []) as EdUnit[];
+  const interests: string[] = Array.isArray(user.user_metadata?.interests)
+    ? user.user_metadata.interests
+    : [];
+
+  let catalogSuggestions: CatalogCourse[] = [];
+  if (edUnits.length === 0) {
+    let q = supabase
+      .from("ed_units_catalog")
+      .select("id,title,provider,topic,format,duration_estimate,cost,url,description")
+      .eq("is_active", true);
+    if (interests.length > 0) q = q.in("topic", interests);
+    const { data } = await q.limit(4);
+    catalogSuggestions = (data ?? []) as CatalogCourse[];
+  }
+
   return (
     <AiGuideView
       user={user}
-      edUnits={(edUnits ?? []) as EdUnit[]}
+      edUnits={edUnits}
+      suggestions={catalogSuggestions}
       unreadCount={unreadCount ?? 0}
       unreadTidingsCount={unreadTidingsCount ?? 0}
       pendingConnectionsCount={pendingConnectionsCount ?? 0}

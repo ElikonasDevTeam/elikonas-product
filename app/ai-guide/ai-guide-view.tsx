@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import type { User } from "@supabase/supabase-js";
 import type { EdUnit, EdUnitStatus } from "@/types";
-import { getSuggestionsForInterests, type SuggestedCourse } from "./course-catalog";
 import { addSuggestedCourseAction } from "./actions";
+import type { CatalogCourse } from "@/lib/catalog/search";
 import { AppShell } from "@/app/components/app-shell";
 
 interface Message {
@@ -73,44 +73,62 @@ function MessageBubble({ message }: { message: Message }) {
   );
 }
 
-function SuggestionCard({ course }: { course: SuggestedCourse }) {
+function SuggestionCard({ course }: { course: CatalogCourse }) {
   const [isPending, startTransition] = useTransition();
 
   return (
     <div className="flex flex-col justify-between gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
       <div className="min-w-0">
-        <p className="text-sm font-semibold leading-snug text-[#323031]">{course.name}</p>
+        <p className="text-sm font-semibold leading-snug text-[#323031]">{course.title}</p>
         <p className="mt-1 text-xs text-[#323031]/60">{course.provider}</p>
-        <p className="mt-1.5 text-[11px] text-[#323031]/40">⏱ {course.duration}</p>
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+          {course.duration_estimate && (
+            <span className="text-[11px] text-[#323031]/40">⏱ {course.duration_estimate}</span>
+          )}
+          {course.cost && (
+            <span className="text-[11px] text-[#323031]/40">💰 {course.cost}</span>
+          )}
+        </div>
       </div>
-      <button
-        onClick={() =>
-          startTransition(() =>
-            addSuggestedCourseAction(course.name, course.provider, course.category)
-          )
-        }
-        disabled={isPending}
-        className={[
-          "w-full rounded-lg px-3 py-2 text-xs font-semibold text-white transition-colors",
-          isPending
-            ? "cursor-not-allowed bg-[#084c61]/40"
-            : "bg-[#084c61] hover:bg-[#177e89]",
-        ].join(" ")}
-      >
-        {isPending ? "Adding…" : "+ Add to my record"}
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={() =>
+            startTransition(() =>
+              addSuggestedCourseAction(course.title, course.provider, course.topic)
+            )
+          }
+          disabled={isPending}
+          className={[
+            "flex-1 rounded-lg px-3 py-2 text-xs font-semibold text-white transition-colors",
+            isPending
+              ? "cursor-not-allowed bg-[#084c61]/40"
+              : "bg-[#084c61] hover:bg-[#177e89]",
+          ].join(" ")}
+        >
+          {isPending ? "Adding…" : "+ Add to record"}
+        </button>
+        {course.url && (
+          <a
+            href={course.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-[#323031]/60 transition-colors hover:bg-gray-50"
+          >
+            View →
+          </a>
+        )}
+      </div>
     </div>
   );
 }
 
-export function AiGuideView({ user, edUnits, unreadCount, unreadTidingsCount, pendingConnectionsCount }: { user: User; edUnits: EdUnit[]; unreadCount: number; unreadTidingsCount: number; pendingConnectionsCount: number }) {
+export function AiGuideView({ user, edUnits, suggestions, unreadCount, unreadTidingsCount, pendingConnectionsCount }: { user: User; edUnits: EdUnit[]; suggestions: CatalogCourse[]; unreadCount: number; unreadTidingsCount: number; pendingConnectionsCount: number }) {
   const meta = user.user_metadata ?? {};
   const fullName: string = meta.full_name || user.email || "Learner";
   const firstName = fullName.split(" ")[0];
   const interests: string[] = Array.isArray(meta.interests) ? meta.interests : [];
 
   const isEmpty = edUnits.length === 0;
-  const suggestions = isEmpty ? getSuggestionsForInterests(interests) : [];
 
   const normalGreeting: Message = {
     id: "initial",
@@ -356,7 +374,7 @@ export function AiGuideView({ user, edUnits, unreadCount, unreadTidingsCount, pe
                   </p>
                   <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                     {suggestions.map((course) => (
-                      <SuggestionCard key={course.name} course={course} />
+                      <SuggestionCard key={course.id} course={course} />
                     ))}
                   </div>
                 </div>
