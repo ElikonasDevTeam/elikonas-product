@@ -7,7 +7,7 @@ export async function addSuggestedCourseAction(
   name: string,
   provider: string,
   category: string
-): Promise<void> {
+): Promise<{ error?: string }> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -32,10 +32,9 @@ export async function addSuggestedCourseAction(
 
   if (insertError) {
     console.error("[addSuggestedCourseAction] insert error:", insertError);
-    // Surface the error code and message so we can diagnose (RLS, missing table, etc.)
-    throw new Error(`Failed to save course: ${insertError.message} (code: ${insertError.code})`);
+    return { error: insertError.message };
   }
 
-  console.log("[addSuggestedCourseAction] insert succeeded, redirecting to /profile");
-  redirect("/profile");
+  console.log("[addSuggestedCourseAction] insert succeeded");
+  return {};
 }

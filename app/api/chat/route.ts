@@ -70,14 +70,14 @@ export async function POST(request: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const { messages: rawMessages, isInit = false } = body;
+  const { messages: rawMessages, isInit = false, conversationId } = body;
 
   const meta = user.user_metadata ?? {};
   const fullName: string = meta.full_name || user.email || "Learner";
   const goal: string | null = meta.goal ?? null;
   const interests: string[] = Array.isArray(meta.interests) ? meta.interests : [];
 
-  console.log("[chat/route] user:", user.id, "| isInit:", isInit, "| goal:", goal, "| interests:", interests, "| fullName:", fullName);
+  console.log("[chat/route] user:", user.id, "| isInit:", isInit, "| conversationId:", conversationId, "| goal:", goal, "| interests:", interests, "| fullName:", fullName);
 
   let systemPrompt: string;
   let anthropicMessages: { role: "user" | "assistant"; content: string }[];
@@ -86,11 +86,6 @@ export async function POST(request: NextRequest) {
     systemPrompt = buildInitSystemPrompt(fullName, goal, interests);
     anthropicMessages = [{ role: "user", content: "Please introduce yourself." }];
   } else {
-    const messages = rawMessages ?? [];
-    if (!messages.length) {
-      return NextResponse.json({ error: "No messages provided" }, { status: 400 });
-    }
-
     const { data: edUnits } = await supabase
       .from("ed_units")
       .select("*")
@@ -102,14 +97,29 @@ export async function POST(request: NextRequest) {
       interests,
       (edUnits ?? []) as EdUnit[]
     );
-    anthropicMessages = messages;
+
+    if (conversationId) {
+      // Fetch full conversation history from DB — this is the source of truth
+      const { data: dbMessages } = await supabase
+        .from("eli_messages")
+        .select("role, content")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true });
+      anthropicMessages = (dbMessages ?? []) as { role: "user" | "assistant"; content: string }[];
+    } else {
+      const messages = rawMessages ?? [];
+      if (!messages.length) {
+        return NextResponse.json({ error: "No messages or conversationId provided" }, { status: 400 });
+      }
+      anthropicMessages = messages;
+    }
   }
 
   // Inject catalog context into the system prompt
   try {
     const lastUserContent = isInit
       ? ""
-      : anthropicMessages.filter((m) => m.role === "user").at(-1)?.content ?? "";
+      : (anthropicMessages.filter((m) => m.role === "user").at(-1)?.content ?? "");
     const catalogCourses = await searchCatalog(lastUserContent, interests, 5);
     if (catalogCourses.length > 0) {
       const lines = catalogCourses.map((c) => {
