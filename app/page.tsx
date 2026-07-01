@@ -1,4 +1,14 @@
-export default function Home() {
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) redirect("/profile");
+
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-6 p-24">
       <h1 className="text-4xl font-bold text-brand-dark-teal">Elikonas</h1>
