@@ -78,10 +78,8 @@ export function ResetPasswordForm({
       return;
     }
 
-    setSuccess(true);
-    // Sign out so the user lands on a clean login state
     await supabase.auth.signOut();
-    setTimeout(() => router.push("/login"), 2000);
+    router.push('/login?message=Password+updated+successfully');
   }
 
   if (initialError) {
