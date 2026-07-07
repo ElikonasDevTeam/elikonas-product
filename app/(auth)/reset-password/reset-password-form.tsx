@@ -6,50 +6,27 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export function ResetPasswordForm({
-  code,
+  sessionReady,
   initialError,
 }: {
-  code: string | null;
+  sessionReady: boolean;
   initialError: string | null;
 }) {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(sessionReady);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(initialError);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // PKCE flow: exchange the code client-side so the session lands in the browser directly.
+  // Listen for PASSWORD_RECOVERY event (PKCE flow via /auth/callback) or
+  // INITIAL_SESSION with an active session (implicit flow via URL hash).
   useEffect(() => {
-    if (!code) return;
+    if (sessionReady) return;
 
     const supabase = createClient();
 
-    supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
-      if (error) {
-        console.error('[ResetPasswordForm] exchangeCodeForSession error:', error.message)
-        setError("This reset link is invalid or has expired. Please request a new one.");
-        return;
-      }
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          setReady(true);
-        } else {
-          setError("Auth session missing. Please request a new reset link.");
-        }
-      });
-    });
-  }, [code]);
-
-  // Implicit flow: listen for PASSWORD_RECOVERY event from URL hash.
-  useEffect(() => {
-    if (code) return;
-
-    const supabase = createClient();
-
-    // Primary: listen for PASSWORD_RECOVERY (implicit flow) or INITIAL_SESSION
-    // with an active session (hash was already processed before subscription).
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (
@@ -61,9 +38,7 @@ export function ResetPasswordForm({
       }
     );
 
-    // Fallback: if the browser client processed the URL hash before this
-    // component mounted (race condition), the event will not fire again.
-    // getSession() returns the already-established recovery session.
+    // Fallback: session may already be established before this component mounts.
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) setReady(true);
     });
@@ -77,7 +52,7 @@ export function ResetPasswordForm({
       subscription.unsubscribe();
       clearTimeout(timeout);
     };
-  }, [code]);
+  }, [sessionReady]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

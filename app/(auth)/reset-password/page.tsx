@@ -5,16 +5,7 @@ export const metadata: Metadata = {
   title: "Set new password — Elikonas",
 };
 
-export default async function ResetPasswordPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string>>;
-}) {
-  const params = await searchParams;
-  const code = params.code ?? null;
-
-  console.log('[reset-password] code received:', !!code)
-
+export default function ResetPasswordPage() {
   return (
     <div className="w-full max-w-md px-4 py-12">
       <div className="mb-8 text-center">
@@ -26,7 +17,7 @@ export default async function ResetPasswordPage({
       </div>
 
       <div className="rounded-2xl border border-gray-100 bg-white px-8 py-8 shadow-sm">
-        <ResetPasswordForm code={code} initialError={null} />
+        <ResetPasswordForm sessionReady={false} initialError={null} />
       </div>
     </div>
   );
