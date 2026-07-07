@@ -26,7 +26,7 @@ export default async function ResetPasswordPage({
       console.error("[reset-password/page] exchangeCodeForSession error:", error.message);
       initialError = "This reset link is invalid or has expired. Please request a new one.";
     } else {
-      sessionReady = true;
+      redirect("/reset-password/set");
     }
   }
   // If no code, the client component will handle the implicit flow
