@@ -5,7 +5,14 @@ export const metadata: Metadata = {
   title: "Sign in — Elikonas",
 };
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const params = await searchParams;
+  const message = params.message ?? null;
+
   return (
     <div className="w-full max-w-md px-4 py-12">
       <div className="mb-8 text-center">
@@ -17,7 +24,7 @@ export default function LoginPage() {
       </div>
 
       <div className="rounded-2xl border border-gray-100 bg-white px-8 py-8 shadow-sm">
-        <LoginForm />
+        <LoginForm message={message} />
       </div>
     </div>
   );

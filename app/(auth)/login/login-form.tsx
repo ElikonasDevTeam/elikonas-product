@@ -59,7 +59,7 @@ function Input({
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ message }: { message?: string | null }) {
   const [state, action, pending] = useActionState<LoginError | null, FormData>(
     loginAction,
     null
@@ -72,6 +72,11 @@ export function LoginForm() {
 
   return (
     <form action={action} className="space-y-4">
+      {message && (
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          {message}
+        </div>
+      )}
       {generalError && (
         <div className="rounded-lg border border-[#db3a34]/30 bg-[#db3a34]/5 px-4 py-3 text-sm text-[#db3a34]">
           {generalError}
