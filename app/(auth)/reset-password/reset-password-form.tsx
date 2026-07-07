@@ -13,13 +13,36 @@ export function ResetPasswordForm({
   initialError: string | null;
 }) {
   const router = useRouter();
-  const [ready, setReady] = useState(sessionReady);
+  const [ready, setReady] = useState(false);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(initialError);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // PKCE flow: server exchanged the code, verify the browser received the session cookie.
+  useEffect(() => {
+    if (!sessionReady) return;
+
+    const supabase = createClient();
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setReady(true);
+        return;
+      }
+      // Cookie didn't propagate — try getUser() as a fallback.
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          setReady(true);
+        } else {
+          setError("Auth session missing. Please request a new reset link.");
+        }
+      });
+    });
+  }, [sessionReady]);
+
+  // Implicit flow: listen for PASSWORD_RECOVERY event from URL hash.
   useEffect(() => {
     if (sessionReady) return;
 
