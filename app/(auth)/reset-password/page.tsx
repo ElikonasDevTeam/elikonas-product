@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ResetPasswordForm } from "./reset-password-form";
 
@@ -17,15 +18,19 @@ export default async function ResetPasswordPage({
   let sessionReady = false;
   let initialError: string | null = null;
 
+  console.log('[reset-password] code received:', !!code)
+
   if (code) {
     // PKCE flow: Supabase appended ?code= to the redirectTo URL.
     // Exchange it server-side so the session lands in cookies before the form renders.
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+    console.log('[reset-password] exchange error:', error?.message ?? 'none')
     if (error) {
       console.error("[reset-password/page] exchangeCodeForSession error:", error.message);
       initialError = "This reset link is invalid or has expired. Please request a new one.";
     } else {
+      console.log('[reset-password] redirecting to /reset-password/set')
       redirect("/reset-password/set");
     }
   }

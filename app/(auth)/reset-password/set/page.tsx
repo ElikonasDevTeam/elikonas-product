@@ -6,6 +6,7 @@ export const metadata: Metadata = {
 };
 
 export default function ResetPasswordSetPage() {
+  console.log('[reset-password/set] page rendered, sessionReady=true')
   return (
     <div className="w-full max-w-md px-4 py-12">
       <div className="mb-8 text-center">
