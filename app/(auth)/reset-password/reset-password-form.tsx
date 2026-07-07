@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export function ResetPasswordForm({
-  sessionReady,
+  code,
   initialError,
 }: {
-  sessionReady: boolean;
+  code: string | null;
   initialError: string | null;
 }) {
   const router = useRouter();
@@ -20,31 +20,31 @@ export function ResetPasswordForm({
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // PKCE flow: server exchanged the code, verify the browser received the session cookie.
+  // PKCE flow: exchange the code client-side so the session lands in the browser directly.
   useEffect(() => {
-    if (!sessionReady) return;
+    if (!code) return;
 
     const supabase = createClient();
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setReady(true);
+    supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+      if (error) {
+        console.error('[ResetPasswordForm] exchangeCodeForSession error:', error.message)
+        setError("This reset link is invalid or has expired. Please request a new one.");
         return;
       }
-      // Cookie didn't propagate — try getUser() as a fallback.
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        if (user) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
           setReady(true);
         } else {
           setError("Auth session missing. Please request a new reset link.");
         }
       });
     });
-  }, [sessionReady]);
+  }, [code]);
 
   // Implicit flow: listen for PASSWORD_RECOVERY event from URL hash.
   useEffect(() => {
-    if (sessionReady) return;
+    if (code) return;
 
     const supabase = createClient();
 
@@ -77,7 +77,7 @@ export function ResetPasswordForm({
       subscription.unsubscribe();
       clearTimeout(timeout);
     };
-  }, [sessionReady]);
+  }, [code]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
