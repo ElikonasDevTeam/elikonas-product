@@ -62,6 +62,16 @@ export async function signupAction(
     return { message: error.message };
   }
 
+  // Record consent at signup time for both flows.
+  if (data.user) {
+    await supabase.from("consent_records").insert({
+      user_id: data.user.id,
+      tos_version: "v1",
+      privacy_version: "v1",
+      consented_at: new Date().toISOString(),
+    });
+  }
+
   if (!data.session) {
     // Email confirmation required — user must confirm before they can authenticate.
     // Profile will be synced in onboarding once they log in.

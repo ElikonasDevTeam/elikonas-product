@@ -66,6 +66,9 @@ export function SignupForm() {
   const [passwordValue, setPasswordValue] = useState("");
   const [confirmValue, setConfirmValue] = useState("");
   const passwordsMatch = confirmValue === "" || passwordValue === confirmValue;
+  const [tosChecked, setTosChecked] = useState(false);
+  const [privacyChecked, setPrivacyChecked] = useState(false);
+  const canSubmit = !pending && passwordsMatch && tosChecked && privacyChecked;
 
   const fieldError = (field: SignupError["field"]) =>
     state?.field === field ? state!.message : undefined;
@@ -181,12 +184,54 @@ export function SignupForm() {
         <FieldError message={fieldError("inviteCode")} />
       </div>
 
+      <div className="space-y-3 pt-1">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={tosChecked}
+            onChange={(e) => setTosChecked(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#084c61] focus:ring-[#177e89]"
+          />
+          <span className="text-sm text-[#323031]/70">
+            I have read and agree to the{" "}
+            <Link
+              href="https://elikonas.com/governance/terms.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-[#177e89] hover:text-[#084c61] transition-colors"
+            >
+              Terms of Service
+            </Link>
+          </span>
+        </label>
+
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={privacyChecked}
+            onChange={(e) => setPrivacyChecked(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#084c61] focus:ring-[#177e89]"
+          />
+          <span className="text-sm text-[#323031]/70">
+            I have read and acknowledge the{" "}
+            <Link
+              href="https://elikonas.com/governance/privacy.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-[#177e89] hover:text-[#084c61] transition-colors"
+            >
+              Privacy Policy
+            </Link>
+          </span>
+        </label>
+      </div>
+
       <button
         type="submit"
-        disabled={pending || !passwordsMatch}
+        disabled={!canSubmit}
         className={[
           "mt-2 w-full rounded-lg px-4 py-3 text-sm font-semibold text-white transition-all duration-150",
-          pending || !passwordsMatch
+          !canSubmit
             ? "cursor-not-allowed bg-[#084c61]/40"
             : "bg-[#084c61] hover:bg-[#177e89] active:scale-[0.99]",
         ].join(" ")}
