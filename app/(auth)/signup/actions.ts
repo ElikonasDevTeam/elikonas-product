@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 const ALPHA_INVITE_CODE = "FOUNDING2026";
 
 export type SignupError = {
-  field?: "fullName" | "email" | "password" | "confirmPassword" | "inviteCode";
+  field?: "firstName" | "lastName" | "email" | "password" | "confirmPassword" | "country" | "phone" | "inviteCode";
   message: string;
 };
 
@@ -18,11 +18,25 @@ export async function signupAction(
   console.log('ANON_KEY exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
   console.log('ANON_KEY prefix:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20))
 
-  const fullName = (formData.get("fullName") as string)?.trim();
+  const firstName = (formData.get("firstName") as string)?.trim();
+  const lastName = (formData.get("lastName") as string)?.trim();
   const email = (formData.get("email") as string)?.trim();
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
+  const country = (formData.get("country") as string)?.trim();
+  const phone = (formData.get("phone") as string)?.trim() || null;
+  const smsOptIn = formData.get("smsOptIn") === "on";
   const inviteCode = (formData.get("inviteCode") as string)?.trim().toUpperCase();
+
+  if (!firstName) {
+    return { field: "firstName", message: "First name is required." };
+  }
+  if (!lastName) {
+    return { field: "lastName", message: "Last name is required." };
+  }
+  if (!country) {
+    return { field: "country", message: "Please select your country." };
+  }
 
   if (inviteCode !== ALPHA_INVITE_CODE) {
     return { field: "inviteCode", message: "Invalid invite code. Please check your code and try again." };
@@ -40,7 +54,11 @@ export async function signupAction(
     email,
     password,
     options: {
-      data: { full_name: fullName },
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+        full_name: `${firstName} ${lastName}`,
+      },
       emailRedirectTo: `${siteUrl}/auth/callback`,
     },
   });
@@ -81,7 +99,16 @@ export async function signupAction(
   // Immediate session (no email confirmation) — sync profile now.
   if (data.user) {
     await supabase.from("profiles").upsert(
-      { id: data.user.id, full_name: fullName, email: data.user.email ?? null },
+      {
+        id: data.user.id,
+        first_name: firstName,
+        last_name: lastName,
+        full_name: `${firstName} ${lastName}`,
+        email: data.user.email ?? null,
+        country,
+        phone,
+        sms_notifications_enabled: phone ? smsOptIn : false,
+      },
       { onConflict: "id" }
     );
   }

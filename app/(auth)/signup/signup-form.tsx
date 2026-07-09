@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import { signupAction, type SignupError } from "./actions";
+import { COUNTRIES } from "./countries";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -19,6 +20,7 @@ function Input({
   error,
   required,
   minLength,
+  optional,
 }: {
   id: string;
   name: string;
@@ -29,11 +31,15 @@ function Input({
   error?: string;
   required?: boolean;
   minLength?: number;
+  optional?: boolean;
 }) {
   return (
     <div>
       <label htmlFor={id} className="block text-sm font-medium text-[#323031] mb-1.5">
         {label}
+        {optional && (
+          <span className="ml-1.5 text-xs font-normal text-[#323031]/40">Optional</span>
+        )}
       </label>
       <input
         id={id}
@@ -68,6 +74,8 @@ export function SignupForm() {
   const passwordsMatch = confirmValue === "" || passwordValue === confirmValue;
   const [tosChecked, setTosChecked] = useState(false);
   const [privacyChecked, setPrivacyChecked] = useState(false);
+  const [phoneValue, setPhoneValue] = useState("");
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const canSubmit = !pending && passwordsMatch && tosChecked && privacyChecked;
 
   const fieldError = (field: SignupError["field"]) =>
@@ -83,16 +91,28 @@ export function SignupForm() {
         </div>
       )}
 
-      <Input
-        id="fullName"
-        name="fullName"
-        type="text"
-        label="Full name"
-        placeholder="Jane Smith"
-        autoComplete="name"
-        required
-        error={fieldError("fullName")}
-      />
+      <div className="grid grid-cols-2 gap-3">
+        <Input
+          id="firstName"
+          name="firstName"
+          type="text"
+          label="First name"
+          placeholder="Jane"
+          autoComplete="given-name"
+          required
+          error={fieldError("firstName")}
+        />
+        <Input
+          id="lastName"
+          name="lastName"
+          type="text"
+          label="Last name"
+          placeholder="Smith"
+          autoComplete="family-name"
+          required
+          error={fieldError("lastName")}
+        />
+      </div>
 
       <Input
         id="email"
@@ -157,6 +177,76 @@ export function SignupForm() {
           <p className="mt-1.5 text-sm text-[#db3a34]">Passwords do not match.</p>
         )}
         <FieldError message={fieldError("confirmPassword")} />
+      </div>
+
+      <div>
+        <label htmlFor="country" className="block text-sm font-medium text-[#323031] mb-1.5">
+          Country
+        </label>
+        <select
+          id="country"
+          name="country"
+          required
+          defaultValue=""
+          className={[
+            "w-full rounded-lg border px-4 py-2.5 text-sm text-[#323031] bg-white",
+            "outline-none transition-all duration-150",
+            "focus:border-[#177e89] focus:ring-2 focus:ring-[#177e89]/20",
+            fieldError("country")
+              ? "border-[#db3a34] bg-[#db3a34]/5"
+              : "border-gray-200 hover:border-gray-300",
+          ].join(" ")}
+        >
+          <option value="" disabled>Select your country</option>
+          {COUNTRIES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+        <FieldError message={fieldError("country")} />
+      </div>
+
+      <div>
+        <label htmlFor="phone" className="block text-sm font-medium text-[#323031] mb-1.5">
+          Phone number
+          <span className="ml-1.5 text-xs font-normal text-[#323031]/40">Optional</span>
+        </label>
+        <input
+          id="phone"
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          placeholder="+1 555 000 0000"
+          value={phoneValue}
+          onChange={(e) => {
+            setPhoneValue(e.target.value);
+            if (!e.target.value) setSmsOptIn(false);
+          }}
+          className={[
+            "w-full rounded-lg border px-4 py-2.5 text-sm text-[#323031] placeholder-[#323031]/40",
+            "outline-none transition-all duration-150",
+            "focus:border-[#177e89] focus:ring-2 focus:ring-[#177e89]/20",
+            fieldError("phone")
+              ? "border-[#db3a34] bg-[#db3a34]/5"
+              : "border-gray-200 bg-white hover:border-gray-300",
+          ].join(" ")}
+        />
+        <FieldError message={fieldError("phone")} />
+        <label
+          className={[
+            "mt-2.5 flex items-center gap-2.5",
+            phoneValue ? "cursor-pointer" : "opacity-40 pointer-events-none",
+          ].join(" ")}
+        >
+          <input
+            type="checkbox"
+            name="smsOptIn"
+            checked={smsOptIn}
+            onChange={(e) => setSmsOptIn(e.target.checked)}
+            disabled={!phoneValue}
+            className="h-4 w-4 rounded border-gray-300 text-[#084c61] focus:ring-[#177e89]"
+          />
+          <span className="text-sm text-[#323031]/70">Send me SMS notifications</span>
+        </label>
       </div>
 
       <div>
