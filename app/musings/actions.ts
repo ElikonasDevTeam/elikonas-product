@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { moderateContent } from "./moderation";
 
 function parseHashtags(text: string): string[] {
   const matches = text.match(/#[a-zA-Z]\w*/g) ?? [];
@@ -37,20 +38,65 @@ export async function postMusingAction(
   const author_tagline: string | null = meta.tagline ?? null;
   const hashtags = parseHashtags(body);
 
+  // Moderate content before saving. Any API failure falls back to saving + flagging for manual review.
+  type PendingReport = { reason: string; details: string };
+  let pendingReport: PendingReport | null = null;
+  let blockPost = false;
+
+  try {
+    const mod = await moderateContent(body);
+
+    if (mod.verdict === "block" && mod.confidence === "high") {
+      blockPost = true;
+    } else if (mod.verdict === "block" || mod.verdict === "flag") {
+      pendingReport = {
+        reason: "ai_moderation_flag",
+        details: `verdict=${mod.verdict} confidence=${mod.confidence}: ${mod.reason}`,
+      };
+    }
+  } catch (err) {
+    console.error("[postMusingAction] moderation error:", err);
+    pendingReport = {
+      reason: "moderation_check_failed",
+      details: err instanceof Error ? err.message : String(err),
+    };
+  }
+
+  if (blockPost) {
+    return { error: "We weren't able to post this musing. Please review our Community Guidelines and try again." };
+  }
+
   console.log("[postMusingAction] inserting for user:", user.id, "| hashtags:", hashtags, "| visibility:", visibility);
 
-  const { error: insertError } = await supabase.from("musings").insert({
-    user_id: user.id,
-    author_name,
-    author_tagline,
-    hashtags,
-    body,
-    visibility,
-  });
+  const { data: newMusing, error: insertError } = await supabase
+    .from("musings")
+    .insert({
+      user_id: user.id,
+      author_name,
+      author_tagline,
+      hashtags,
+      body,
+      visibility,
+    })
+    .select("id")
+    .single();
 
   if (insertError) {
     console.error("[postMusingAction] insert error:", insertError.message, "| code:", insertError.code, "| details:", insertError.details);
     return { error: `Failed to post: ${insertError.message} (${insertError.code})` };
+  }
+
+  if (pendingReport && newMusing) {
+    const { error: reportError } = await supabase.from("reports").insert({
+      reporter_id: null,
+      content_type: "musing",
+      content_id: newMusing.id,
+      reason: pendingReport.reason,
+      details: pendingReport.details,
+    });
+    if (reportError) {
+      console.error("[postMusingAction] report insert error:", reportError.message);
+    }
   }
 
   revalidatePath("/musings");
