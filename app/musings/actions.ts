@@ -104,15 +104,32 @@ export async function submitReportAction(
 
   if (authError || !user) redirect("/login");
 
-  const { data: existing } = await supabase
-    .from("reports")
-    .select("id")
-    .eq("reporter_id", user.id)
-    .eq("content_type", "musing")
-    .eq("content_id", musingId)
-    .maybeSingle();
+  const [{ data: musing }, { data: existing }] = await Promise.all([
+    supabase
+      .from("musings")
+      .select("body, user_id")
+      .eq("id", musingId)
+      .single(),
+    supabase
+      .from("reports")
+      .select("id")
+      .eq("reporter_id", user.id)
+      .eq("content_type", "musing")
+      .eq("content_id", musingId)
+      .maybeSingle(),
+  ]);
 
   if (existing) return { error: "already_reported" };
+
+  let posterEmail: string | null = null;
+  if (musing?.user_id) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("email")
+      .eq("id", musing.user_id)
+      .maybeSingle();
+    posterEmail = profile?.email ?? null;
+  }
 
   const { error: insertError } = await supabase.from("reports").insert({
     reporter_id: user.id,
@@ -120,6 +137,9 @@ export async function submitReportAction(
     content_id: musingId,
     reason,
     details: details.trim() || null,
+    musing_content: musing?.body ?? null,
+    poster_email: posterEmail,
+    reporter_email: user.email ?? null,
   });
 
   if (insertError) {
