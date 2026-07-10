@@ -2,7 +2,7 @@
 
 import { useEffect, useOptimistic, useRef, useState, useTransition } from "react";
 import { useActionState } from "react";
-import { postMusingAction, toggleLikeAction } from "./actions";
+import { postMusingAction, toggleLikeAction, submitReportAction } from "./actions";
 import { AppShell } from "@/app/components/app-shell";
 
 export interface MusingData {
@@ -18,6 +18,15 @@ export interface MusingData {
   is_liked: boolean;
   comment_count: number;
 }
+
+const REPORT_REASONS = [
+  { value: "spam", label: "Spam" },
+  { value: "harassment", label: "Harassment" },
+  { value: "hate_speech", label: "Hate speech" },
+  { value: "sensitive_personal_information", label: "Sensitive personal information" },
+  { value: "inappropriate_content", label: "Inappropriate content" },
+  { value: "other", label: "Other" },
+] as const;
 
 function initials(name: string): string {
   return name
@@ -74,14 +83,158 @@ function HashtagBadge({
   );
 }
 
+function ReportModal({
+  musingId,
+  onClose,
+  onSuccess,
+}: {
+  musingId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [reason, setReason] = useState("");
+  const [details, setDetails] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!reason) return;
+    setSubmitting(true);
+    setError(null);
+    const result = await submitReportAction(musingId, reason, details);
+    setSubmitting(false);
+    if ("success" in result) {
+      onSuccess();
+    } else if (result.error === "already_reported") {
+      setError("You've already reported this musing.");
+    } else {
+      setError("Something went wrong. Please try again.");
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-base font-semibold text-[#323031]">Report this musing</h2>
+          <button
+            onClick={onClose}
+            className="text-[#323031]/40 hover:text-[#323031] transition-colors"
+            aria-label="Close"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="rounded-lg border border-[#db3a34]/30 bg-[#db3a34]/5 px-4 py-3 text-sm text-[#db3a34]">
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-2.5">
+            {REPORT_REASONS.map(({ value, label }) => (
+              <label key={value} className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name="reason"
+                  value={value}
+                  checked={reason === value}
+                  onChange={() => setReason(value)}
+                  className="h-4 w-4 border-gray-300 text-[#084c61] focus:ring-[#177e89]"
+                />
+                <span className="text-sm text-[#323031]">{label}</span>
+              </label>
+            ))}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[#323031] mb-1.5">
+              Additional details
+              <span className="ml-1.5 text-xs font-normal text-[#323031]/40">Optional</span>
+            </label>
+            <textarea
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              placeholder="Any additional context…"
+              rows={3}
+              className="w-full resize-none rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-[#323031] placeholder-[#323031]/40 outline-none transition-all focus:border-[#177e89] focus:bg-white focus:ring-2 focus:ring-[#177e89]/20"
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg px-4 py-2 text-sm font-medium text-[#323031]/60 hover:text-[#323031] transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!reason || submitting}
+              className={[
+                "rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all",
+                !reason || submitting
+                  ? "cursor-not-allowed bg-[#084c61]/40"
+                  : "bg-[#084c61] hover:bg-[#177e89]",
+              ].join(" ")}
+            >
+              {submitting ? "Submitting…" : "Submit report"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Toast({ message, onDismiss }: { message: string; onDismiss: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onDismiss, 4000);
+    return () => clearTimeout(t);
+  }, [onDismiss]);
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 shadow-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0 text-emerald-500">
+        <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+      </svg>
+      <p className="text-sm font-medium text-emerald-700">{message}</p>
+    </div>
+  );
+}
+
 function MusingCard({
   musing,
   activeHashtag,
   onHashtagClick,
+  currentUserId,
+  onReport,
 }: {
   musing: MusingData;
   activeHashtag: string | null;
   onHashtagClick: (tag: string) => void;
+  currentUserId: string;
+  onReport: (musingId: string) => void;
 }) {
   const [optimisticLiked, addOptimisticLiked] = useOptimistic(musing.is_liked);
   const [optimisticCount, addOptimisticCount] = useOptimistic(musing.like_count);
@@ -95,6 +248,8 @@ function MusingCard({
     });
   }
 
+  const isOwnMusing = currentUserId === musing.user_id;
+
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
       <div className="flex items-start gap-3">
@@ -105,7 +260,21 @@ function MusingCard({
             {musing.author_tagline && (
               <span className="text-xs text-[#323031]/50">{musing.author_tagline}</span>
             )}
-            <span className="ml-auto text-xs text-[#323031]/40">{relativeTime(musing.created_at)}</span>
+            <div className="ml-auto flex items-center gap-2">
+              <span className="text-xs text-[#323031]/40">{relativeTime(musing.created_at)}</span>
+              {!isOwnMusing && (
+                <button
+                  onClick={() => onReport(musing.id)}
+                  title="Report this musing"
+                  className="text-[#323031]/20 hover:text-[#db3a34]/60 transition-colors"
+                  aria-label="Report this musing"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
 
           <p className="mt-3 text-sm leading-relaxed text-[#323031]">{musing.body}</p>
@@ -295,6 +464,8 @@ export function MusingsView({
 }) {
   const [musings, setMusings] = useState(initialMusings);
   const [hashtagFilter, setHashtagFilter] = useState<string | null>(null);
+  const [reportingMusingId, setReportingMusingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     setMusings(initialMusings);
@@ -362,12 +533,27 @@ export function MusingsView({
                   musing={m}
                   activeHashtag={hashtagFilter}
                   onHashtagClick={handleHashtagClick}
+                  currentUserId={currentUserId}
+                  onReport={setReportingMusingId}
                 />
               ))
             )}
           </div>
         </div>
       </div>
+
+      {reportingMusingId && (
+        <ReportModal
+          musingId={reportingMusingId}
+          onClose={() => setReportingMusingId(null)}
+          onSuccess={() => {
+            setReportingMusingId(null);
+            setToast("Thanks for the report — we'll review it shortly");
+          }}
+        />
+      )}
+
+      {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
     </AppShell>
   );
 }

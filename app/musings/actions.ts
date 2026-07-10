@@ -88,3 +88,44 @@ export async function toggleLikeAction(
 
   revalidatePath("/musings");
 }
+
+export type ReportResult = { success: true } | { error: "already_reported" | string };
+
+export async function submitReportAction(
+  musingId: string,
+  reason: string,
+  details: string
+): Promise<ReportResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) redirect("/login");
+
+  const { data: existing } = await supabase
+    .from("reports")
+    .select("id")
+    .eq("reporter_id", user.id)
+    .eq("content_type", "musing")
+    .eq("content_id", musingId)
+    .maybeSingle();
+
+  if (existing) return { error: "already_reported" };
+
+  const { error: insertError } = await supabase.from("reports").insert({
+    reporter_id: user.id,
+    content_type: "musing",
+    content_id: musingId,
+    reason,
+    details: details.trim() || null,
+  });
+
+  if (insertError) {
+    if (insertError.code === "23505") return { error: "already_reported" };
+    return { error: insertError.message };
+  }
+
+  return { success: true };
+}
