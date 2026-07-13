@@ -33,7 +33,6 @@ Return ONLY a JSON object with no other text:
 { "verdict": "pass" | "flag" | "block", "reason": "brief explanation", "confidence": "high" | "medium" | "low" }`;
 
 export async function moderateContent(content: string): Promise<ModerationResult> {
-  console.log('[moderation] checking content:', content?.substring(0, 50))
   const message = await anthropic.messages.create(
     {
       model: CLAUDE_MODEL,

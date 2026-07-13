@@ -38,8 +38,6 @@ export async function postMusingAction(
   const author_tagline: string | null = meta.tagline ?? null;
   const hashtags = parseHashtags(body);
 
-  console.log('[musings] action triggered, content length:', body?.length)
-
   // Moderate content before saving. Any API failure falls back to saving + flagging for manual review.
   type PendingReport = { reason: string; details: string };
   let pendingReport: PendingReport | null = null;

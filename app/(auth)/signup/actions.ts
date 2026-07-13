@@ -14,10 +14,6 @@ export async function signupAction(
   _prev: SignupError | null,
   formData: FormData
 ): Promise<SignupError | null> {
-  console.log('SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
-  console.log('ANON_KEY exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-  console.log('ANON_KEY prefix:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20))
-
   const firstName = (formData.get("firstName") as string)?.trim();
   const lastName = (formData.get("lastName") as string)?.trim();
   const email = (formData.get("email") as string)?.trim();
