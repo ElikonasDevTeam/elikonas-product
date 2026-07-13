@@ -45,7 +45,9 @@ export async function moderateContent(content: string): Promise<ModerationResult
   );
 
   const raw = message.content[0]?.type === "text" ? message.content[0].text.trim() : "";
-  const parsed = JSON.parse(raw);
+  // Strip markdown code fences in case the model wraps the response
+  const json = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+  const parsed = JSON.parse(json);
 
   const verdict = parsed.verdict;
   const confidence = parsed.confidence;
