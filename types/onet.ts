@@ -1,6 +1,6 @@
 export interface ONetQuestion {
   index: number;
-  area: string; // R | I | A | S | E | C
+  area: string; // "realistic" | "investigative" | "artistic" | "social" | "enterprising" | "conventional"
   text: string;
 }
 
@@ -11,15 +11,15 @@ export interface ONetQuestionsResponse {
   question: ONetQuestion[];
 }
 
-export interface ONetResultArea {
-  id: string; // R | I | A | S | E | C
-  score: number;
-}
-
+// v2 API: scores are returned embedded in the careers URL query params
 export interface ONetResultsResponse {
-  result: {
-    area: ONetResultArea[];
-  };
+  careers: string; // URL with ?realistic=N&investigative=N&... — used to extract scores
+  result: Array<{
+    href: string;
+    code: string;  // e.g. "realistic"
+    title: string;
+    description: string;
+  }>;
 }
 
 export interface RIASECScores {
@@ -32,9 +32,9 @@ export interface RIASECScores {
 }
 
 export interface ONetCareerTags {
-  bright_outlook: boolean;
-  green: boolean;
-  apprenticeship: boolean;
+  bright_outlook?: boolean;
+  green?: boolean;
+  apprenticeship?: boolean;
 }
 
 export interface ONetCareer {
@@ -42,6 +42,7 @@ export interface ONetCareer {
   title: string;
   tags: ONetCareerTags;
   href: string;
+  fit?: string; // e.g. "Best", "Great" — present in v2
 }
 
 export interface ONetCareersResponse {

@@ -18,8 +18,8 @@ const headers = {
 
 const endpoints = [
   { label: "Questions",  path: "/mnm/interestprofiler/questions?start=1&end=5" },
-  { label: "Results",    path: "/mnm/interestprofiler/results?answers=3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3" },
-  { label: "Careers",    path: "/mnm/interestprofiler/careers?area=R,I,A&start=1&end=5" },
+  { label: "Results",    path: "/mnm/interestprofiler/results?answers=" + "3".repeat(60) },
+  { label: "Careers",    path: "/mnm/interestprofiler/careers?realistic=30&investigative=25&artistic=20&social=30&enterprising=15&conventional=10&start=1&end=5" },
 ];
 
 async function main() {
