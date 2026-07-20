@@ -8,8 +8,7 @@ import type {
 export const ONET_ATTRIBUTION =
   "This product uses the O*NET Web Services by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.";
 
-// v2.0 base URL — note: no /ws prefix (removed from v1.9)
-const BASE_URL = "https://services.onetcenter.org";
+const BASE_URL = "https://services.onetcenter.org/ws";
 
 // Maps full RIASEC key names to single-letter Holland codes
 const RIASEC_CODES: Record<keyof RIASECScores, string> = {
