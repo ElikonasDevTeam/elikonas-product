@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { AppShell } from "@/app/components/app-shell";
 import type { EdUnit, EdUnitStatus } from "@/types";
+import type { RIASECScores } from "@/types/onet";
 import { AddLearningModal } from "./add-learning-modal";
 
 function getInitials(name: string): string {
@@ -139,7 +140,30 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
   );
 }
 
-export function ProfileView({ user, edUnits, unreadCount, unreadTidingsCount, pendingConnectionsCount }: { user: User; edUnits: EdUnit[]; unreadCount: number; unreadTidingsCount: number; pendingConnectionsCount: number }) {
+const RIASEC_NAMES: Record<string, { code: string; name: string }> = {
+  realistic:     { code: "R", name: "Realistic" },
+  investigative: { code: "I", name: "Investigative" },
+  artistic:      { code: "A", name: "Artistic" },
+  social:        { code: "S", name: "Social" },
+  enterprising:  { code: "E", name: "Enterprising" },
+  conventional:  { code: "C", name: "Conventional" },
+};
+
+export function ProfileView({
+  user,
+  edUnits,
+  unreadCount,
+  unreadTidingsCount,
+  pendingConnectionsCount,
+  latestAssessment,
+}: {
+  user: User;
+  edUnits: EdUnit[];
+  unreadCount: number;
+  unreadTidingsCount: number;
+  pendingConnectionsCount: number;
+  latestAssessment: { id: string; riasec_scores: RIASECScores } | null;
+}) {
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -148,6 +172,16 @@ export function ProfileView({ user, edUnits, unreadCount, unreadTidingsCount, pe
   const initials = getInitials(fullName);
   const interests: string[] = Array.isArray(meta.interests) ? meta.interests : [];
   const isFoundingMember: boolean = meta.founding_member === true;
+
+  let plan = (meta.plan as string) ?? "free";
+  if (meta.founding_member === true) plan = "founding_member";
+  const isPaid = plan !== "free";
+
+  const top3Areas = latestAssessment
+    ? (Object.entries(latestAssessment.riasec_scores) as [string, number][])
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 3)
+    : [];
 
   const total = edUnits.length;
   const completed = edUnits.filter((u) => u.status === "completed").length;
@@ -218,6 +252,83 @@ export function ProfileView({ user, edUnits, unreadCount, unreadTidingsCount, pe
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Career Interests card */}
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-[#323031]">Career Interests</h2>
+              {latestAssessment && (
+                <Link
+                  href={`/assessment/results?session=${latestAssessment.id}`}
+                  className="text-sm font-medium text-[#177e89] hover:underline"
+                >
+                  View full results
+                </Link>
+              )}
+            </div>
+
+            {latestAssessment ? (
+              <>
+                <div className="mb-5 space-y-3">
+                  {top3Areas.map(([key, score]) => {
+                    const info = RIASEC_NAMES[key];
+                    const pct = Math.round((score / 50) * 100);
+                    return (
+                      <div key={key}>
+                        <div className="mb-1 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#084c61] text-[10px] font-bold text-white">
+                              {info.code}
+                            </span>
+                            <span className="text-sm font-medium text-[#323031]">
+                              {info.name}
+                            </span>
+                          </div>
+                          <span className="text-xs tabular-nums text-gray-400">
+                            {score}/50
+                          </span>
+                        </div>
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+                          <div
+                            className="h-1.5 rounded-full bg-[#177e89]"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {isPaid ? (
+                  <Link
+                    href="/assessment"
+                    className="inline-flex items-center rounded-lg border border-gray-200 px-3.5 py-2 text-sm font-medium text-[#323031] transition-colors hover:border-gray-300 hover:bg-gray-50"
+                  >
+                    Retake assessment
+                  </Link>
+                ) : (
+                  <span title="Upgrade to retake" className="inline-block cursor-not-allowed">
+                    <span className="pointer-events-none inline-flex items-center rounded-lg border border-gray-200 px-3.5 py-2 text-sm font-medium text-[#323031] opacity-50">
+                      Retake assessment
+                    </span>
+                  </span>
+                )}
+              </>
+            ) : (
+              <>
+                <p className="mb-4 text-sm leading-relaxed text-gray-500">
+                  Discover your career interest profile with a free 10-minute assessment from the U.S.
+                  Department of Labor.
+                </p>
+                <Link
+                  href="/assessment"
+                  className="inline-flex items-center rounded-lg bg-[#084c61] px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#177e89]"
+                >
+                  Take the Interest Profiler
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Learning record */}
