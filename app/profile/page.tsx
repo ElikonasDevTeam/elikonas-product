@@ -46,18 +46,28 @@ export default async function ProfilePage() {
       .eq("status", "pending"),
     supabase
       .from("assessment_sessions")
-      .select("id, riasec_scores, completed_at")
+      .select(
+        "id, realistic_score, investigative_score, artistic_score, social_score, enterprising_score, conventional_score, completed_at"
+      )
       .eq("user_id", user.id)
       .not("completed_at", "is", null)
+      .not("realistic_score", "is", null)
       .order("completed_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
   ]);
 
-  const latestAssessment = latestAssessmentRow?.riasec_scores
+  const latestAssessment = latestAssessmentRow?.realistic_score != null
     ? {
         id: latestAssessmentRow.id as string,
-        riasec_scores: latestAssessmentRow.riasec_scores as RIASECScores,
+        riasec_scores: {
+          realistic:     latestAssessmentRow.realistic_score,
+          investigative: latestAssessmentRow.investigative_score,
+          artistic:      latestAssessmentRow.artistic_score,
+          social:        latestAssessmentRow.social_score,
+          enterprising:  latestAssessmentRow.enterprising_score,
+          conventional:  latestAssessmentRow.conventional_score,
+        } as RIASECScores,
       }
     : null;
 

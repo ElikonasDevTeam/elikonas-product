@@ -52,27 +52,31 @@ export default async function ResultsPage({
       .eq("status", "pending"),
     supabase
       .from("assessment_sessions")
-      .select("riasec_scores, completed_at, suggested_careers")
+      .select(
+        "realistic_score, investigative_score, artistic_score, social_score, enterprising_score, conventional_score, completed_at"
+      )
       .eq("id", sessionId)
       .eq("user_id", user.id)
       .single(),
   ]);
 
-  if (!sessionData?.riasec_scores) redirect("/assessment");
+  if (sessionData?.realistic_score == null) redirect("/assessment");
 
-  const scores = sessionData.riasec_scores as RIASECScores;
+  const scores: RIASECScores = {
+    realistic:     sessionData.realistic_score,
+    investigative: sessionData.investigative_score,
+    artistic:      sessionData.artistic_score,
+    social:        sessionData.social_score,
+    enterprising:  sessionData.enterprising_score,
+    conventional:  sessionData.conventional_score,
+  };
 
-  // Prefer stored careers; fall back to live O*NET fetch if the store step failed
   let careers: ONetCareer[] = [];
-  if (sessionData.suggested_careers) {
-    careers = sessionData.suggested_careers as ONetCareer[];
-  } else {
-    try {
-      const res = await getOccupations(scores);
-      careers = res.career ?? [];
-    } catch {
-      // Non-fatal — show results without career suggestions
-    }
+  try {
+    const res = await getOccupations(scores);
+    careers = res.career ?? [];
+  } catch {
+    // Non-fatal — show results without career suggestions
   }
 
   return (

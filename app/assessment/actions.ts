@@ -2,8 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { getResults, getOccupations } from "@/lib/onet/client";
-import type { RIASECScores, ONetCareer } from "@/types/onet";
+import { getResults } from "@/lib/onet/client";
+import type { RIASECScores } from "@/types/onet";
 
 export async function startAssessment(): Promise<
   { sessionId: string } | { error: string }
@@ -74,21 +74,15 @@ export async function submitAssessment(
     };
   }
 
-  // Fetch and store career suggestions alongside scores (non-fatal if fails;
-  // results page falls back to a live fetch when suggested_careers is null)
-  let suggestedCareers: ONetCareer[] | null = null;
-  try {
-    const res = await getOccupations(scores);
-    suggestedCareers = res.career ?? [];
-  } catch {
-    // intentionally silent — careers are a bonus, not required for results
-  }
-
   const { error: updateError } = await supabase
     .from("assessment_sessions")
     .update({
-      riasec_scores: scores,
-      suggested_careers: suggestedCareers,
+      realistic_score:     scores.realistic,
+      investigative_score: scores.investigative,
+      artistic_score:      scores.artistic,
+      social_score:        scores.social,
+      enterprising_score:  scores.enterprising,
+      conventional_score:  scores.conventional,
       completed_at: new Date().toISOString(),
     })
     .eq("id", sessionId)
