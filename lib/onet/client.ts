@@ -43,8 +43,7 @@ async function onetFetch<T>(path: string, options?: RequestInit): Promise<T> {
     ...options,
     headers: {
       Accept: "application/json",
-      // v2.0 auth: X-API-Key header only — key is not accepted in query string or POST body
-      "X-API-Key": apiKey(),
+      Authorization: "Basic " + Buffer.from(`${apiKey()}:`).toString("base64"),
       ...options?.headers,
     },
     // Disable Next.js caching for live O*NET data
