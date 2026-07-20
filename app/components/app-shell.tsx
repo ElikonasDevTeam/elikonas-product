@@ -242,7 +242,8 @@ export type ActivePage =
   | "tidings"
   | "notifications"
   | "account"
-  | "public-profile";
+  | "public-profile"
+  | "assessment";
 
 export function AppShell({
   currentUserName,
