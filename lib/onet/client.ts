@@ -61,6 +61,8 @@ async function onetFetch<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export async function getQuestions(): Promise<ONetQuestionsResponse> {
+  console.log('[onet] API key exists:', !!process.env.ONET_API_KEY)
+  console.log('[onet] API key prefix:', process.env.ONET_API_KEY?.substring(0, 8))
   return onetFetch<ONetQuestionsResponse>(
     "/mnm/interestprofiler/questions?start=1&end=60"
   );
