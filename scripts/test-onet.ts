@@ -24,7 +24,7 @@ const endpoints = [
 
 async function main() {
   console.log("Base URL:", BASE_URL);
-  console.log("Key prefix:", key.substring(0, 8) + "...");
+  console.log("Key prefix:", key ? key.substring(0, 8) + "..." : "(none)");
 
   for (const ep of endpoints) {
     console.log("\n" + "─".repeat(60));
