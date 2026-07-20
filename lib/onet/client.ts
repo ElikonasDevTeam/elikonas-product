@@ -8,7 +8,7 @@ import type {
 export const ONET_ATTRIBUTION =
   "This product uses the O*NET Web Services by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.";
 
-const BASE_URL = "https://services.onetcenter.org/ws";
+const BASE_URL = "https://api-v2.onetcenter.org";
 
 // Maps full RIASEC key names to single-letter Holland codes
 const RIASEC_CODES: Record<keyof RIASECScores, string> = {
@@ -43,7 +43,7 @@ async function onetFetch<T>(path: string, options?: RequestInit): Promise<T> {
     ...options,
     headers: {
       Accept: "application/json",
-      Authorization: "Basic " + Buffer.from(`${apiKey()}:`).toString("base64"),
+      "X-API-Key": apiKey(),
       ...options?.headers,
     },
     // Disable Next.js caching for live O*NET data
