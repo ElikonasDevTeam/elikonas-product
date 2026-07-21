@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { anthropic, CLAUDE_MODEL } from "@/lib/anthropic/client";
 import { searchCatalog } from "@/lib/catalog/search";
 import type { EdUnit } from "@/types";
+import type { RIASECScores } from "@/types/onet";
 
 const GOAL_LABELS: Record<string, string> = {
   "career-change": "career change — moving into a new field",
@@ -11,11 +12,54 @@ const GOAL_LABELS: Record<string, string> = {
   "exploring": "exploring — not sure of direction yet",
 };
 
+const RIASEC_NAMES: Record<keyof RIASECScores, string> = {
+  realistic:     "Realistic",
+  investigative: "Investigative",
+  artistic:      "Artistic",
+  social:        "Social",
+  enterprising:  "Enterprising",
+  conventional:  "Conventional",
+};
+
+interface AssessmentContext {
+  scores: RIASECScores;
+  completedAt: string;
+}
+
+function buildAssessmentSection(assessment: AssessmentContext | null): string {
+  if (!assessment) {
+    return `This user has NOT completed the O*NET Interest Profiler assessment. If the conversation touches on career interests, learning goals, or pathway planning within the first 2–3 exchanges, introduce it naturally once using this framing: "There's a free, research-backed interest assessment from the U.S. Department of Labor that takes about 10 minutes and helps me give you much better pathway suggestions. Want to try it now? You can find it under Profile → Career Interests, or I can take you there directly." Introduce it once when relevant, then move on — don't repeat it every turn.
+When drawing inferences about the user's interests from conversation alone, always use hedged language like "it sounds like you might enjoy..." or "based on what you've shared..." — never present your conversational read with the same authority as a validated assessment result.`;
+  }
+
+  const sorted = (Object.entries(assessment.scores) as [keyof RIASECScores, number][])
+    .sort(([, a], [, b]) => b - a);
+  const top3 = sorted.slice(0, 3);
+  const rank = ["Top", "Second", "Third"] as const;
+  const scoresText = top3
+    .map(([key, score], i) => `- ${rank[i]} interest area: ${RIASEC_NAMES[key]} (score: ${score}/50)`)
+    .join("\n");
+
+  const monthsSince =
+    (Date.now() - new Date(assessment.completedAt).getTime()) / (1000 * 60 * 60 * 24 * 30);
+  const isStale = monthsSince >= 12;
+
+  return `The user's O*NET Interest Profiler results (validated, research-backed):
+${scoresText}
+Use these to inform pathway recommendations. Reference them naturally when relevant — don't open every response with them. When drawing on these validated results you may say "your assessment showed..." or "based on your O*NET results...". This is linguistically distinct from conversational inferences, which must use hedged language like "it sounds like..." or "based on what you've shared..." — never present your own read of the conversation with the same authority as the validated scores.${
+    isStale
+      ? "\nTheir assessment was completed over a year ago. If they mention a career change, new direction, or shifting goals, gently suggest that retaking it could sharpen your recommendations."
+      : ""
+  }
+If they ask about retaking the assessment, tell them it's available under Profile → Career Interests.`;
+}
+
 function buildSystemPrompt(
   fullName: string,
   goal: string | null,
   interests: string[],
-  edUnits: EdUnit[]
+  edUnits: EdUnit[],
+  assessment: AssessmentContext | null
 ): string {
   const firstName = fullName.split(" ")[0];
 
@@ -38,6 +82,8 @@ You are speaking with ${firstName} (full name: ${fullName}).
 ${goal ? `Their primary goal: ${GOAL_LABELS[goal] ?? goal}` : "They haven't set a primary goal yet."}
 ${interests.length > 0 ? `Their interests: ${interests.join(", ")}` : "They haven't selected interests yet."}
 
+${buildAssessmentSection(assessment)}
+
 Their learning record:
 ${record}
 
@@ -47,7 +93,8 @@ Respond in a warm, encouraging, and specific tone. Every response must be 3 to 5
 function buildInitSystemPrompt(
   fullName: string,
   goal: string | null,
-  interests: string[]
+  interests: string[],
+  assessment: AssessmentContext | null
 ): string {
   const firstName = fullName.split(" ")[0];
   const goalLabel = goal ? GOAL_LABELS[goal] ?? goal : null;
@@ -57,6 +104,8 @@ function buildInitSystemPrompt(
 You are greeting ${firstName} for the very first time. They have just joined Elikonas and have not yet added any learning to their record.
 ${goalLabel ? `Their primary goal: ${goalLabel}` : "They haven't stated a primary goal yet."}
 ${interests.length > 0 ? `Their interests: ${interests.join(", ")}` : "They haven't selected interests yet."}
+
+${buildAssessmentSection(assessment)}
 
 Write a warm, personal opening message of exactly 2 to 3 sentences. Reference their specific goal and at least one of their interests by name so it feels genuinely tailored to them. End by telling them you've hand-picked some courses to get them started — but do NOT name any specific courses; those will be shown separately as interactive cards. Write in plain flowing prose only — no markdown, no bullet points, no formatting of any kind.`;
 }
@@ -79,11 +128,39 @@ export async function POST(request: NextRequest) {
 
   console.log("[chat/route] user:", user.id, "| isInit:", isInit, "| conversationId:", conversationId, "| goal:", goal, "| interests:", interests, "| fullName:", fullName);
 
+  // Fetch assessment context for both init and regular paths
+  const { data: assessmentRow } = await supabase
+    .from("assessment_sessions")
+    .select(
+      "realistic_score, investigative_score, artistic_score, social_score, enterprising_score, conventional_score, completed_at"
+    )
+    .eq("user_id", user.id)
+    .not("completed_at", "is", null)
+    .not("realistic_score", "is", null)
+    .order("completed_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const assessmentContext: AssessmentContext | null =
+    assessmentRow?.realistic_score != null
+      ? {
+          scores: {
+            realistic:     assessmentRow.realistic_score,
+            investigative: assessmentRow.investigative_score,
+            artistic:      assessmentRow.artistic_score,
+            social:        assessmentRow.social_score,
+            enterprising:  assessmentRow.enterprising_score,
+            conventional:  assessmentRow.conventional_score,
+          },
+          completedAt: assessmentRow.completed_at,
+        }
+      : null;
+
   let systemPrompt: string;
   let anthropicMessages: { role: "user" | "assistant"; content: string }[];
 
   if (isInit) {
-    systemPrompt = buildInitSystemPrompt(fullName, goal, interests);
+    systemPrompt = buildInitSystemPrompt(fullName, goal, interests, assessmentContext);
     anthropicMessages = [{ role: "user", content: "Please introduce yourself." }];
   } else {
     const { data: edUnits } = await supabase
@@ -95,7 +172,8 @@ export async function POST(request: NextRequest) {
       fullName,
       goal,
       interests,
-      (edUnits ?? []) as EdUnit[]
+      (edUnits ?? []) as EdUnit[],
+      assessmentContext
     );
 
     if (conversationId) {
