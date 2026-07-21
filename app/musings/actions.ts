@@ -66,8 +66,6 @@ export async function postMusingAction(
     return { error: "We weren't able to post this musing. Please review our Community Guidelines and try again." };
   }
 
-  console.log("[postMusingAction] inserting for user:", user.id, "| hashtags:", hashtags, "| visibility:", visibility);
-
   const { data: newMusing, error: insertError } = await supabase
     .from("musings")
     .insert({
