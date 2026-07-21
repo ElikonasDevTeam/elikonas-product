@@ -72,6 +72,17 @@ export async function POST(req: NextRequest) {
       const customerId = typeof session.customer === "string" ? session.customer : null;
 
       if (session.mode === "payment") {
+        const foundingPriceId = process.env.STRIPE_PRICE_FOUNDING;
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+        const isFoundingMember = lineItems.data.some((item) => item.price?.id === foundingPriceId);
+
+        if (!isFoundingMember) {
+          console.warn(
+            `[stripe/webhook] payment-mode session=${session.id} did not match STRIPE_PRICE_FOUNDING (prices=${lineItems.data.map((i) => i.price?.id).join(",")}) — skipping`
+          );
+          return NextResponse.json({ received: true });
+        }
+
         // Founding member one-time purchase — cancel any active subscriptions
         if (customerId) await cancelOtherSubscriptions(customerId);
         const metadata = {
