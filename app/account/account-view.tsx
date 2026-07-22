@@ -50,16 +50,18 @@ function Toggle({
 }
 
 function SectionCard({
+  id,
   title,
   description,
   children,
 }: {
+  id?: string;
   title: string;
   description: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+    <div id={id} className="rounded-2xl border border-gray-100 bg-white shadow-sm">
       <div className="border-b border-gray-100 px-6 py-4">
         <h2 className="text-sm font-semibold text-[#323031]">{title}</h2>
         <p className="mt-0.5 text-xs text-[#323031]/50">{description}</p>
@@ -121,6 +123,7 @@ function PrivacySection({
 
   return (
     <SectionCard
+      id="privacy"
       title="Privacy"
       description="Control what others can see on your public profile. All fields are hidden by default."
     >
@@ -204,6 +207,13 @@ function ProfileSlugSection({ initialSlug }: { initialSlug: string | null }) {
       description="Your public profile link. You can change this anytime."
     >
       <div className="px-6 py-5">
+        <p className="mb-3 text-xs text-[#323031]/50">
+          Anyone with this link can view your public profile without signing in. Check your{" "}
+          <a href="#privacy" className="font-medium text-[#177e89] hover:underline">
+            privacy settings
+          </a>{" "}
+          below to control what they can see.
+        </p>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex min-w-0 flex-1 items-center overflow-hidden rounded-lg border border-gray-200 bg-white focus-within:border-[#177e89] focus-within:ring-1 focus-within:ring-[#177e89]">
             <span className="shrink-0 border-r border-gray-200 bg-gray-50 px-3 py-2 text-xs text-[#323031]/40">

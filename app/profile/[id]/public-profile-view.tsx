@@ -212,26 +212,44 @@ function ConnectionButton({
   );
 }
 
+export type ProfileViewer =
+  | {
+      signedIn: true;
+      currentUserName: string;
+      unreadCount: number;
+      unreadTidingsCount: number;
+      pendingConnectionsCount: number;
+      connectionStatus: ConnectionStatus;
+      connectionId: string | null;
+    }
+  | { signedIn: false };
+
+function PublicHeader() {
+  return (
+    <header className="border-b border-gray-100 bg-white px-6 py-4">
+      <div className="mx-auto flex max-w-4xl items-center justify-between">
+        <img src="/images/logo-color.svg" alt="Elikonas" className="h-7 w-auto" />
+        <Link
+          href="/login"
+          className="rounded-lg border border-gray-200 px-3.5 py-2 text-sm font-medium text-[#323031] transition-colors hover:bg-gray-50"
+        >
+          Sign in
+        </Link>
+      </div>
+    </header>
+  );
+}
+
 export function PublicProfileView({
   profile,
   edUnits,
-  connectionStatus,
-  connectionId,
-  currentUserName,
   privacySettings,
-  unreadCount,
-  unreadTidingsCount,
-  pendingConnectionsCount,
+  viewer,
 }: {
   profile: PublicProfile;
   edUnits: EdUnit[];
-  connectionStatus: ConnectionStatus;
-  connectionId: string | null;
-  currentUserName: string;
   privacySettings: PrivacySettings;
-  unreadCount: number;
-  unreadTidingsCount: number;
-  pendingConnectionsCount: number;
+  viewer: ProfileViewer;
 }) {
   const displayName = profile.full_name || "Unknown";
   const ini = getInitials(displayName);
@@ -250,93 +268,108 @@ export function PublicProfileView({
     show_learning_record,
   } = privacySettings;
 
-  return (
-    <AppShell
-      currentUserName={currentUserName}
-      unreadCount={unreadCount}
-      unreadTidingsCount={unreadTidingsCount}
-      pendingConnectionsCount={pendingConnectionsCount}
-      activePage="public-profile"
-    >
-      <main className="mx-auto max-w-4xl space-y-5 px-6 py-8">
-        {/* Profile card */}
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-            {/* Identity */}
-            <div className="flex flex-col items-center gap-3 text-center sm:min-w-[200px] sm:items-start sm:text-left">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#084c61] text-2xl font-bold text-white">
-                {ini}
+  const content = (
+    <main className="mx-auto max-w-4xl space-y-5 px-6 py-8">
+      {/* Profile card */}
+      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+          {/* Identity */}
+          <div className="flex flex-col items-center gap-3 text-center sm:min-w-[200px] sm:items-start sm:text-left">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#084c61] text-2xl font-bold text-white">
+              {ini}
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold text-[#323031]">{displayName}</h1>
+            </div>
+            {show_interests && profile.interests.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-1.5 sm:justify-start">
+                {profile.interests.map((interest) => (
+                  <span
+                    key={interest}
+                    className="rounded-full bg-[#177e89]/10 px-2.5 py-0.5 text-xs font-medium text-[#177e89]"
+                  >
+                    {interest}
+                  </span>
+                ))}
               </div>
-              <div>
-                <h1 className="text-xl font-semibold text-[#323031]">{displayName}</h1>
-              </div>
-              {show_interests && profile.interests.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-1.5 sm:justify-start">
-                  {profile.interests.map((interest) => (
-                    <span
-                      key={interest}
-                      className="rounded-full bg-[#177e89]/10 px-2.5 py-0.5 text-xs font-medium text-[#177e89]"
-                    >
-                      {interest}
-                    </span>
-                  ))}
+            )}
+          </div>
+
+          {/* Progress + stats — only shown when at least one is enabled */}
+          {(show_progress_pct || show_edunits_count) && (
+            <div className="flex flex-1 flex-wrap items-center justify-around gap-6">
+              {show_progress_pct && <ProgressRing pct={pathwayPct} />}
+              {show_edunits_count && (
+                <div className="grid grid-cols-2 gap-x-10 gap-y-4">
+                  <Stat number={total} label="Total ed-units" />
+                  <Stat number={completed} label="Completed" />
+                  <Stat number={inProgress} label="In progress" />
+                  {show_planned_units && <Stat number={planned} label="Planned" />}
                 </div>
               )}
             </div>
+          )}
+        </div>
 
-            {/* Progress + stats — only shown when at least one is enabled */}
-            {(show_progress_pct || show_edunits_count) && (
-              <div className="flex flex-1 flex-wrap items-center justify-around gap-6">
-                {show_progress_pct && <ProgressRing pct={pathwayPct} />}
-                {show_edunits_count && (
-                  <div className="grid grid-cols-2 gap-x-10 gap-y-4">
-                    <Stat number={total} label="Total ed-units" />
-                    <Stat number={completed} label="Completed" />
-                    <Stat number={inProgress} label="In progress" />
-                    {show_planned_units && <Stat number={planned} label="Planned" />}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Connection action */}
+        {/* Connection action — only for signed-in viewers */}
+        {viewer.signedIn && (
           <div className="mt-5 flex justify-end border-t border-gray-100 pt-5">
             <ConnectionButton
               profileId={profile.id}
-              connectionId={connectionId}
-              initialStatus={connectionStatus}
+              connectionId={viewer.connectionId}
+              initialStatus={viewer.connectionStatus}
             />
           </div>
-        </div>
+        )}
+      </div>
 
-        {/* Learning record */}
-        {show_learning_record && (
-          <div>
-            <h2 className="mb-4 text-lg font-semibold text-[#323031]">Learning Record</h2>
-            {edUnits.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center">
-                <p className="text-sm text-[#323031]/50">No learning recorded yet.</p>
-              </div>
-            ) : (
-              <div className="space-y-2.5">
-                {edUnits
-                  .filter((u) => show_planned_units || u.status !== "planned")
-                  .map((unit) => (
-                    <EdUnitRow key={unit.id} unit={unit} />
-                  ))}
-              </div>
-            )}
-          </div>
-        )}
-        {!show_learning_record && !show_progress_pct && !show_edunits_count && !show_interests && (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-10 text-center">
-            <p className="text-sm text-[#323031]/50">
-              This member hasn&apos;t made their profile public yet.
-            </p>
-          </div>
-        )}
-      </main>
-    </AppShell>
+      {/* Learning record */}
+      {show_learning_record && (
+        <div>
+          <h2 className="mb-4 text-lg font-semibold text-[#323031]">Learning Record</h2>
+          {edUnits.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center">
+              <p className="text-sm text-[#323031]/50">No learning recorded yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {edUnits
+                .filter((u) => show_planned_units || u.status !== "planned")
+                .map((unit) => (
+                  <EdUnitRow key={unit.id} unit={unit} />
+                ))}
+            </div>
+          )}
+        </div>
+      )}
+      {!show_learning_record && !show_progress_pct && !show_edunits_count && !show_interests && (
+        <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-10 text-center">
+          <p className="text-sm text-[#323031]/50">
+            {displayName} hasn&apos;t shared anything publicly yet.
+          </p>
+        </div>
+      )}
+    </main>
+  );
+
+  if (viewer.signedIn) {
+    return (
+      <AppShell
+        currentUserName={viewer.currentUserName}
+        unreadCount={viewer.unreadCount}
+        unreadTidingsCount={viewer.unreadTidingsCount}
+        pendingConnectionsCount={viewer.pendingConnectionsCount}
+        activePage="public-profile"
+      >
+        {content}
+      </AppShell>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <PublicHeader />
+      {content}
+    </div>
   );
 }

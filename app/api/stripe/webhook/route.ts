@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe/client";
-import { createClient } from "@supabase/supabase-js";
 import type Stripe from "stripe";
 import { FOUNDING_MEMBER_CAP } from "@/app/account/constants";
+import { getAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
-
-function getAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error("Missing Supabase service role config");
-  return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-}
 
 async function updateUser(userId: string, metadata: Record<string, unknown>) {
   const admin = getAdminClient();
