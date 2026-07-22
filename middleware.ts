@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
   const isDashboardRoute =
     pathname.startsWith("/learner") ||
     pathname.startsWith("/provider") ||
-    pathname.startsWith("/profile") ||
+    pathname === "/profile" || // /profile/<slug> is the public profile view — no auth required
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/ai-guide") ||
     pathname.startsWith("/musings") ||
