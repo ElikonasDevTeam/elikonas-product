@@ -35,5 +35,5 @@ export async function saveOnboardingAction(
     { onConflict: "id" }
   );
 
-  redirect("/profile");
+  redirect("/onboarding/welcome");
 }
