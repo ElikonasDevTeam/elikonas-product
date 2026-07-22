@@ -17,7 +17,7 @@ export async function loginAction(
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     const msg = error.message.toLowerCase();
@@ -30,6 +30,10 @@ export async function loginAction(
     return {
       message: "Incorrect email or password. Please try again.",
     };
+  }
+
+  if (data.user?.user_metadata?.onboarding_completed !== true) {
+    redirect("/onboarding");
   }
 
   redirect("/profile");

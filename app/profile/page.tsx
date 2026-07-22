@@ -16,6 +16,7 @@ export default async function ProfilePage() {
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
+  if (user.user_metadata?.onboarding_completed !== true) redirect("/onboarding");
 
   const [
     { data: edUnits },
