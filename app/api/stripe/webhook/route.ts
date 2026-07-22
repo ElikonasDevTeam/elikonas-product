@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe/client";
 import { createClient } from "@supabase/supabase-js";
 import type Stripe from "stripe";
+import { FOUNDING_MEMBER_CAP } from "@/app/account/constants";
 
 export const runtime = "nodejs";
 
@@ -83,11 +84,51 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ received: true });
         }
 
+        const admin = getAdminClient();
+
+        // Idempotency guard: Stripe may redeliver checkout.session.completed for the same
+        // session (retries, timeouts). Without this, a redelivery would claim a second slot
+        // for a user who already has founding member status.
+        const { data: existingUser, error: existingUserError } = await admin.auth.admin.getUserById(userId);
+        if (existingUserError) {
+          console.error("[stripe/webhook] failed to look up user before claiming slot:", existingUserError.message);
+          return NextResponse.json({ error: "Internal error" }, { status: 500 });
+        }
+        if (existingUser.user?.user_metadata?.founding_member === true) {
+          console.log(`[stripe/webhook] user=${userId} already founding_member — skipping duplicate claim (session=${session.id})`);
+          return NextResponse.json({ received: true });
+        }
+
+        // Atomically claim a founding-member slot (source of truth for the 1,000 cap).
+        const { data: slot, error: slotError } = await admin.rpc("claim_founding_member_slot", {
+          cap: FOUNDING_MEMBER_CAP,
+        });
+
+        if (slotError) {
+          console.error("[stripe/webhook] claim_founding_member_slot RPC failed:", slotError.message);
+          return NextResponse.json({ error: "Internal error" }, { status: 500 });
+        }
+
+        if (slot === null) {
+          // Cap already reached — payment succeeded but no slot available. Flag for manual
+          // review rather than auto-refunding.
+          console.warn(
+            `[stripe/webhook] founding member cap reached — flagging overflow for user=${userId} session=${session.id}`
+          );
+          await admin.from("founding_member_overflow").insert({
+            user_id: userId,
+            stripe_session_id: session.id,
+            stripe_customer_id: customerId,
+          });
+          return NextResponse.json({ received: true });
+        }
+
         // Founding member one-time purchase — cancel any active subscriptions
         if (customerId) await cancelOtherSubscriptions(customerId);
         const metadata = {
           plan: "founding_member",
           founding_member: true,
+          founding_member_number: slot,
           plan_canceling: false,
           plan_cancel_at: null,
           stripe_subscription_id: null,
@@ -95,7 +136,11 @@ export async function POST(req: NextRequest) {
         };
         console.log("[stripe/webhook] updating user metadata:", metadata);
         await updateUser(userId, metadata);
-        console.log(`[stripe/webhook] founding_member set for user=${userId}`);
+        await admin
+          .from("profiles")
+          .update({ founding_member: true, founding_member_number: slot })
+          .eq("id", userId);
+        console.log(`[stripe/webhook] founding_member #${slot} set for user=${userId}`);
       } else if (session.mode === "subscription" && session.subscription) {
         const subId = typeof session.subscription === "string"
           ? session.subscription

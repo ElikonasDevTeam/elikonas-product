@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { stripe } from "@/lib/stripe/client";
 import type { Plan, PrivacyField } from "./types";
+import { FOUNDING_MEMBER_CAP } from "./constants";
 
 export async function updatePrivacySettingAction(
   field: PrivacyField,
@@ -48,6 +49,17 @@ export async function createCheckoutSessionAction(
 
   const priceId = priceMap[plan];
   if (!priceId) return { error: "Invalid plan." };
+
+  if (plan === "founding_member") {
+    const { data: counter } = await supabase
+      .from("founding_member_counter")
+      .select("claimed")
+      .eq("id", true)
+      .maybeSingle();
+    if ((counter?.claimed ?? 0) >= FOUNDING_MEMBER_CAP) {
+      return { error: "Founding member spots are full." };
+    }
+  }
 
   const isSubscription = plan === "monthly" || plan === "annual";
 

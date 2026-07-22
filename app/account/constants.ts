@@ -1,0 +1,1 @@
+export const FOUNDING_MEMBER_CAP = 1000;

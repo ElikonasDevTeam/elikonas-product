@@ -39,6 +39,7 @@ export default async function AccountPage({
     { count: unreadTidingsCount },
     { count: pendingConnectionsCount },
     { data: privacyData },
+    { data: foundingCounter },
   ] = await Promise.all([
     supabase
       .from("notifications")
@@ -62,6 +63,7 @@ export default async function AccountPage({
       )
       .eq("user_id", user.id)
       .maybeSingle(),
+    supabase.from("founding_member_counter").select("claimed").eq("id", true).maybeSingle(),
   ]);
 
   const privacySettings: PrivacySettings = privacyData
@@ -87,6 +89,7 @@ export default async function AccountPage({
       unreadCount={unreadCount ?? 0}
       unreadTidingsCount={unreadTidingsCount ?? 0}
       pendingConnectionsCount={pendingConnectionsCount ?? 0}
+      foundingSpotsClaimed={foundingCounter?.claimed ?? 0}
     />
   );
 }

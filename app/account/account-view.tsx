@@ -10,6 +10,7 @@ import {
   changePasswordAction,
 } from "./actions";
 import type { Plan, PrivacyField, PrivacySettings } from "./types";
+import { FOUNDING_MEMBER_CAP } from "./constants";
 
 // ---------------------------------------------------------------------------
 // Shared primitives
@@ -173,20 +174,26 @@ const FOUNDING_FEATURES = [
   "Early access to all new features",
 ];
 
-const FOUNDING_SPOTS_TOTAL = 1000;
+const FOUNDING_SPOTS_TOTAL = FOUNDING_MEMBER_CAP;
 
 function Check() {
   return <span className="mr-2 shrink-0 text-[#177e89]">✓</span>;
 }
 
-function PricingTable() {
+function PricingTable({ foundingSpotsClaimed }: { foundingSpotsClaimed: number }) {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const [, startCheckout] = useTransition();
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  const foundingSpotsRemaining = Math.max(0, FOUNDING_SPOTS_TOTAL - foundingSpotsClaimed);
+  const foundingSoldOut = foundingSpotsRemaining <= 0;
 
   function checkout(plan: Plan) {
+    setCheckoutError(null);
     startCheckout(async () => {
       const result = await createCheckoutSessionAction(plan);
       if (result.url) window.location.href = result.url;
+      else if (result.error) setCheckoutError(result.error);
     });
   }
 
@@ -285,7 +292,9 @@ function PricingTable() {
         <p className="mt-2 text-2xl font-bold text-[#323031]">$200</p>
         <p className="text-xs text-[#323031]/50">one-time · lifetime access</p>
         <p className="mt-1 text-xs font-medium text-[#b8860b]">
-          Limited to {FOUNDING_SPOTS_TOTAL.toLocaleString()} members
+          {foundingSoldOut
+            ? `All ${FOUNDING_SPOTS_TOTAL.toLocaleString()} founding spots claimed`
+            : `${foundingSpotsRemaining.toLocaleString()} of ${FOUNDING_SPOTS_TOTAL.toLocaleString()} spots remaining`}
         </p>
         <ul className="mt-5 flex-1 space-y-2 text-sm text-[#323031]/70">
           {FOUNDING_FEATURES.map((f) => (
@@ -298,11 +307,15 @@ function PricingTable() {
         <div className="mt-6">
           <button
             onClick={() => checkout("founding_member")}
-            className="w-full rounded-lg bg-[#084c61] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#177e89]"
+            disabled={foundingSoldOut}
+            className="w-full rounded-lg bg-[#084c61] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#177e89] disabled:cursor-not-allowed disabled:bg-gray-300 disabled:hover:bg-gray-300"
           >
-            Become a Founding Member
+            {foundingSoldOut ? "Sold out" : "Become a Founding Member"}
           </button>
         </div>
+        {checkoutError && (
+          <p className="mt-2 text-center text-xs text-[#db3a34]">{checkoutError}</p>
+        )}
       </div>
     </div>
   );
@@ -321,11 +334,13 @@ function BillingSection({
   planRenewalDate,
   planCanceling,
   planCancelAt,
+  foundingSpotsClaimed,
 }: {
   plan: Plan;
   planRenewalDate: string | null;
   planCanceling: boolean;
   planCancelAt: string | null;
+  foundingSpotsClaimed: number;
 }) {
   const [, startPortal] = useTransition();
   const [, startCheckout] = useTransition();
@@ -452,7 +467,7 @@ function BillingSection({
                 Upgrade to unlock AI guidance, exclusive deals, and more.
               </p>
             </div>
-            <PricingTable />
+            <PricingTable foundingSpotsClaimed={foundingSpotsClaimed} />
           </div>
         )}
       </div>
@@ -578,6 +593,7 @@ export function AccountView({
   unreadCount,
   unreadTidingsCount,
   pendingConnectionsCount,
+  foundingSpotsClaimed,
 }: {
   currentUserName: string;
   privacySettings: PrivacySettings;
@@ -590,6 +606,7 @@ export function AccountView({
   unreadCount: number;
   unreadTidingsCount: number;
   pendingConnectionsCount: number;
+  foundingSpotsClaimed: number;
 }) {
   const router = useRouter();
 
@@ -652,6 +669,7 @@ export function AccountView({
             planRenewalDate={planRenewalDate}
             planCanceling={planCanceling}
             planCancelAt={planCancelAt}
+            foundingSpotsClaimed={foundingSpotsClaimed}
           />
           <PrivacySection initialSettings={privacySettings} />
           <ChangePasswordSection />
