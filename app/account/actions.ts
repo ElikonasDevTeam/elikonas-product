@@ -6,6 +6,16 @@ import { stripe } from "@/lib/stripe/client";
 import type { Plan, PrivacyField } from "./types";
 import { FOUNDING_MEMBER_CAP } from "./constants";
 
+// Keep in sync with the `reserved` array in generate_unique_profile_slug() (Supabase SQL).
+const RESERVED_SLUGS = new Set([
+  "account", "ai-guide", "api", "assessment", "auth", "bookstore",
+  "check-email", "forgot-password", "groups", "learner", "learning-library",
+  "login", "musings", "notifications", "onboarding", "people", "profile",
+  "provider", "register", "reset-password", "signup", "tidings", "in",
+  "admin", "support", "settings", "help", "about", "elikonas",
+]);
+const SLUG_FORMAT = /^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])?$/;
+
 export async function updatePrivacySettingAction(
   field: PrivacyField,
   value: boolean
@@ -28,6 +38,47 @@ export async function updatePrivacySettingAction(
 
   revalidatePath("/account");
   return {};
+}
+
+export async function updateProfileSlugAction(
+  rawSlug: string
+): Promise<{ error?: string; slug?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated." };
+
+  const slug = rawSlug.trim().toLowerCase();
+
+  if (!SLUG_FORMAT.test(slug)) {
+    return {
+      error: "3–30 characters: lowercase letters, numbers, and hyphens only. No leading/trailing hyphen.",
+    };
+  }
+  if (RESERVED_SLUGS.has(slug)) {
+    return { error: "That username is reserved. Please choose another." };
+  }
+
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("slug", slug)
+    .neq("id", user.id)
+    .maybeSingle();
+  if (existing) {
+    return { error: "That username is already taken." };
+  }
+
+  const { error } = await supabase.from("profiles").update({ slug }).eq("id", user.id);
+  if (error) {
+    console.error("[updateProfileSlugAction] error:", error.message);
+    return { error: "Failed to save username." };
+  }
+
+  revalidatePath("/account");
+  revalidatePath(`/profile/${slug}`);
+  return { slug };
 }
 
 export async function createCheckoutSessionAction(

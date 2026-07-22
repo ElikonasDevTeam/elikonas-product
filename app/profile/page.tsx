@@ -23,6 +23,7 @@ export default async function ProfilePage() {
     { count: unreadTidingsCount },
     { count: pendingConnectionsCount },
     { data: latestAssessmentRow },
+    { data: profileRow },
   ] = await Promise.all([
     supabase
       .from("ed_units")
@@ -55,6 +56,7 @@ export default async function ProfilePage() {
       .order("completed_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    supabase.from("profiles").select("slug").eq("id", user.id).maybeSingle(),
   ]);
 
   const latestAssessment = latestAssessmentRow?.realistic_score != null
@@ -79,6 +81,7 @@ export default async function ProfilePage() {
       unreadTidingsCount={unreadTidingsCount ?? 0}
       pendingConnectionsCount={pendingConnectionsCount ?? 0}
       latestAssessment={latestAssessment}
+      profileSlug={profileRow?.slug ?? null}
     />
   );
 }

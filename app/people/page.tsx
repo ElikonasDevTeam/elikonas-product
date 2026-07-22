@@ -113,7 +113,7 @@ export default async function PeoplePage() {
       allProfileIds.length > 0
         ? await supabase
             .from("profiles")
-            .select("id, full_name, interests")
+            .select("id, full_name, interests, slug")
             .in("id", allProfileIds)
         : { data: [] };
 
@@ -123,6 +123,7 @@ export default async function PeoplePage() {
         {
           name: p.full_name ?? "Unknown",
           interests: Array.isArray(p.interests) ? (p.interests as string[]) : [],
+          slug: (p.slug as string | null) ?? null,
         },
       ])
     );
@@ -130,10 +131,11 @@ export default async function PeoplePage() {
     connections = (acceptedRaw ?? []).map((c) => {
       const otherId =
         c.requester_id === user.id ? c.addressee_id : c.requester_id;
-      const profile = profileMap[otherId] ?? { name: "Unknown", interests: [] };
+      const profile = profileMap[otherId] ?? { name: "Unknown", interests: [], slug: null };
       return {
         id: c.id,
         other_user_id: otherId,
+        other_user_slug: profile.slug,
         other_user_name: profile.name,
         interests: profile.interests,
         connection_type: (c.connection_type as string | null) ?? null,
@@ -145,10 +147,12 @@ export default async function PeoplePage() {
       const profile = profileMap[c.requester_id] ?? {
         name: "Unknown",
         interests: [],
+        slug: null,
       };
       return {
         id: c.id,
         requester_id: c.requester_id,
+        requester_slug: profile.slug,
         requester_name: profile.name,
         interests: profile.interests,
         created_at: c.created_at,

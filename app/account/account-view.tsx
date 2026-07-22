@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AppShell } from "@/app/components/app-shell";
 import {
   updatePrivacySettingAction,
+  updateProfileSlugAction,
   createCheckoutSessionAction,
   createPortalSessionAction,
   changePasswordAction,
@@ -143,6 +144,118 @@ function PrivacySection({
           </li>
         ))}
       </ul>
+    </SectionCard>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Profile URL section
+// ---------------------------------------------------------------------------
+
+const SLUG_FORMAT = /^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])?$/;
+
+function ProfileSlugSection({ initialSlug }: { initialSlug: string | null }) {
+  const [value, setValue] = useState(initialSlug ?? "");
+  const [savedSlug, setSavedSlug] = useState(initialSlug);
+  const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [, startTransition] = useTransition();
+
+  const trimmed = value.trim().toLowerCase();
+  const formatValid = SLUG_FORMAT.test(trimmed);
+  const isUnchanged = trimmed === (savedSlug ?? "");
+
+  function doSave() {
+    setConfirming(false);
+    startTransition(async () => {
+      const result = await updateProfileSlugAction(trimmed);
+      if (result.error) {
+        setError(result.error);
+      } else if (result.slug) {
+        setSavedSlug(result.slug);
+        setValue(result.slug);
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 2000);
+      }
+    });
+  }
+
+  function handleSaveClick() {
+    setError(null);
+    setSuccess(false);
+    if (!formatValid) {
+      setError(
+        "3–30 characters: lowercase letters, numbers, and hyphens only. No leading/trailing hyphen."
+      );
+      return;
+    }
+    if (isUnchanged) return;
+    if (savedSlug) {
+      setConfirming(true);
+      return;
+    }
+    doSave();
+  }
+
+  return (
+    <SectionCard
+      title="Profile URL"
+      description="Your public profile link. You can change this anytime."
+    >
+      <div className="px-6 py-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 flex-1 items-center overflow-hidden rounded-lg border border-gray-200 bg-white focus-within:border-[#177e89] focus-within:ring-1 focus-within:ring-[#177e89]">
+            <span className="shrink-0 border-r border-gray-200 bg-gray-50 px-3 py-2 text-xs text-[#323031]/40">
+              elikonas.com/profile/
+            </span>
+            <input
+              value={value}
+              onChange={(e) => {
+                setValue(e.target.value);
+                setError(null);
+              }}
+              placeholder="your-name"
+              className="w-full min-w-[100px] flex-1 px-3 py-2 text-sm text-[#323031] outline-none"
+            />
+          </div>
+          <button
+            onClick={handleSaveClick}
+            disabled={isUnchanged || !trimmed}
+            className="shrink-0 rounded-lg bg-[#084c61] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#177e89] disabled:cursor-not-allowed disabled:bg-gray-300"
+          >
+            Save
+          </button>
+        </div>
+        {error && <p className="mt-2 text-xs text-rose-600">{error}</p>}
+        {success && <p className="mt-2 text-xs text-emerald-600">Saved.</p>}
+      </div>
+
+      {confirming && (
+        <div className="border-t border-gray-100 bg-amber-50 px-6 py-4">
+          <p className="text-sm font-medium text-amber-900">
+            Changing your username will break your old profile link.
+          </p>
+          <p className="mt-0.5 text-xs text-amber-800">
+            elikonas.com/profile/{savedSlug} will stop working — anyone who has that link won&apos;t
+            be able to find your profile anymore.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={doSave}
+              className="rounded-lg bg-amber-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+            >
+              Change it anyway
+            </button>
+            <button
+              onClick={() => setConfirming(false)}
+              className="rounded-lg border border-amber-300 bg-white px-4 py-2 text-sm font-medium text-amber-800 transition-colors hover:bg-amber-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </SectionCard>
   );
 }
@@ -594,6 +707,7 @@ export function AccountView({
   unreadTidingsCount,
   pendingConnectionsCount,
   foundingSpotsClaimed,
+  profileSlug,
 }: {
   currentUserName: string;
   privacySettings: PrivacySettings;
@@ -607,6 +721,7 @@ export function AccountView({
   unreadTidingsCount: number;
   pendingConnectionsCount: number;
   foundingSpotsClaimed: number;
+  profileSlug: string | null;
 }) {
   const router = useRouter();
 
@@ -664,6 +779,7 @@ export function AccountView({
         </div>
 
         <div className="space-y-5">
+          <ProfileSlugSection initialSlug={profileSlug} />
           <BillingSection
             plan={plan}
             planRenewalDate={planRenewalDate}

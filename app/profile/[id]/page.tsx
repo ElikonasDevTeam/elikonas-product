@@ -28,12 +28,14 @@ export const metadata: Metadata = {
   title: "Profile — Elikonas",
 };
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export default async function PublicProfilePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id: profileId } = await params;
+  const { id: slugOrId } = await params;
 
   const supabase = await createClient();
   const {
@@ -41,13 +43,37 @@ export default async function PublicProfilePage({
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
+
+  const { data: bySlug } = await supabase
+    .from("profiles")
+    .select("id, full_name, interests, slug")
+    .eq("slug", slugOrId)
+    .maybeSingle();
+
+  let profileRow = bySlug;
+
+  // Fall back to a raw-UUID lookup for links shared before slugs existed.
+  if (!profileRow && UUID_RE.test(slugOrId)) {
+    const { data: byId } = await supabase
+      .from("profiles")
+      .select("id, full_name, interests, slug")
+      .eq("id", slugOrId)
+      .maybeSingle();
+    if (byId) {
+      if (byId.slug) redirect(`/profile/${byId.slug}`);
+      profileRow = byId;
+    }
+  }
+
+  if (!profileRow) redirect("/people");
+
+  const profileId = profileRow.id;
   if (profileId === user.id) redirect("/profile");
 
   const meta = user.user_metadata ?? {};
   const currentUserName: string = meta.full_name || user.email || "Learner";
 
   const [
-    { data: profileData },
     { data: edUnitsData },
     { data: connData },
     { count: notifCount },
@@ -55,11 +81,6 @@ export default async function PublicProfilePage({
     { count: pendingConnCount },
     { data: privacyData },
   ] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("id, full_name, interests")
-      .eq("id", profileId)
-      .maybeSingle(),
     supabase
       .from("ed_units")
       .select("*")
@@ -96,8 +117,6 @@ export default async function PublicProfilePage({
       .maybeSingle(),
   ]);
 
-  if (!profileData) redirect("/people");
-
   const privacySettings: PrivacySettings = privacyData
     ? {
         show_interests: privacyData.show_interests,
@@ -124,10 +143,10 @@ export default async function PublicProfilePage({
   return (
     <PublicProfileView
       profile={{
-        id: profileData.id,
-        full_name: profileData.full_name ?? null,
-        interests: Array.isArray(profileData.interests)
-          ? (profileData.interests as string[])
+        id: profileRow.id,
+        full_name: profileRow.full_name ?? null,
+        interests: Array.isArray(profileRow.interests)
+          ? (profileRow.interests as string[])
           : [],
       }}
       edUnits={(edUnitsData ?? []) as EdUnit[]}

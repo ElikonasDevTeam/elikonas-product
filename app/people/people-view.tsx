@@ -9,6 +9,7 @@ import { AppShell } from "@/app/components/app-shell";
 export interface ConnectionData {
   id: string;
   other_user_id: string;
+  other_user_slug: string | null;
   other_user_name: string;
   interests: string[];
   connection_type: string | null;
@@ -18,6 +19,7 @@ export interface ConnectionData {
 export interface IncomingRequestData {
   id: string;
   requester_id: string;
+  requester_slug: string | null;
   requester_name: string;
   interests: string[];
   created_at: string;
@@ -25,6 +27,7 @@ export interface IncomingRequestData {
 
 interface SearchResult {
   id: string;
+  slug: string | null;
   full_name: string | null;
   interests: string[];
 }
@@ -57,26 +60,29 @@ function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg"
 
 function PersonCard({
   userId,
+  slug,
   name,
   interests,
   connectionType,
   footer,
 }: {
   userId: string;
+  slug: string | null;
   name: string;
   interests: string[];
   connectionType?: string | null;
   footer: React.ReactNode;
 }) {
+  const profileHref = `/profile/${slug ?? userId}`;
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
       <div className="flex items-center gap-3">
-        <Link href={`/profile/${userId}`}>
+        <Link href={profileHref}>
           <Avatar name={name} size="lg" />
         </Link>
         <div className="min-w-0 flex-1">
           <Link
-            href={`/profile/${userId}`}
+            href={profileHref}
             className="block truncate font-semibold text-[#323031] transition-colors hover:text-[#177e89]"
           >
             {name}
@@ -141,13 +147,14 @@ export function PeopleView({
       const supabase = createClient();
       const { data } = await supabase
         .from("profiles")
-        .select("id, full_name, interests")
+        .select("id, full_name, interests, slug")
         .neq("id", currentUserId)
         .ilike("full_name", `%${searchQuery.trim()}%`)
         .limit(20);
       setSearchResults(
         (data ?? []).map((p) => ({
           id: p.id,
+          slug: (p.slug as string | null) ?? null,
           full_name: p.full_name ?? null,
           interests: Array.isArray(p.interests) ? p.interests : [],
         }))
@@ -171,6 +178,7 @@ export function PeopleView({
     const newConn: ConnectionData = {
       id: req.id,
       other_user_id: req.requester_id,
+      other_user_slug: req.requester_slug,
       other_user_name: req.requester_name,
       interests: req.interests,
       connection_type: null,
@@ -222,6 +230,7 @@ export function PeopleView({
                 <PersonCard
                   key={req.id}
                   userId={req.requester_id}
+                  slug={req.requester_slug}
                   name={req.requester_name}
                   interests={req.interests}
                   footer={
@@ -290,6 +299,7 @@ export function PeopleView({
                   <PersonCard
                     key={result.id}
                     userId={result.id}
+                    slug={result.slug}
                     name={displayName}
                     interests={result.interests}
                     footer={
@@ -343,6 +353,7 @@ export function PeopleView({
                   <PersonCard
                     key={conn.id}
                     userId={conn.other_user_id}
+                    slug={conn.other_user_slug}
                     name={conn.other_user_name}
                     interests={conn.interests}
                     connectionType={conn.connection_type}

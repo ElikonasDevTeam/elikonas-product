@@ -14,10 +14,6 @@ function getInitials(name: string): string {
   return (parts[0]?.[0] ?? "?").toUpperCase();
 }
 
-function slugify(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-}
-
 function ProgressRing({ pct }: { pct: number }) {
   const r = 38;
   const circ = 2 * Math.PI * r;
@@ -156,6 +152,7 @@ export function ProfileView({
   unreadTidingsCount,
   pendingConnectionsCount,
   latestAssessment,
+  profileSlug,
 }: {
   user: User;
   edUnits: EdUnit[];
@@ -163,6 +160,7 @@ export function ProfileView({
   unreadTidingsCount: number;
   pendingConnectionsCount: number;
   latestAssessment: { id: string; riasec_scores: RIASECScores } | null;
+  profileSlug: string | null;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -189,7 +187,7 @@ export function ProfileView({
   const planned = edUnits.filter((u) => u.status === "planned").length;
   const pathwayPct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-  const shareUrl = `https://elikonas.com/profile/${slugify(fullName)}`;
+  const shareUrl = `https://elikonas.com/profile/${profileSlug ?? user.id}`;
 
   function handleShare() {
     navigator.clipboard.writeText(shareUrl).then(() => {
