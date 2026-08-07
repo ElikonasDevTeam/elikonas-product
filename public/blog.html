@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  // Disable HubSpot's default cookie banner
+  window.disableHubSpotCookieBanner = true;
+  window._hsp = window._hsp || [];
+
+  const setHubSpotConsent = (consentDetails) => {
+    window._hsp.push(["setHubSpotConsent", consentDetails]);
+  };
+
+  const getConsentDetails = ({ analytics, advertisement, functional }) => ({
+    analytics: !!analytics,
+    advertisement: !!advertisement,
+    functionality: !!functional,
+  });
+
+  document.addEventListener("cookieyes_banner_load", ({ detail }) => {
+    if (!detail || !detail.categories) return;
+    setHubSpotConsent(getConsentDetails(detail.categories));
+  });
+
+  document.addEventListener("cookieyes_consent_update", ({ detail }) => {
+    if (!detail || !detail.categories) return;
+    setHubSpotConsent(getConsentDetails(detail.categories));
+  });
+</script>
+<!-- Start cookieyes banner -->
+    <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/8991d2cf76f366b01f801203893e9ec9/script.js"></script>
+    <!-- End cookieyes banner -->
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SEO-META-START -->
+    <meta name="description" content="Insights on non-traditional learning, portable credentials, and the future of how skills get recognized — from the Elikonas team.">
+    <link rel="canonical" href="https://elikonas.com/blog.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Insights - Elikonas">
+    <meta property="og:description" content="Insights on non-traditional learning, portable credentials, and the future of how skills get recognized — from the Elikonas team.">
+    <meta property="og:url" content="https://elikonas.com/blog.html">
+    <meta property="og:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Insights - Elikonas">
+    <meta name="twitter:description" content="Insights on non-traditional learning, portable credentials, and the future of how skills get recognized — from the Elikonas team.">
+    <meta name="twitter:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
+<!-- SEO-META-END -->
+    <title>Insights - Elikonas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global-styles.css">
+    <link rel="stylesheet" href="blog-styles.css">
+	<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "wnnjpdxu7b");
+</script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="blog.html" class="active">Insights</a></li>
+            <li><a href="stories.html">Stories</a></li>
+            <li><a href="roadmap.html">Roadmap</a></li>
+            <li><a href="https://elikonas.com/governance/index.html">Governance</a></li>
+        </ul>
+    </nav>
+
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container">
+        <div class="blog-header">
+            <h1>Elikonas Insights</h1>
+            <p>Insights on how we're changing the journey in secondary education</p>
+        </div>
+
+        <div class="blog-grid">
+
+    <!-- Add more blog cards as needed -->
+
+				<!-- Blog Card 11 - Independence Day -->
+			            <div class="blog-card" onclick="location.href='post_20260704_250years.html'">
+			                <div class="blog-card-image">
+			                    <img src="assets/images/post-image_20260704.png" alt="250 Years snd Moving Forward">
+			                </div>
+			                <div class="blog-card-content">
+			                    <div class="blog-card-date">July 04, 2026</div>
+			                    <h2 class="blog-card-title">
+			                        <a href="post_20260704_250years.html">250 Years and Still Building the Promise</a>
+			                    </h2>
+			                    <p class="blog-card-summary">
+			                        On America's 250th, a reflection on what the founding promise of opportunity still leaves unfinished — and why building a way for you to own your learning, no matter where it happens, adds to that promise.</p>
+			                    <a href="post_20260704_250years.html" class="blog-card-link">
+			                        Read more →
+			                    </a>
+			                </div>
+			            </div>
+
+
+
+			<!-- Blog Card 9 - Memorial Day (May 26, 2026) -->
+			            <div class="blog-card" onclick="location.href='post_20260526_memorial-day.html'">
+			                <div class="blog-card-image">
+			                    <img src="assets/images/post-image_20260526.png" alt="Maryhill Stonehenge Memorial, Washington State">
+			                </div>
+			                <div class="blog-card-content">
+			                    <div class="blog-card-date">May 26, 2026</div>
+			                    <h2 class="blog-card-title">
+			                        <a href="post_20260526_memorial-day.html">Land of the Free Because of the Brave</a>
+			                    </h2>
+			                    <p class="blog-card-summary">
+			                        I was on a road trip the week before Memorial Day in the US. I reflect on the meaning of Memorial Day, what it means for me personally and for all of those who live in this country and beyond. 
+			                    </p>
+			                    <a href="post_20260526_memorial-day.html" class="blog-card-link">
+			                        Read more →
+			                    </a>
+			                </div>
+			            </div>
+
+
+			<!-- Blog Card 8 - Mother's Day (May 10, 2026) -->
+			            <div class="blog-card" onclick="location.href='post_20260510_mothers-day.html'">
+			                <div class="blog-card-image">
+			                    <img src="assets/images/post-image_20260510.png" alt="For Mom">
+			                </div>
+			                <div class="blog-card-content">
+			                    <div class="blog-card-date">May 10, 2026</div>
+			                    <h2 class="blog-card-title">
+			                        <a href="post_20260510_mothers-day.html">Turning the Tide...for Mom</a>
+			                    </h2>
+			                    <p class="blog-card-summary">
+			                        When I graduated from the University of Washington, my mom greeted me with tears. That day meant more to her than it did to me and I didn't realize why until much later. 
+			                    </p>
+			                    <a href="post_20260510_mothers-day.html" class="blog-card-link">
+			                        Read more →
+			                    </a>
+			                </div>
+			            </div>
+
+			<!-- Blog Card 7 - Anabasis Hot Seat follow-up (April 81, 2026) -->
+			            <div class="blog-card" onclick="location.href='post_20260428_hot-seat-followup.html'">
+			                <div class="blog-card-image">
+			                    <img src="assets/images/post-image_20260428.png" alt="ChatGPTs interpretation of the hot seat">
+			                </div>
+			                <div class="blog-card-content">
+			                    <div class="blog-card-date">April 28, 2026</div>
+			                    <h2 class="blog-card-title">
+			                        <a href="post_20260428_hot-seat-followup.html">Hot Seat Follow-up</a>
+			                    </h2>
+			                    <p class="blog-card-summary">
+			                        What happens when someone willingly steps into the “hot seat” and invites honest feedback? This reflection explores how courageous vulnerability can unlock surprising insight, stronger relationships, and personal growth.
+			                    </p>
+			                    <a href="post_20260428_hot-seat-followup.html" class="blog-card-link">
+			                        Read more →
+			                    </a>
+			                </div>
+			            </div>
+            
+			<!-- Blog Card 6 - Look for the Helpers (April 21, 2026) -->
+			            <div class="blog-card" onclick="location.href='post_20260421_look-for-the-helpers.html'">
+			                <div class="blog-card-image">
+			                    <img src="assets/images/post-image_20260421.png" alt="Look for the Helpers">
+			                </div>
+			                <div class="blog-card-content">
+			                    <div class="blog-card-date">April 21, 2026</div>
+			                    <h2 class="blog-card-title">
+			                        <a href="post_20260421_look-for-the-helpers.html">Look for the Helpers</a>
+			                    </h2>
+			                    <p class="blog-card-summary">
+			                        There's real fear building around AI. Fred Rogers had advice for moments like this — and it still applies.
+			                    </p>
+			                    <a href="post_20260421_look-for-the-helpers.html" class="blog-card-link">
+			                        Read more →
+			                    </a>
+			                </div>
+			            </div>
+			
+			 <!-- Blog Card 5 -->
+            <div class="blog-card" onclick="location.href='post_20260420_anabasis-hot-seat.html'">
+                <div class="blog-card-image">
+                    <img src="assets/images/post-image_20260420.png" alt="Blog post image">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-date">April 20, 2026</div>
+                    <h2 class="blog-card-title">
+                        <a href="post_20260420_anabasis-hot-seat.html">Founder in the Hot Seat: Warm as Advertised!</a>
+                    </h2>
+                    <p class="blog-card-summary">
+                        Sid Mohasseb of Anabasis Academy puts our founder, Katie Stroud, in the hot seat on what the business is and why it should exist.
+                    </p>
+                    <a href="post_20260420_anabasis-hot-seat.html" class="blog-card-link">Read more →</a>
+                </div>
+            </div>
+
+            
+            <!-- Blog Card 4 -->
+            <div class="blog-card" onclick="location.href='post_20260408_maslows-needs.html'">
+                <div class="blog-card-image">
+                    <img src="assets/images/post-image_20260408.png" alt="Blog post image">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-date">April 08, 2026</div>
+                    <h2 class="blog-card-title">
+                        <a href="post_20260408_maslows-needs.html">Why Learning Stalls: Maslow's Hierarchy of Needs and Your Career Path</a>
+                    </h2>
+                    <p class="blog-card-summary">
+                        When your basic needs aren't met, your brain can't focus on growth. Here's what that means for career change — and how Elikonas helps.
+                    </p>
+                    <a href="post_20260408_maslows-needs.html" class="blog-card-link">Read more →</a>
+                </div>
+            </div>
+
+            <!-- Blog Card 3 -->
+            <div class="blog-card" onclick="location.href='post_20260204_what-elikonas-is-not.html'">
+                <div class="blog-card-image">
+                    <img src="assets/images/post-image_20260204.svg" alt="Blog post image">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-date">February 4, 2026</div>
+                    <h2 class="blog-card-title">
+                        <a href="post_20260204_what-elikonas-is-not.html">What Elikonas Is Not</a>
+                    </h2>
+                    <p class="blog-card-summary">
+                        Defining a new approach to formal education by breaking common conceptions.
+                    </p>
+                    <a href="post_20260204_what-elikonas-is-not.html" class="blog-card-link">Read more →</a>
+                </div>
+            </div>
+        
+            
+            <!-- Blog Card 2 -->
+            <div class="blog-card" onclick="location.href='post_20260120_whats-in-a-name.html'">
+                <div class="blog-card-image">
+                    <img src="assets/images/post-thumb_20260120.svg" alt="Blog post image">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-date">January 20, 2026</div>
+                    <h2 class="blog-card-title">
+                        <a href="post_20260120_whats-in-a-name.html">What's in a Name?'</a>
+                    </h2>
+                    <p class="blog-card-summary">
+                        How did Elikonas get its name and how does that apply to the logo?
+                    </p>
+                    <a href="post_20260120_whats-in-a-name.html" class="blog-card-link">Read more →</a>
+                </div>
+            </div>
+            
+            <!-- Blog Card 1 -->
+            <div class="blog-card" onclick="location.href='post_20260114_what-is-elikonas.html'">
+                <div class="blog-card-image">
+                    <img src="assets/images/post-thumbnail_20260114.png" alt="Blog post image">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-date">January 14, 2026</div>
+                    <h2 class="blog-card-title">
+                        <a href="post_20260114_what-is-elikonas.html">What is Elikonas?</a>
+                    </h2>
+                    <p class="blog-card-summary">
+                        Discover a new way to "do" college one that starts with curiosity instead of credentials.
+                    </p>
+                    <a href="post_20260114_what-is-elikonas.html" class="blog-card-link">Read more →</a>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.shape');
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.0005;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                shape.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+	<!-- Start of HubSpot Embed Code -->
+      <script type="text/javascript" id="hs-script-loader" async defer src="//js-na2.hs-scripts.com/245593327.js"></script>
+    <!-- End of HubSpot Embed Code -->
+<!-- SITE-FOOTER-START -->
+    <footer class="site-footer">
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h3>Mission</h3>
+                <div class="footer-divider"></div>
+                <p>Elikonas is a Public Benefit Corporation, legally committed to
+                   expanding equitable access to education and workforce development.</p>
+                <a href="mission.html">Learn more about our mission &rarr;</a>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <div class="footer-divider"></div>
+                <ul>
+                    <li><a href="/subscribe.html">Subscribe to Our Newsletter</a></li>
+                    <li><a href="mailto:support@elikonas.com">Contact Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+            <div class="social-links">
+                <a href="https://x.com/elikonasmuse" class="social-link">
+                    <img src="assets/images/social-x.svg" alt="X (Twitter)">
+                </a>
+                <a href="https://www.facebook.com/elikonasmuse" class="social-link">
+                    <img src="assets/images/social-fb.svg" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com/elikonasmuse" class="social-link">
+                    <img src="assets/images/social-ig.svg" alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com/company/elikonas" class="social-link">
+                    <img src="assets/images/social-in.svg" alt="LinkedIn">
+                </a>
+                <a href="https://youtube.com/@elikonasmuse" class="social-link">
+                    <img src="assets/images/social-yt.svg" alt="YouTube">
+                </a>
+            </div>
+        <div class="footer-bottom">&copy; 2026 Elikonas Public Benefit Corporation</div>
+    </footer>
+<!-- SITE-FOOTER-END -->
+</body>
+</html>

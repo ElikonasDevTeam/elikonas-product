@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+      // Disable HubSpot's default cookie banner
+      window.disableHubSpotCookieBanner = true;
+      window._hsp = window._hsp || [];
+
+      const setHubSpotConsent = (consentDetails) => {
+        window._hsp.push(["setHubSpotConsent", consentDetails]);
+      };
+
+      const getConsentDetails = ({ analytics, advertisement, functional }) => ({
+        analytics: !!analytics,
+        advertisement: !!advertisement,
+        functionality: !!functional,
+      });
+
+      document.addEventListener("cookieyes_banner_load", ({ detail }) => {
+        if (!detail || !detail.categories) return;
+        setHubSpotConsent(getConsentDetails(detail.categories));
+      });
+
+      document.addEventListener("cookieyes_consent_update", ({ detail }) => {
+        if (!detail || !detail.categories) return;
+        setHubSpotConsent(getConsentDetails(detail.categories));
+      });
+    </script>
+    <!-- Start cookieyes banner -->
+    <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/8991d2cf76f366b01f801203893e9ec9/script.js"></script>
+    <!-- End cookieyes banner -->
+
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="../assets/images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SEO-META-START -->
+    <meta name="description" content="How Elikonas uses AI — in the platform and internally — and what we commit to as we do.">
+    <link rel="canonical" href="https://elikonas.com/governance/ai-usage-policy.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AI Usage Policy - Elikonas">
+    <meta property="og:description" content="How Elikonas uses AI — in the platform and internally — and what we commit to as we do.">
+    <meta property="og:url" content="https://elikonas.com/governance/ai-usage-policy.html">
+    <meta property="og:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Usage Policy - Elikonas">
+    <meta name="twitter:description" content="How Elikonas uses AI — in the platform and internally — and what we commit to as we do.">
+    <meta name="twitter:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
+<!-- SEO-META-END -->
+    <title>AI Usage Policy - Elikonas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../global-styles.css">
+    <style>
+        body { overflow-x: hidden; }
+        .doc-container { display: flex; flex-direction: column; align-items: center; padding: 7rem 1.5rem 4rem 1.5rem; position: relative; width: 100%; }
+        .doc-content { max-width: 720px; width: 100%; }
+        .doc-breadcrumb { text-align: center; margin-bottom: 1.25rem; font-size: 0.9rem; }
+        .doc-breadcrumb a { color: var(--teal-ink); text-decoration: none; }
+        .doc-breadcrumb a:hover { text-decoration: underline; }
+        .doc-title { font-family: 'Crimson Pro', serif; font-size: 2.25rem; font-weight: 700; text-align: center; margin-bottom: 0.5rem; color: var(--fg); }
+        .doc-meta { text-align: center; color: var(--fg-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+        .doc-pdf-link { text-align: center; margin-bottom: 3rem; }
+        .doc-pdf-link a { color: var(--teal-ink); text-decoration: none; font-size: 0.9rem; }
+        .doc-pdf-link a:hover { text-decoration: underline; }
+        .doc-body { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 16px; padding: 2.5rem; line-height: 1.75; margin-bottom: 3rem; color: var(--fg); }
+        .doc-body h2 { font-family: 'Crimson Pro', serif; font-size: 1.4rem; margin: 1.75rem 0 0.85rem 0; color: var(--dark-teal); }
+        .doc-body h2:first-child { margin-top: 0; }
+        .doc-body p { margin-bottom: 1rem; }
+        .doc-body ul { margin: 0 0 1rem 1.25rem; }
+        .doc-body li { margin-bottom: 0.5rem; }
+        .doc-body a, .doc-body a:visited { color: var(--teal-ink); }
+        .version-history { margin-bottom: 1rem; }
+        .version-history-title { font-family: 'Crimson Pro', serif; font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; color: var(--fg); }
+        .version-entry { background: var(--surface); border: 1px solid var(--surface-border); border-left: 4px solid var(--gold); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+        .version-entry.is-current { border-left-color: var(--gold); background: rgba(255, 200, 87, 0.12); }
+        .version-entry-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
+        .version-entry-header h3 { font-size: 1.05rem; color: var(--fg); }
+        .version-badge { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--gold); color: #084c61; padding: 0.2rem 0.6rem; border-radius: 50px; font-weight: 700; }
+        .version-entry-date { font-size: 0.85rem; color: var(--fg-muted); }
+        .version-entry ul { margin: 0.5rem 0 0 1.1rem; font-size: 0.95rem; color: var(--fg-muted); }
+        .version-entry li { margin-bottom: 0.35rem; }
+        .back-to-governance { text-align: center; margin-top: 2.5rem; }
+        .back-to-governance a { color: var(--teal-ink); text-decoration: none; font-size: 0.95rem; }
+        .back-to-governance a:hover { text-decoration: underline; }
+        @media (max-width: 600px) {
+            .doc-title { font-size: 1.7rem; }
+            .doc-body { padding: 1.75rem; }
+            .version-entry-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="../blog.html">Insights</a></li>
+            <li><a href="../stories.html">Stories</a></li>
+            <li><a href="../roadmap.html">Roadmap</a></li>
+            <li><a href="https://elikonas.com/governance/index.html" class="active">Governance</a></li>
+        </ul>
+    </nav>
+
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="doc-container">
+        <div class="doc-content">
+            <div class="doc-breadcrumb"><a href="/">&larr; Back to Governance</a></div>
+            <h1 class="doc-title">AI Usage Policy</h1>
+            <div class="doc-meta">Current version: v1 &middot; Last updated June 24, 2026</div>
+            <div class="doc-pdf-link"><a href="/assets/files/ai-usage.pdf" target="_blank" rel="noopener">Download PDF version</a></div>
+
+            <div class="doc-body">
+                <p><em>Effective: June 9, 2026 | Reviewed annually by the CEO</em></p>
+
+                <h2>Why this policy exists</h2>
+                <p>AI is not incidental to what Elikonas does — it is foundational. Our AI guide Eli, our pathway builder, and the AI tools we use internally are all part of how we deliver on our mission. That level of integration demands that we think carefully about how we use AI, what we ask of it, and what we owe to the people it serves.</p>
+                <p>This policy governs Elikonas's use of AI in our platform, our operations, and our team. It reflects our commitment to using AI responsibly, transparently, and in ways that are consistent with our values as a Public Benefit Corporation.</p>
+
+                <h2>How we use AI at Elikonas</h2>
+                <p><strong>On the platform:</strong></p>
+                <ul>
+                    <li><strong>Eli, the AI Learning Guide</strong> — Eli is powered by the Anthropic Claude API. Eli helps users explore learning pathways, reflect on their progress, and navigate the platform. Eli's responses are scoped to each user's profile and learning record. Conversation histories are stored as part of the user's learner profile and are subject to our data retention and deletion policies.</li>
+                    <li><strong>AI Pathway Builder</strong> — Elikonas uses AI to generate personalized education pathway recommendations based on user-provided goals, interests, and life circumstances. These recommendations are advisory only. No automated decision produces legal or similarly significant effects on any user.</li>
+                </ul>
+                <p><strong>Internally:</strong></p>
+                <ul>
+                    <li>Elikonas uses AI tools including Claude (Anthropic) in day-to-day operations including content development, product design, communications, and business strategy. Team members are expected to review, verify, and take responsibility for any AI-assisted work before it is published or acted upon.</li>
+                    <li>Elikonas does not use AI in hiring, performance evaluation, or employment decisions.</li>
+                </ul>
+
+                <h2>What we commit to</h2>
+                <p><strong>Transparency.</strong> We will always tell users when they are interacting with an AI. Eli is never presented as a human. We will not use AI to deceive, manipulate, or misrepresent — to users, partners, investors, or the public.</p>
+                <p><strong>Human oversight.</strong> AI at Elikonas supports human judgment — it does not replace it. All consequential decisions, including those affecting users, employees, and business strategy, remain under human review and accountability. The CEO holds ultimate responsibility for AI policy and its implementation.</p>
+                <p><strong>Data stewardship.</strong> User data submitted to AI systems is governed by our <a href="privacy.html">Privacy Policy</a>. Elikonas does not submit raw personally identifiable information to third-party AI APIs beyond what is necessary for platform operation. We do not use user data to train external AI models.</p>
+                <p><strong>Responsible vendor selection.</strong> Elikonas selects AI vendors that demonstrate meaningful commitments to safety, ethics, and responsible development. Our current primary AI vendor, Anthropic, was founded with AI safety as its central mission. We will reassess vendor relationships as the AI landscape evolves.</p>
+
+                <h2>Our commitment to sustainable AI use</h2>
+                <p>AI systems consume significant computational resources and energy. We take that seriously — not as a compliance exercise, but because it is consistent with who we are.</p>
+                <p>Elikonas commits to the following:</p>
+                <ul>
+                    <li><strong>Right-sizing AI use</strong> — We do not use AI where simpler tools suffice. Eli is invoked because AI meaningfully serves the learner, not because it adds a feature. We will resist the pressure to AI-wash the platform with capabilities that don't serve the mission.</li>
+                    <li><strong>Vendor accountability</strong> — We favor AI vendors who are transparent about their environmental impact and are actively working to reduce it. Anthropic publishes information about their efforts toward responsible and sustainable AI development, and we will hold future vendor relationships to the same standard.</li>
+                    <li><strong>Efficiency over excess</strong> — Internally, we use AI to reduce waste — of time, of effort, of resources. We do not use it in ways that generate unnecessary compute load without proportionate value.</li>
+                    <li><strong>Ongoing review</strong> — As AI energy consumption data becomes more available and industry standards develop, Elikonas will update this policy to reflect best practices.</li>
+                </ul>
+
+                <h2>A note on AI and the people we serve</h2>
+                <p>We are aware that many of the learners Elikonas serves have complicated feelings about AI — about what it means for their jobs, their futures, and their sense of value. We do not take that lightly.</p>
+                <p>Elikonas will never position AI as a replacement for human potential. Eli exists to support learners, not to evaluate, rank, or diminish them. The platform's core belief — that every person's learning has value — applies to how we design and deploy AI just as much as it applies to everything else we build.</p>
+
+                <h2>Policy governance</h2>
+                <p>This policy is owned by the CEO and reviewed annually or when material changes to Elikonas's AI use occur. Questions or concerns about this policy may be directed to <a href="mailto:support@elikonas.com">support@elikonas.com</a>.</p>
+                <p>All versions of this policy are maintained on our Governance page at elikonas.com/governance, including a changelog documenting what changed and when. Users will be notified of updates within the platform. Material changes — including new AI vendors, new uses of user data, or significant new AI capabilities — will require user acknowledgment before continuing use of the platform. Minor clarifying updates will be communicated via an in-app notification that does not require acknowledgment.</p>
+            </div>
+
+            <div class="version-history">
+                <h2 class="version-history-title">Version History</h2>
+                <div class="version-entry is-current">
+                    <div class="version-entry-header">
+                        <h3>Version 1</h3>
+                        <span class="version-badge">Current</span>
+                    </div>
+                    <div class="version-entry-date">June 24, 2026</div>
+                    <ul>
+                        <li>Initial publication of this policy.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="back-to-governance"><a href="/">&larr; Back to Governance</a></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.shape');
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.0005;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                shape.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+    <script src="https://helloskip.com/agent.js" data-agent-id="JgvQjunMZL0PD1J81u0H"></script>
+    <!-- Start of HubSpot Embed Code -->
+      <script type="text/javascript" id="hs-script-loader" async defer src="//js-na2.hs-scripts.com/245593327.js"></script>
+    <!-- End of HubSpot Embed Code -->
+<!-- SITE-FOOTER-START -->
+    <footer class="site-footer">
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h3>Mission</h3>
+                <div class="footer-divider"></div>
+                <p>Elikonas is a Public Benefit Corporation, legally committed to
+                   expanding equitable access to education and workforce development.</p>
+                <a href="../mission.html">Learn more about our mission &rarr;</a>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <div class="footer-divider"></div>
+                <ul>
+                    <li><a href="/subscribe.html">Subscribe to Our Newsletter</a></li>
+                    <li><a href="mailto:support@elikonas.com">Contact Us</a></li>
+                    <li><a href="../careers.html">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+            <div class="social-links">
+                <a href="https://x.com/elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-x.svg" alt="X (Twitter)">
+                </a>
+                <a href="https://www.facebook.com/elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-fb.svg" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com/elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-ig.svg" alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com/company/elikonas" class="social-link">
+                    <img src="../assets/images/social-in.svg" alt="LinkedIn">
+                </a>
+                <a href="https://youtube.com/@elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-yt.svg" alt="YouTube">
+                </a>
+            </div>
+        <div class="footer-bottom">&copy; 2026 Elikonas Public Benefit Corporation</div>
+    </footer>
+<!-- SITE-FOOTER-END -->
+</body>
+</html>

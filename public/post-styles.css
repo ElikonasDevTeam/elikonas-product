@@ -1,0 +1,449 @@
+/* ============================================================
+   post-styles.css
+   Styles for all blog post pages.
+   Also requires: global-styles.css
+   ============================================================ */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6rem 2rem 4rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 3rem;
+}
+
+.post-content {
+    background: var(--bg);
+    padding: 3rem;
+    border-radius: 15px;
+    border: 1px solid var(--surface-border);
+}
+
+.post-header {
+    margin-bottom: 2rem;
+}
+
+.post-date {
+    color: var(--teal-ink);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.post-title {
+    font-family: 'Crimson Pro', serif;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    color: var(--fg);
+}
+
+.post-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6rem;
+}
+
+.post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.post-body {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: var(--fg);
+}
+
+.post-body p {
+    margin-bottom: 1.5rem;
+}
+
+/* Only styles links inside the <main> tag */
+.post-body a:link,
+.post-body a:visited {
+    color: var(--dark-teal);
+    text-decoration: underline;
+}
+
+.post-body a.btn-link-solid,
+.post-body a.btn-link-solid:link,
+.post-body a.btn-link-solid:visited {
+    color: #084c61;
+    text-decoration: none;
+}
+
+.post-body a.btn-link:link,
+.post-body a.btn-link:visited {
+    color: var(--dark-teal);
+    text-decoration: none;
+}
+
+.post-body h2 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.8rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--fg);
+}
+
+.post-body h3 {
+    font-size: 1.4rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+    color: var(--fg);
+}
+
+.post-body ul, .post-body ol {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.post-body li {
+    margin-bottom: 0.2rem;
+}
+
+.post-body blockquote {
+    border-left: 4px solid var(--gold);
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: var(--fg-muted);
+}
+
+.post-body hr {
+    border: none;
+    border-top: 1px solid var(--surface-border);
+    margin: 2rem 0;
+}
+
+
+/* Episode tag badge */
+.episode-tag {
+    display: inline-block;
+    background: var(--dark-teal);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.3rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* ─── Link Button Styles ─── */
+.btn-link {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    background: transparent;
+    color: var(--dark-teal);
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 2px solid var(--dark-teal);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+}
+
+.btn-link:hover {
+    background: var(--dark-teal);
+    color: #fff;
+    transform: translateY(-3px);
+}
+
+.btn-link:active {
+    transform: translateY(-1px);
+}
+
+.btn-link-solid {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    background: var(--gold);
+    color: #084c61;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+}
+
+.btn-link-solid:hover {
+    background: #f0b83e;
+    transform: translateY(-3px);
+    color: #084c61;
+}
+/* ─── End Link Button Styles ─── */
+
+/* CTA boxes */
+.cta-box {
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2.5rem 0;
+    text-align: center;
+}
+
+.cta-box h3 {
+    color: var(--fg);
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.cta-box p {
+    margin-bottom: 1.5rem;
+    color: var(--fg-muted);
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* About the show box */
+.about-show {
+    background: var(--band-bg);
+    color: var(--band-fg);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 3rem;
+}
+
+.about-show h3 {
+    color: var(--gold);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.about-show p {
+    font-size: 1rem;
+    color: var(--band-fg-muted);
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+/* Share section */
+.share-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--surface-border);
+}
+
+.share-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--fg);
+}
+
+.share-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.share-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.share-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(8, 76, 97, 0.25);
+}
+
+.share-twitter  { background: #1DA1F2; color: white; }
+.share-linkedin { background: #0A66C2; color: white; }
+.share-facebook { background: #1877F2; color: white; }
+.share-email    { background: #EA4335; color: white; }
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.social-link {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.social-link img {
+    width: 22px;
+    height: 22px;
+}
+
+.social-link:hover {
+    border-color: var(--teal);
+    transform: scale(1.1);
+}
+
+/* Sidebar */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.sidebar-widget {
+    background: var(--surface);
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 1px solid var(--surface-border);
+}
+
+.sidebar-widget h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--fg);
+}
+
+.related-post {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--surface-border);
+}
+
+.related-post:last-child {
+    border-bottom: none;
+}
+
+.related-post-date {
+    font-size: 0.85rem;
+    color: var(--teal-ink);
+    margin-bottom: 0.3rem;
+}
+
+.related-post a {
+    color: var(--fg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.related-post a:hover {
+    color: var(--dark-teal);
+    text-decoration: underline;
+}
+
+/* Back link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--dark-teal);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    transition: gap 0.2s ease;
+}
+
+.back-link:hover {
+    gap: 1rem;
+    text-decoration: underline;
+}
+
+/* Email signup (sidebar) */
+.cta-section {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.email-signup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+}
+
+.email-signup .email-label {
+    display: block;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+}
+
+.email-input {
+    flex: 1;
+    padding: 0.6rem 0.75rem;
+    border: 1.5px solid var(--control-border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: inherit;
+    width: 100%;
+}
+
+.signup-btn {
+    padding: 0.6rem;
+    background: var(--red);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.signup-btn:hover {
+    filter: brightness(1.08);
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+    .container { grid-template-columns: 1fr; }
+    .sidebar { order: 2; }
+    .post-content { order: 1; }
+}
+
+@media (max-width: 768px) {
+    .container { padding-top: 5rem; padding-left: 1rem; padding-right: 1rem; }
+    .post-content { padding: 1.5rem; }
+    .post-title { font-size: 1.8rem; }
+    .post-image { height: 250px; font-size: 4rem; }
+    .share-buttons { flex-direction: column; }
+    .share-btn { justify-content: center; }
+    .cta-buttons { flex-direction: column; align-items: center; }
+}

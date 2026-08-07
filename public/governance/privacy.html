@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+      // Disable HubSpot's default cookie banner
+      window.disableHubSpotCookieBanner = true;
+      window._hsp = window._hsp || [];
+
+      const setHubSpotConsent = (consentDetails) => {
+        window._hsp.push(["setHubSpotConsent", consentDetails]);
+      };
+
+      const getConsentDetails = ({ analytics, advertisement, functional }) => ({
+        analytics: !!analytics,
+        advertisement: !!advertisement,
+        functionality: !!functional,
+      });
+
+      document.addEventListener("cookieyes_banner_load", ({ detail }) => {
+        if (!detail || !detail.categories) return;
+        setHubSpotConsent(getConsentDetails(detail.categories));
+      });
+
+      document.addEventListener("cookieyes_consent_update", ({ detail }) => {
+        if (!detail || !detail.categories) return;
+        setHubSpotConsent(getConsentDetails(detail.categories));
+      });
+    </script>
+    <!-- Start cookieyes banner -->
+    <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/8991d2cf76f366b01f801203893e9ec9/script.js"></script>
+    <!-- End cookieyes banner -->
+
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="../assets/images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SEO-META-START -->
+    <meta name="description" content="What personal information Elikonas collects, how we use it, and the choices you have about it.">
+    <link rel="canonical" href="https://elikonas.com/governance/privacy.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Privacy Policy - Elikonas">
+    <meta property="og:description" content="What personal information Elikonas collects, how we use it, and the choices you have about it.">
+    <meta property="og:url" content="https://elikonas.com/governance/privacy.html">
+    <meta property="og:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Privacy Policy - Elikonas">
+    <meta name="twitter:description" content="What personal information Elikonas collects, how we use it, and the choices you have about it.">
+    <meta name="twitter:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
+<!-- SEO-META-END -->
+    <title>Privacy Policy - Elikonas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../global-styles.css">
+    <style>
+        body { overflow-x: hidden; }
+        .doc-container { display: flex; flex-direction: column; align-items: center; padding: 7rem 1.5rem 4rem 1.5rem; position: relative; width: 100%; }
+        .doc-content { max-width: 720px; width: 100%; }
+        .doc-breadcrumb { text-align: center; margin-bottom: 1.25rem; font-size: 0.9rem; }
+        .doc-breadcrumb a { color: var(--teal-ink); text-decoration: none; }
+        .doc-breadcrumb a:hover { text-decoration: underline; }
+        .doc-title { font-family: 'Crimson Pro', serif; font-size: 2.25rem; font-weight: 700; text-align: center; margin-bottom: 0.5rem; color: var(--fg); }
+        .doc-meta { text-align: center; color: var(--fg-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+        .doc-pdf-link { text-align: center; margin-bottom: 3rem; }
+        .doc-pdf-link a { color: var(--teal-ink); text-decoration: none; font-size: 0.9rem; }
+        .doc-pdf-link a:hover { text-decoration: underline; }
+        .doc-body { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 16px; padding: 2.5rem; line-height: 1.75; margin-bottom: 3rem; color: var(--fg); }
+        .doc-body h2 { font-family: 'Crimson Pro', serif; font-size: 1.4rem; margin: 1.75rem 0 0.85rem 0; color: var(--dark-teal); }
+        .doc-body h2:first-child { margin-top: 0; }
+        .doc-body p { margin-bottom: 1rem; }
+        .doc-body ul { margin: 0 0 1rem 1.25rem; }
+        .doc-body li { margin-bottom: 0.5rem; }
+        .doc-body a, .doc-body a:visited { color: var(--teal-ink); }
+        .version-history { margin-bottom: 1rem; }
+        .version-history-title { font-family: 'Crimson Pro', serif; font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; color: var(--fg); }
+        .version-entry { background: var(--surface); border: 1px solid var(--surface-border); border-left: 4px solid var(--gold); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+        .version-entry.is-current { border-left-color: var(--gold); background: rgba(255, 200, 87, 0.12); }
+        .version-entry-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
+        .version-entry-header h3 { font-size: 1.05rem; color: var(--fg); }
+        .version-badge { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--gold); color: #084c61; padding: 0.2rem 0.6rem; border-radius: 50px; font-weight: 700; }
+        .version-entry-date { font-size: 0.85rem; color: var(--fg-muted); }
+        .version-entry ul { margin: 0.5rem 0 0 1.1rem; font-size: 0.95rem; color: var(--fg-muted); }
+        .version-entry li { margin-bottom: 0.35rem; }
+        .back-to-governance { text-align: center; margin-top: 2.5rem; }
+        .back-to-governance a { color: var(--teal-ink); text-decoration: none; font-size: 0.95rem; }
+        .back-to-governance a:hover { text-decoration: underline; }
+        @media (max-width: 600px) {
+            .doc-title { font-size: 1.7rem; }
+            .doc-body { padding: 1.75rem; }
+            .version-entry-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="../blog.html">Insights</a></li>
+            <li><a href="../stories.html">Stories</a></li>
+            <li><a href="../roadmap.html">Roadmap</a></li>
+            <li><a href="https://elikonas.com/governance/index.html" class="active">Governance</a></li>
+        </ul>
+    </nav>
+
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="doc-container">
+        <div class="doc-content">
+            <div class="doc-breadcrumb"><a href="/">&larr; Back to Governance</a></div>
+            <h1 class="doc-title">Privacy Policy</h1>
+            <div class="doc-meta">Current version: v1 &middot; Last updated June 24, 2026</div>
+            <div class="doc-pdf-link"><a href="/assets/files/privacy.pdf" target="_blank" rel="noopener">Download PDF version</a></div>
+
+            <div class="doc-body">
+                <p>Elikonas, a Public Benefit Corporation ("Elikonas", "we", "our", or "us") respects your privacy and is committed to protecting it through our compliance with this policy. This policy describes how we collect, process, retain, and disclose personal data about you when providing services to you through our website located at https://elikonas.com/ and our associated applications and services that link to this policy (our "Services"). This policy also describes our practices for using, maintaining, protecting, and disclosing that information.</p>
+                <p>This policy applies only to information we collect through the Services.</p>
+                <p>It does not apply to information collected by:</p>
+                <ul>
+                    <li>Us offline or through any other means, including on any other website operated by Elikonas or any other party (including our affiliates and subsidiaries) that does not link to this policy; or</li>
+                    <li>Any third party (including our affiliates and subsidiaries), including through any application or content (including advertising) that may link to or be accessible from or through the Services.</li>
+                </ul>
+                <p>Please read this policy carefully to understand our policies and practices regarding your information and how we treat it. By interacting with our Services or providing us with your information, you agree to the collection, use, and sharing of your information as described in this privacy policy. This policy may change from time to time (see Changes to Our Privacy Policy). Your continued use of the Services after we make changes as described here is deemed to be acceptance of those changes, so please check the policy periodically for updates.</p>
+
+                <h2>Children's and Minors' Data</h2>
+                <p>Our Services are not intended for, and we do not knowingly collect any personal data from, children under the age of 18. If we learn we have collected or received personal data from a child under 18 years old, we will delete that information.</p>
+
+                <h2>The Personal Data That We Collect or Process</h2>
+                <p>"Personal data" is information that identifies, relates to, or describes, directly or indirectly, you as an individual, such as your name, email address, telephone number, home address, city and country information, or payment information.</p>
+                <p>The types and categories of personal data we collect or process include:</p>
+                <ul>
+                    <li>Account and contact information, including name, email address, phone number (collected optionally for SMS notifications, with your consent), city, state, country, username, and other contact information you provide us.</li>
+                    <li>Account history, including information about your use of the Services, your learning records, education units, and AI Learning Guide ("Eli") conversation history.</li>
+                    <li>Demographic information, including your age, gender, or education.</li>
+                    <li>Location information, including general geographic location such as country, state or province, or city.</li>
+                    <li>Device information, including your IP address, device identifiers, operating system and version, preferred language, hardware identifiers, browser type and settings, and other device information.</li>
+                    <li>Content and information you elect to provide as part of your profile, including any posts or content you share through the platform's community features. Please note that such posts or content may be visible to other users within your network or publicly, depending on your settings. You should exercise discretion in deciding what personal information to share in such content. Please see our <a href="community-guidelines.html">Community Guidelines</a> for more information.</li>
+                </ul>
+                <p>We also collect:</p>
+                <p><strong>Statistics or aggregated information.</strong> Statistical or aggregated data does not directly identify a specific person, but we may derive non-personal statistical or aggregated data from personal data. For example, we may aggregate personal data to calculate the percentage of users accessing a specific Services feature.</p>
+                <p><strong>Technical information.</strong> Technical information includes information about your internet connection and usage details about your interactions with the Services, such as clickstream information to, through, and from our Services (including date and time), products that you view or search for; page response times, download errors, length of your visits to certain pages, page interaction information (such as scrolling, clicks, and mouse-overs), or methods used to browse away from a page.</p>
+                <p>If we combine or connect non-personal statistical or technical data with personal data so that it directly or indirectly identifies an individual, we treat the combined information as personal information.</p>
+
+                <h2>How We Collect Your Personal and Other Data</h2>
+                <p><strong>You Provide Information to Us</strong></p>
+                <p>We collect information about you when you interact with our Services, such as when you create or update an account, participate in surveys, opt in to SMS notifications, or create, upload, or post content to the Services.</p>
+                <p><strong>Automatically Through Our Services</strong></p>
+                <p>As you navigate through and interact with our Services, we may use automatic data collection technologies to collect information that may include personal data. Information collected automatically may include usage details, IP addresses, operating system, and browser type, and information collected through cookies, web beacons, and other tracking technologies, including details of your interactions with our Services, such as traffic data, location data, logs, and other communication data, and which resources and Services features that you access and use.</p>
+                <p>Using automatic collection technologies helps us to improve our Services and to deliver a better and more personalized experience.</p>
+                <p>The technologies we use for this automatic data collection may include:</p>
+                <p><strong>Cookies.</strong> A cookie is a small file placed on your device when you interact with the Services. We may use both session cookies (which expire when you close your browser) and persistent cookies (which remain on your device until deleted). You may refuse to accept or disable cookies by activating the appropriate setting on your browser or device, or, if available, by managing your cookie preferences through any cookie consent mechanism we make available on the Services. However, if you disable cookies, you may be unable to access certain features of the Services.</p>
+                <p><strong>Web Beacons.</strong> Some parts of the Services may contain small electronic files known as web beacons (also referred to as clear gifs, pixel tags, and single-pixel gifs) that permit Elikonas, for example, to count users who have visited those parts and for other related statistics (for example, recording the popularity of certain content and verifying system and server integrity).</p>
+                <p>You may opt out of use of these automated technologies. Please note that some Services features may be unavailable as a result.</p>
+                <p>When you interact with the Services, there are third parties that may use automatic collection technologies to collect information about your or your device. These third parties may include:</p>
+                <ul>
+                    <li>Analytics companies.</li>
+                    <li>Your device manufacturer.</li>
+                    <li>Your internet or mobile service provider.</li>
+                    <li>Any other third parties you have authorized to collect information.</li>
+                </ul>
+                <p>These third parties may use tracking technologies to collect information about you when you use the Services. The information they collect may be associated with your personal data or they may collect information, including personal data, about your online activities over time and across different websites, apps, platforms, and other online services.</p>
+                <p>We do not control these third parties' tracking technologies or how they may be used. If you have any questions about an advertisement or other targeted content, you should contact the provider directly.</p>
+
+                <h2>How We Use Your Information</h2>
+                <p>We use information that we collect about you or that you provide to us, including any personal data, for the purposes described below. Our legal bases for processing your personal data include: (a) provide the Services; (b) our legitimate interests in operating, improving, and securing the Services; (c) your consent, where you have provided it; and (d) compliance with legal obligations. We use your information to:</p>
+                <ul>
+                    <li>Provide you with the Services and any contents, features, information, products, or services that we make available through the Services.</li>
+                    <li>Provide you with personalized learning experiences through our AI-powered features, including the Eli and its AI Pathway Builder, which generate suggestions based on your profile data, goals, interests, and learning records.</li>
+                    <li>Fulfill any other purpose for which you provide it.</li>
+                    <li>Provide you with notices about your account.</li>
+                    <li>Provide you with notifications in accordance with your selected preferences, including email and SMS notifications regarding Services updates, events, or promotional offerings, where you have opted in to receive such communications. You may opt out of SMS notifications at any time by replying "STOP" to any SMS message you receive from us, by updating your notification preferences within your account settings.</li>
+                    <li>Improve our Services, including by analyzing your information and creating aggregated data derived from your information to develop, maintain, analyze, improve, optimize, measure, and report on our Services and their features and how users interact with them.</li>
+                    <li>Notify you when Services updates are available and about changes to any products or services we offer or provide through them.</li>
+                    <li>Create and maintain user profiles within the Services. By default, user profiles are private and not visible to other users. As you add individuals to your network, certain profile information, such as your display name, profile photo, city, and country, may become visible to those individuals. You may control what information is set to public, visible within your network, or private through your account settings. No profile information is visible to the public unless you affirmatively choose to make it so.</li>
+                    <li>In any other way we may describe when you provide the information.</li>
+                    <li>For any other purpose with your consent.</li>
+                </ul>
+                <p>The usage information we collect, whether connected to your personal data or not, helps us improve our Services and deliver a better and more personalized experience by enabling us to:</p>
+                <ul>
+                    <li>Estimate our audience sizes and usage patterns.</li>
+                    <li>Store information about your preferences, allowing us to customize the Services according to your individual needs and interests.</li>
+                    <li>Speed up your searches.</li>
+                    <li>Recognize you when you return to our Services.</li>
+                </ul>
+
+                <h2>Who We Disclose Your Information To</h2>
+                <p>We may disclose aggregated information about our users, and information that does not identify any individual, without restriction.</p>
+                <p>We may also disclose personal data that we collect, or you provide, as described in this privacy policy to:</p>
+                <ul>
+                    <li>Our subsidiaries, affiliates, successors and assigns.</li>
+                    <li>Contractors, service providers, and other third parties we use to support our organization, including cloud infrastructure providers, payment processors, email marketing platforms, analytics providers, and AI service providers, who are bound by contractual obligations to keep personal data confidential and use it only for the purposes for which we disclose it to them. Where you enroll in services offered by third-party education vendors integrated into the Services, you may be directed to such vendor's own platform to manage your information, and any data you provide to such vendor will be subject to that vendor's own privacy policy.</li>
+                    <li>Parties to fulfill the purpose for which you provide it.</li>
+                    <li>Parties for any other purpose disclosed by us when you provide the information.</li>
+                    <li>Parties with your consent.</li>
+                </ul>
+                <p>We may also disclose your personal data:</p>
+                <ul>
+                    <li>To comply with any court order, law, or legal process, including to respond to any government or regulatory request.</li>
+                    <li>To enforce or apply any future terms of use or code of conduct.</li>
+                    <li>If we believe disclosure is necessary or appropriate to protect the rights, property, or safety of our organization or others.</li>
+                </ul>
+                <p>The categories of personal data we may disclose include:</p>
+                <ul>
+                    <li>Account and contact information.</li>
+                    <li>Account history.</li>
+                    <li>Demographic information.</li>
+                    <li>Device information.</li>
+                    <li>Content and information you elect to provide to us.</li>
+                </ul>
+                <p><strong>International Data Transfers Disclaimer.</strong> Our Services are operated in the United States. If you are located outside the United States, please be aware that any information you provide to us, including personal data, may be transferred to, stored, and processed in the United States or other jurisdictions where our service providers operate.</p>
+
+                <h2>Your State Privacy Rights</h2>
+                <p>Depending on your state of residency, you may have certain rights related to your personal data under applicable law. These rights may include:</p>
+                <p><strong>Access and Data Portability.</strong> You may confirm whether we process your personal data and access a copy of the personal data we process. To the extent feasible and required by state law, depending on your state, data will be provided in a portable format. Depending on your state, you may have the right to receive additional information, and it will be included in the response to your access request.</p>
+                <p><strong>Correction.</strong> You may request that we correct inaccuracies in your personal data that we maintain, taking into account the information's nature and processing purpose.</p>
+                <p><strong>Deletion.</strong> You may request that we delete personal data about you that we maintain. Deletion requests will be fulfilled in accordance with applicable law.</p>
+                <p><strong>Personal Data for Targeted Advertising, Profiling, and Sales.</strong> We do not use your data for these purposes as of the date of this policy.</p>
+                <p><strong>Important:</strong> The exact scope of these rights varies by state. There are also several exceptions where we may not have an obligation to fulfill your request.</p>
+                <p>To exercise any of these rights, please submit a request via email to <a href="mailto:support@elikonas.com">support@elikonas.com</a>. We will fulfill access requests in accordance with applicable law. To appeal a decision regarding a consumer rights request, resubmit your request, and we will escalate internally and respond in accordance with applicable law. If you are unsuccessful on appeal you may contact your state attorney general in connection with the denial.</p>
+
+                <h2>How We Protect Your Personal Data</h2>
+                <p>We use commercially reasonable administrative, physical, and technical measures designed to protect your personal data from accidental loss or destruction and from unauthorized access, use, alteration, and disclosure. However, no website, mobile application, system, electronic storage, or online service is completely secure, and we cannot guarantee the security of your personal data transmitted to, through, using, or in connection with the Services. In particular, email, texts, and chats sent to or from the Services may not be secure, and you should carefully decide what information you send to us via such communications channels. Any transmission of personal data is at your own risk.</p>
+                <p>The safety and security of your information also depends on you. You are responsible for taking steps to protect your personal data against unauthorized use, disclosure, and access.</p>
+
+                <h2>How We Retain Your Personal Data</h2>
+                <p>We keep the categories of personal data described in this policy for as long as reasonably necessary to fulfill the purposes described (or as otherwise legally permitted or required), such as maintaining the Services, operating our organization, complying with our legal obligations, resolving disputes, and for safety, security, and fraud prevention. This means that we consider our legal and business obligations, potential risks of harm, and nature of the information when deciding how long to retain personal data. At the end of the retention period, personal data will be deleted, destroyed, or deidentified.</p>
+
+                <h2>Changes to Our Privacy Policy</h2>
+                <p>We may update this policy from time to time, and we will provide notice of any such changes to the policy as required by law. The date the privacy policy was last updated is identified at the top of the page. We will notify you of changes to this policy by updating the "last updated" date and posting the updated policy on the Services. We may email or otherwise communicate reminders about this policy, but you should check our Services periodically to see the current policy and any changes we have made to it.</p>
+
+                <h2>AI Policy</h2>
+                <p>For more information on our AI practices, please see our <a href="ai-usage-policy.html">AI Usage Policy</a>.</p>
+
+                <h2>Contact Information</h2>
+                <p>To exercise your rights or ask questions or comment about this privacy policy or our privacy practices, contact us at: <a href="mailto:support@elikonas.com">support@elikonas.com</a></p>
+            </div>
+
+            <div class="version-history">
+                <h2 class="version-history-title">Version History</h2>
+                <div class="version-entry is-current">
+                    <div class="version-entry-header">
+                        <h3>Version 1</h3>
+                        <span class="version-badge">Current</span>
+                    </div>
+                    <div class="version-entry-date">June 24, 2026</div>
+                    <ul>
+                        <li>Initial publication of this policy.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="back-to-governance"><a href="/">&larr; Back to Governance</a></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.shape');
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.0005;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                shape.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+    <script src="https://helloskip.com/agent.js" data-agent-id="JgvQjunMZL0PD1J81u0H"></script>
+    <!-- Start of HubSpot Embed Code -->
+      <script type="text/javascript" id="hs-script-loader" async defer src="//js-na2.hs-scripts.com/245593327.js"></script>
+    <!-- End of HubSpot Embed Code -->
+<!-- SITE-FOOTER-START -->
+    <footer class="site-footer">
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h3>Mission</h3>
+                <div class="footer-divider"></div>
+                <p>Elikonas is a Public Benefit Corporation, legally committed to
+                   expanding equitable access to education and workforce development.</p>
+                <a href="../mission.html">Learn more about our mission &rarr;</a>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <div class="footer-divider"></div>
+                <ul>
+                    <li><a href="/subscribe.html">Subscribe to Our Newsletter</a></li>
+                    <li><a href="mailto:support@elikonas.com">Contact Us</a></li>
+                    <li><a href="../careers.html">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+            <div class="social-links">
+                <a href="https://x.com/elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-x.svg" alt="X (Twitter)">
+                </a>
+                <a href="https://www.facebook.com/elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-fb.svg" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com/elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-ig.svg" alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com/company/elikonas" class="social-link">
+                    <img src="../assets/images/social-in.svg" alt="LinkedIn">
+                </a>
+                <a href="https://youtube.com/@elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-yt.svg" alt="YouTube">
+                </a>
+            </div>
+        <div class="footer-bottom">&copy; 2026 Elikonas Public Benefit Corporation</div>
+    </footer>
+<!-- SITE-FOOTER-END -->
+</body>
+</html>

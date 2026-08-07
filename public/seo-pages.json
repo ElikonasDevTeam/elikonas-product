@@ -1,0 +1,52 @@
+{
+  "site_url": "https://elikonas.com",
+  "default_image": "assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png",
+  "organization": {
+    "name": "Elikonas",
+    "sameAs": [
+      "https://x.com/elikonasmuse",
+      "https://www.facebook.com/elikonasmuse",
+      "https://www.linkedin.com/company/elikonas",
+      "https://youtube.com/@elikonasmuse",
+      "https://www.instagram.com/elikonasmuse"
+    ]
+  },
+  "pages": {
+    "index.html": {
+      "description": "Elikonas is a learner-owned educational record platform for non-traditional learners — a portable, lifelong record of everything you've learned, guided by AI."
+    },
+    "blog.html": {
+      "description": "Insights on non-traditional learning, portable credentials, and the future of how skills get recognized — from the Elikonas team."
+    },
+    "stories.html": {
+      "description": "Real stories from non-traditional learners building lifelong, portable records of everything they know — outside the traditional degree path."
+    },
+    "roadmap.html": {
+      "description": "See what's next for Elikonas — the learner-owned platform giving non-traditional learners a permanent, portable record of their skills."
+    },
+    "mission.html": {
+      "description": "Elikonas is a Public Benefit Corporation, legally committed to expanding equitable access to education and workforce development."
+    },
+    "careers.html": {
+      "description": "Elikonas isn't hiring yet, but we will be. Tell us you're interested and we'll reach out when there's an opening."
+    },
+    "subscribe.html": {
+      "description": "Sign up to hear about Elikonas' progress before you're able to create an account."
+    },
+    "governance/index.html": {
+      "description": "Elikonas exists to give every learner a record they can trust — one that belongs to the user, for as long as they want it. Here's how we govern this site."
+    },
+    "governance/privacy.html": {
+      "description": "What personal information Elikonas collects, how we use it, and the choices you have about it."
+    },
+    "governance/terms.html": {
+      "description": "The agreement between you and Elikonas that governs your use of the website and platform."
+    },
+    "governance/community-guidelines.html": {
+      "description": "How we treat each other at Elikonas — what's welcome, what's not, and how we handle concerns."
+    },
+    "governance/ai-usage-policy.html": {
+      "description": "How Elikonas uses AI — in the platform and internally — and what we commit to as we do."
+    }
+  }
+}

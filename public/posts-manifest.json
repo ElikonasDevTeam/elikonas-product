@@ -1,0 +1,151 @@
+{
+  "posts": [
+    {
+      "file": "post_20260114_what-is-elikonas.html",
+      "title": "What is Elikonas?",
+      "date": "2026-01-14",
+      "category": "insight",
+      "description": "Discover a new way to \"do\" college one that starts with curiosity instead of credentials."
+    },
+    {
+      "file": "post_20260120_whats-in-a-name.html",
+      "title": "What's in a Name?'",
+      "date": "2026-01-20",
+      "category": "insight",
+      "description": "How did Elikonas get its name and how does that apply to the logo?"
+    },
+    {
+      "file": "post_20260204_what-elikonas-is-not.html",
+      "title": "What Elikonas is Not",
+      "date": "2026-02-04",
+      "category": "insight",
+      "description": "Defining a new approach to formal education by breaking common conceptions."
+    },
+    {
+      "file": "post_20260218_whats-your-college-story.html",
+      "title": "You're Invited: What's Your College Story?",
+      "date": "2026-02-18",
+      "category": "story",
+      "description": "Join us to share your college story! Some went to college. Some didn't. Some have been successful regardless."
+    },
+    {
+      "file": "post_20260323_isara-witten-college-story.html",
+      "title": "She Couldn't Always See the Board, But Never Lost Sight of Her Goal",
+      "date": "2026-03-23",
+      "category": "story",
+      "description": "Episode 1 recap of What's Your College Story? — Isara Witten, a Computer Science student and Elikonas collaborator, shares her visually impaired path through a non-linear education journey."
+    },
+    {
+      "file": "post_20260326_troy-kindle-college-story.html",
+      "title": "Finding Purpose in Helping People Thrive",
+      "date": "2026-03-26",
+      "category": "story",
+      "description": "Episode 2 recap of What's Your College Story? — Troy Kindle, an L&D professional, shares his journey from the military to law enforcement to discovering his true calling in learning and development."
+    },
+    {
+      "file": "post_20260408_maslows-needs.html",
+      "title": "Why Learning Stalls: Maslow's Hierarchy of Needs and What It Means for Your Career Path",
+      "date": "2026-04-08",
+      "category": "insight",
+      "description": "When your basic needs aren't met, your brain can't focus on growth. Here's what that means for career change — and how Elikonas helps."
+    },
+    {
+      "file": "post_20260416_mark-sheppard-college-story.html",
+      "title": "From Architecture Dreams to a Master's in His Field",
+      "date": "2026-04-16",
+      "category": "story",
+      "description": "Episode 3 recap of What's Your College Story? — Mark Sheppard, L&D Lead at General Motors, shares his winding path from architecture school rejection to a master's degree and nearly 40 years in learning and development."
+    },
+    {
+      "file": "post_20260420_anabasis-hot-seat.html",
+      "title": "I Signed Up to Be in the Hot Seat. It Was Exactly as Warm as Advertised.",
+      "date": "2026-04-20",
+      "category": "insight",
+      "description": "Katie Stroud joins Sid Mohasseb of Anabasis Academy for a Hot Seat session — and gets a useful, humbling lesson in the difference between planning to learn and planning to feel safe."
+    },
+    {
+      "file": "post_20260421_look-for-the-helpers.html",
+      "title": "Look for the Helpers",
+      "date": "2026-04-21",
+      "category": "insight",
+      "description": "There's real fear building around AI. Fred Rogers had advice for moments like this — and it still applies."
+    },
+    {
+      "file": "post_20260423_karen-hyder.html",
+      "title": "Chronically Unwilling to Guild Master",
+      "date": "2026-04-23",
+      "category": "story",
+      "description": "Episode 4 of What's Your College Story? — Virtual learning pioneer and eLearning Guild Master Karen Hyder tells her own story, from a Catholic school in Buffalo to shaping how the world teaches online."
+    },
+    {
+      "file": "post_20260428_hot-seat-followup.html",
+      "title": "What the Hot Seat Taught Me About My Own Business",
+      "date": "2026-04-28",
+      "category": "insight",
+      "description": "A follow-up to my Anabasis Academy Hot Seat session — and the one question that finally helped me communicate what Elikonas is really for."
+    },
+    {
+      "file": "post_20260507_christabel-behr.html",
+      "title": "Christabel Behr: The Plant Lady",
+      "date": "2026-05-07",
+      "category": "story",
+      "description": "Episode 5 of What's Your College Story? — Landscape designer Christabel Behr shares her winding path from a childhood dream of college to becoming the Plant Lady — through Running Start, floristry, horticulture, permaculture, and a boss who handed her a catalog and said 'figure it out.'"
+    },
+    {
+      "file": "post_20260510_mothers-day.html",
+      "title": "Turning the Tides — For All the Moms",
+      "date": "2026-05-10",
+      "category": "insight",
+      "description": "When I graduated from the University of Washington, my mom greeted me with tears. That day meant more to her than it did to me and I didn't realize why until…"
+    },
+    {
+      "file": "post_20260514_john-edward-ryan.html",
+      "title": "John Edward Ryan: Live for Your Calling",
+      "date": "2026-05-14",
+      "category": "story",
+      "description": "Episode 6 of What's Your College Story? — Financial coach John Edward Ryan never went to college. He went to the factory floor instead — and spent 28 years becoming a toolmaker, a leader, and eventually the creator of Shop Class, a framework for building the life you actually want."
+    },
+    {
+      "file": "post_20260526_memorial-day.html",
+      "title": "Land of the Free Because of the Brave",
+      "date": "2026-05-26",
+      "category": "insight",
+      "description": "I was on a road trip the week before Memorial Day in the US. I reflect on the meaning of Memorial Day, what it means for me personally and for all of those…"
+    },
+    {
+      "file": "post_20260528_fermina-cotterell.html",
+      "title": "Fermina Cotterell: She Made It Matter",
+      "date": "2026-05-28",
+      "category": "story",
+      "description": "Episode 7 of What's Your College Story? — Fermina Cotterell was pulled out of school in 10th grade, put to work at 15, and told her whole life that nothing she did mattered. She spent the next few decades proving that wrong — and passing something different on to her daughters."
+    },
+    {
+      "file": "post_20260611_mohammed-alguthmi.html",
+      "title": "Mohammed Alguthmi: The Cellist Who Lit the Way",
+      "date": "2026-06-11",
+      "category": "story",
+      "description": "Episode 8 of What's Your College Story? — Mohammed Alguthmi ran a plastics factory in Riyadh and had a master's degree in business. Then divorce, grief, and a cello changed everything — and eventually led him to invent a tool that could change how the world learns string instruments."
+    },
+    {
+      "file": "post_20260704_250years.html",
+      "title": "Two Hundred and Fifty Years of Unfinished Promise",
+      "date": "2026-07-04",
+      "category": "insight",
+      "description": "On America's 250th, a reflection on what the founding promise of opportunity still leaves unfinished — and why building a way for you to own your learning, no…"
+    },
+    {
+      "file": "post_20260716_noah-homsley.html",
+      "title": "Noah Homsley: Never Say No",
+      "date": "2026-07-16",
+      "category": "story",
+      "description": "Episode 9 of What's Your College Story? — Noah Homsley, known on air as Porkchop, tried three colleges and finished none of them. Then he walked past a student radio station one sunny afternoon in Portland, and nearly 30 years later he's still on the air."
+    },
+    {
+      "file": "post_20260723_kristin-mitchell.html",
+      "title": "Kristin Mitchell: No Plan B",
+      "date": "2026-07-23",
+      "category": "story",
+      "description": "Episode 10 of What's Your College Story? — Kristin Mitchell decided at age five she was going to train dolphins. She never changed her mind. What followed was years of unpaid internships, a hurricane, a killer whale department, two dolphins named Rose and Luna — and one of the most honest accounts of what it actually takes to chase a dream."
+    }
+  ]
+}

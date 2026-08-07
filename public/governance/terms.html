@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+      // Disable HubSpot's default cookie banner
+      window.disableHubSpotCookieBanner = true;
+      window._hsp = window._hsp || [];
+
+      const setHubSpotConsent = (consentDetails) => {
+        window._hsp.push(["setHubSpotConsent", consentDetails]);
+      };
+
+      const getConsentDetails = ({ analytics, advertisement, functional }) => ({
+        analytics: !!analytics,
+        advertisement: !!advertisement,
+        functionality: !!functional,
+      });
+
+      document.addEventListener("cookieyes_banner_load", ({ detail }) => {
+        if (!detail || !detail.categories) return;
+        setHubSpotConsent(getConsentDetails(detail.categories));
+      });
+
+      document.addEventListener("cookieyes_consent_update", ({ detail }) => {
+        if (!detail || !detail.categories) return;
+        setHubSpotConsent(getConsentDetails(detail.categories));
+      });
+    </script>
+    <!-- Start cookieyes banner -->
+    <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/8991d2cf76f366b01f801203893e9ec9/script.js"></script>
+    <!-- End cookieyes banner -->
+
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="../assets/images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SEO-META-START -->
+    <meta name="description" content="The agreement between you and Elikonas that governs your use of the website and platform.">
+    <link rel="canonical" href="https://elikonas.com/governance/terms.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Terms of Service - Elikonas">
+    <meta property="og:description" content="The agreement between you and Elikonas that governs your use of the website and platform.">
+    <meta property="og:url" content="https://elikonas.com/governance/terms.html">
+    <meta property="og:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Terms of Service - Elikonas">
+    <meta name="twitter:description" content="The agreement between you and Elikonas that governs your use of the website and platform.">
+    <meta name="twitter:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
+<!-- SEO-META-END -->
+    <title>Terms of Service - Elikonas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../global-styles.css">
+    <style>
+        body { overflow-x: hidden; }
+        .doc-container { display: flex; flex-direction: column; align-items: center; padding: 7rem 1.5rem 4rem 1.5rem; position: relative; width: 100%; }
+        .doc-content { max-width: 720px; width: 100%; }
+        .doc-breadcrumb { text-align: center; margin-bottom: 1.25rem; font-size: 0.9rem; }
+        .doc-breadcrumb a { color: var(--teal-ink); text-decoration: none; }
+        .doc-breadcrumb a:hover { text-decoration: underline; }
+        .doc-title { font-family: 'Crimson Pro', serif; font-size: 2.25rem; font-weight: 700; text-align: center; margin-bottom: 0.5rem; color: var(--fg); }
+        .doc-meta { text-align: center; color: var(--fg-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+        .doc-pdf-link { text-align: center; margin-bottom: 3rem; }
+        .doc-pdf-link a { color: var(--teal-ink); text-decoration: none; font-size: 0.9rem; }
+        .doc-pdf-link a:hover { text-decoration: underline; }
+        .doc-body { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 16px; padding: 2.5rem; line-height: 1.75; margin-bottom: 3rem; color: var(--fg); }
+        .doc-body h2 { font-family: 'Crimson Pro', serif; font-size: 1.4rem; margin: 1.75rem 0 0.85rem 0; color: var(--dark-teal); }
+        .doc-body h2:first-child { margin-top: 0; }
+        .doc-body p { margin-bottom: 1rem; }
+        .doc-body ul { margin: 0 0 1rem 1.25rem; }
+        .doc-body li { margin-bottom: 0.5rem; }
+        .doc-body a, .doc-body a:visited { color: var(--teal-ink); }
+        .version-history { margin-bottom: 1rem; }
+        .version-history-title { font-family: 'Crimson Pro', serif; font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; color: var(--fg); }
+        .version-entry { background: var(--surface); border: 1px solid var(--surface-border); border-left: 4px solid var(--gold); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+        .version-entry.is-current { border-left-color: var(--gold); background: rgba(255, 200, 87, 0.12); }
+        .version-entry-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
+        .version-entry-header h3 { font-size: 1.05rem; color: var(--fg); }
+        .version-badge { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--gold); color: #084c61; padding: 0.2rem 0.6rem; border-radius: 50px; font-weight: 700; }
+        .version-entry-date { font-size: 0.85rem; color: var(--fg-muted); }
+        .version-entry ul { margin: 0.5rem 0 0 1.1rem; font-size: 0.95rem; color: var(--fg-muted); }
+        .version-entry li { margin-bottom: 0.35rem; }
+        .back-to-governance { text-align: center; margin-top: 2.5rem; }
+        .back-to-governance a { color: var(--teal-ink); text-decoration: none; font-size: 0.95rem; }
+        .back-to-governance a:hover { text-decoration: underline; }
+        @media (max-width: 600px) {
+            .doc-title { font-size: 1.7rem; }
+            .doc-body { padding: 1.75rem; }
+            .version-entry-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="../blog.html">Insights</a></li>
+            <li><a href="../stories.html">Stories</a></li>
+            <li><a href="../roadmap.html">Roadmap</a></li>
+            <li><a href="https://elikonas.com/governance/index.html" class="active">Governance</a></li>
+        </ul>
+    </nav>
+
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="doc-container">
+        <div class="doc-content">
+            <div class="doc-breadcrumb"><a href="/">&larr; Back to Governance</a></div>
+            <h1 class="doc-title">Terms of Service</h1>
+            <div class="doc-meta">Current version: v1 &middot; Last updated June 24, 2026</div>
+            <div class="doc-pdf-link"><a href="/assets/files/terms-of-service.pdf" target="_blank" rel="noopener">Download PDF version</a></div>
+
+            <div class="doc-body">
+                <h2>Acceptance of the Terms of Service</h2>
+                <p>These Terms of Service are entered into by and between you and Elikonas, a Delaware public benefit corporation ("Elikonas," "we," or "us"). The following terms and conditions, together with any documents they expressly incorporate by reference (collectively, "Terms of Service"), govern your access to and use of elikonas.com (the "Website"), including any content, functionality, and services offered on or through the Elikonas platform (the "Platform"), whether as a guest or a registered user.</p>
+                <p>Please read the Terms of Service carefully before you start to use the Platform. By using the Platform, you accept and agree to be bound and abide by these Terms of Service, and all other terms and policies applicable to your use of the Platform, including, without limitation, our <a href="privacy.html">Privacy Policy</a>, our <a href="community-guidelines.html">Community Guidelines</a>, and our <a href="ai-usage-policy.html">AI Usage Policy</a> (all incorporated herein by reference). If you do not want to agree to these Terms of Service or the referenced policies, you must not access or use the Platform.</p>
+                <p>The Platform is offered and available to users who are 18 years of age or older. By using the Platform, you represent and warrant that you are 18 years of age or older.</p>
+
+                <h2>Changes to the Terms of Service</h2>
+                <p>We may revise and update these Terms of Service from time to time in our sole discretion. All changes are effective immediately when posted. Your continued use of the Platform following the posting of revised Terms of Service means that you accept and agree to the changes. You are expected to check this page from time to time so you are aware of any changes, as they are binding on you.</p>
+
+                <h2>Accessing the Platform and Account Security</h2>
+                <p>We reserve the right to withdraw or amend the Platform, and any service or material we provide on the Platform, in our sole discretion without notice. We will not be liable if for any reason all or any part of the Platform is unavailable at any time or for any period. From time to time, we may restrict user access, including registered user access, to some or all of the Platform.</p>
+                <p>You are responsible for both:</p>
+                <ul>
+                    <li>Making all arrangements necessary for you to have access to the Platform.</li>
+                    <li>Ensuring that all persons who access the Platform through your internet connection are aware of these Terms of Service and comply with them.</li>
+                </ul>
+                <p>To access the Platform or some of the resources it offers, you may be asked to provide certain registration details or other information. Registration requires a username, first name, last name, email address, city, state, country, and optionally a phone number. It is a condition of your use of the Platform that all information you provide is correct, current, and complete. You agree that all information you provide to register with the Platform is governed by our <a href="privacy.html">Privacy Policy</a>, and you consent to all actions we take with respect to your information consistent with our Privacy Policy. Public-facing pages, including marketing content and our blog, are accessible without registration. Full platform features require a registered account.</p>
+                <p>If you choose, or are provided with, a username, password, or any other piece of information as part of our security procedures, you must treat such information as confidential, and you must not disclose it to any other person or entity. You also acknowledge that your account is personal to you and agree not to provide any other person with access to the Platform or portions of it using your username, password, or other security information. You agree to notify us immediately of any unauthorized access to or use of your username or password or any other breach of security. You also agree to ensure that you exit from your account at the end of each session. You should use particular caution when accessing your account from a public or shared computer so that others are not able to view or record your password or other personal information.</p>
+                <p>We have the right to disable any username, password, or other identifier, whether chosen by you or provided by us, at any time if, in our opinion, you have violated any provision of these Terms of Service.</p>
+
+                <h2>Intellectual Property Rights</h2>
+                <p>The Platform and its entire contents, features, and functionality (including but not limited to all information, software, text, displays, images, video, and audio, and the design, selection, and arrangement thereof) are owned by Elikonas, its licensors, or other providers of such material and are protected by United States and international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.</p>
+                <p>These Terms of Service permit you to use the Platform for your personal, non-commercial use only. You must not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any of the material on our Platform, except as follows:</p>
+                <ul>
+                    <li>Your computer may temporarily store copies of such materials in RAM incidental to your accessing and viewing those materials.</li>
+                    <li>You may store files that are automatically cached by your Web browser for display enhancement purposes.</li>
+                    <li>You may print or download one copy of a reasonable number of pages of the Platform for your own personal, non-commercial use and not for further reproduction, publication, or distribution.</li>
+                </ul>
+                <p>You must not:</p>
+                <ul>
+                    <li>Modify copies of any materials from this site.</li>
+                    <li>Delete or alter any copyright, trademark, or other proprietary rights notices from copies of materials from this site.</li>
+                </ul>
+                <p>You must not access or use for any commercial purposes any part of the Platform or any services or materials available through the Platform.</p>
+                <p>If you print, copy, modify, download, or otherwise use or provide any other person with access to any part of the Platform in breach of the Terms of Service, your right to use the Platform will stop immediately and you must, at our option, return or destroy any copies of the materials you have made. No right, title, or interest in or to the Platform or any content on the Platform is transferred to you, and all rights not expressly granted are reserved by Elikonas. Any use of the Platform not expressly permitted by these Terms of Service is a breach of these Terms of Service and may violate copyright, trademark, and other laws.</p>
+
+                <h2>Trademarks</h2>
+                <p>The "Elikonas" name and logo, "Eli" (the name of Elikonas's AI Learning Guide), "Master your craft!" (tagline), and all related names, logos, product and service names, designs, and slogans are trademarks or service marks of Elikonas, whether or not formally registered. You must not use such marks without the prior written permission of Elikonas. All other names, logos, product and service names, designs, and slogans on the Platform are the trademarks of their respective owners.</p>
+
+                <h2>Prohibited Uses</h2>
+                <p>You may use the Platform only for lawful purposes and in accordance with these Terms of Service and the <a href="community-guidelines.html">Community Guidelines</a>, incorporated herein by reference. You agree not to use the Platform:</p>
+                <ul>
+                    <li>In any way that violates any applicable federal, state, local, or international law or regulation (including, without limitation, any laws regarding the export of data or software to and from the US or other countries).</li>
+                    <li>For the purpose of exploiting, harming, or attempting to exploit or harm minors in any way by exposing them to inappropriate content, asking for personally identifiable information, or otherwise.</li>
+                    <li>To send, knowingly receive, upload, download, use, or re-use any material that does not comply with our Community Guidelines.</li>
+                    <li>To impersonate or attempt to impersonate Elikonas, an Elikonas employee, another user, or any other person or entity (including, without limitation, by using email addresses associated with any of the foregoing).</li>
+                    <li>To engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the Platform, or which, as determined by us, may harm Elikonas or users of the Platform, or expose them to liability.</li>
+                </ul>
+                <p>Additionally, you agree not to:</p>
+                <ul>
+                    <li>Use the Platform in any manner that could disable, overburden, damage, or impair the Website or interfere with any other party's use of the Platform, including their ability to engage in real time activities through the Platform.</li>
+                    <li>Use any robot, spider, or other automatic device, process, or means to access the Platform for any purpose, including monitoring or copying any of the material on the Platform.</li>
+                    <li>Use any manual process to monitor or copy any of the material on the Platform, or for any other purpose not expressly authorized in these Terms of Service, without our prior written consent.</li>
+                    <li>Use any device, software, or routine that interferes with the proper working of the Platform.</li>
+                    <li>Introduce any viruses, Trojan horses, worms, logic bombs, or other material that is malicious or technologically harmful.</li>
+                    <li>Attempt to gain unauthorized access to, interfere with, damage, or disrupt any parts of the Platform, the server on which the Platform is stored, or any server, computer, or database connected to the Platform.</li>
+                    <li>Attack the Platform via a denial-of-service attack or a distributed denial-of-service attack.</li>
+                    <li>Otherwise attempt to interfere with the proper working of the Platform.</li>
+                </ul>
+
+                <h2>User Contributions</h2>
+                <p>The Platform includes interactive features (collectively, "Interactive Services") that allow users to post, submit, publish, display, or transmit content to other users or third parties ("post"). These features include user learner profiles, a community feed, connection and networking features, and an AI-powered learning pathway builder. Content or materials posted by users are referred to as "User Contributions."</p>
+                <p>All User Contributions must comply with our Community Guidelines.</p>
+                <p>Users retain ownership of their User Contributions at all times. By providing any User Contribution on the Platform, you grant Elikonas and its licensees, successors, and assigns a limited, non-exclusive, royalty-free license to use, reproduce, modify, perform, display, distribute, and otherwise disclose such material solely to the extent necessary to operate the Platform and consistent with your account privacy settings. Content you designate as private or network-only will not be used by Elikonas for any public-facing purpose. Content you designate as public may be used by Elikonas for platform promotion, subject to your right to opt out at any time through your account settings.</p>
+                <p>You represent and warrant that:</p>
+                <p>You own or control all rights in and to the User Contributions and have the right to grant the license granted above to us and our licensees, successors, and assigns.</p>
+                <p>All of your User Contributions do and will comply with these Terms of Service.</p>
+                <p>You understand and acknowledge that you are responsible for any User Contributions you submit or contribute, and you, not Elikonas, have full responsibility for such content, including its legality, reliability, accuracy, and appropriateness.</p>
+                <p>We are not responsible or liable to any third party for the content or accuracy of any User Contributions posted by you or any other user of the Platform.</p>
+
+                <h2>Monitoring and Enforcement; Termination</h2>
+                <p>We have the right to:</p>
+                <p>Remove or refuse to post any User Contributions in our sole discretion.</p>
+                <p>Take any action with respect to any User Contribution that we deem necessary or appropriate in our sole discretion, including if we believe that such User Contribution violates the Terms of Service, our Community Guidelines, any intellectual property right or other right of any person or entity, threatens the personal safety of users of the Platform or the public, or could create liability for Elikonas.</p>
+                <p>Disclose your identity or other information about you to any third party who claims that material posted by you violates their rights, including their intellectual property rights or their right to privacy.</p>
+                <p>Take appropriate legal action, including without limitation, referral to law enforcement, for any illegal or unauthorized use of the Platform.</p>
+                <p>Terminate or suspend your access to all or part of the Platform for any violation of these Terms of Service.</p>
+                <p>Without limiting the foregoing, we have the right to cooperate fully with any law enforcement authorities or court order requesting or directing us to disclose the identity or other information of anyone posting any materials on or through the Platform. YOU WAIVE AND HOLD HARMLESS ELIKONAS AND ITS AFFILIATES, LICENSEES, AND SERVICE PROVIDERS FROM ANY CLAIMS RESULTING FROM ANY ACTION TAKEN BY ANY OF THE FOREGOING PARTIES DURING, OR TAKEN AS A CONSEQUENCE OF, INVESTIGATIONS BY EITHER SUCH PARTIES OR LAW ENFORCEMENT AUTHORITIES.</p>
+                <p>However, we cannot review material before it is posted on the Platform and cannot ensure prompt removal of objectionable material after it has been posted. Accordingly, we assume no liability for any action or inaction regarding transmissions, communications, or content provided by any user or third party. We have no liability or responsibility to anyone for performance or nonperformance of the activities described in this section.</p>
+
+                <h2>Reliance on Information Posted</h2>
+                <p>The information presented on or through the Platform is made available solely for general information purposes. In addition to any disclaimers you may see while using the Platform, we do not warrant the accuracy, completeness, or usefulness of this information. Any reliance you place on such information is strictly at your own risk. We disclaim all liability and responsibility arising from any reliance placed on such materials by you or any other visitor to the Platform, or by anyone who may be informed of any of its contents.</p>
+                <p>The Platform may include content provided by third parties, including materials provided by other users and third-party licensors, syndicators, aggregators, and/or reporting services. All statements and/or opinions expressed in these materials, and all articles and responses to questions and other content, other than the content provided by Elikonas, are solely the opinions and the responsibility of the person or entity providing those materials. These materials do not necessarily reflect the opinion of Elikonas. We are not responsible, or liable to you or any third party, for the content or accuracy of any materials provided by any third parties.</p>
+
+                <h2>Changes to the Platform</h2>
+                <p>We may update the content on the Platform from time to time, but its content is not necessarily complete or up-to-date. Any of the material on the Platform may be out of date at any given time, and we are under no obligation to update such material.</p>
+
+                <h2>Information About You and Your Visits to the Platform</h2>
+                <p>All information we collect on the Platform is subject to our <a href="privacy.html">Privacy Policy</a>. By using the Platform, you consent to all actions taken by us with respect to your information in compliance with the Privacy Policy.</p>
+
+                <h2>Links from the Platform</h2>
+                <p>If the Platform contains links to other sites and resources provided by third parties, these links are provided for your convenience only. This includes links contained in advertisements, including banner advertisements and sponsored links. We have no control over the contents of those sites or resources and accept no responsibility for them or for any loss or damage that may arise from your use of them. If you decide to access any of the third-party websites linked to the Platform, you do so entirely at your own risk and subject to the terms and conditions of use for such websites.</p>
+
+                <h2>Geographic Restrictions</h2>
+                <p>Elikonas is headquartered in the United States and intends to serve users globally. We make no representation that the Platform or any of its content is appropriate or legally available in every jurisdiction. Your access to the Platform is on your own initiative, and you are responsible for compliance with all applicable local laws and regulations.</p>
+
+                <h2>Disclaimer of Warranties</h2>
+                <p>You understand that we cannot and do not guarantee or warrant that files available for downloading from the internet or the Platform will be free of viruses or other destructive code. You are responsible for implementing sufficient procedures and checkpoints to satisfy your particular requirements for anti-virus protection and accuracy of data input and output, and for maintaining a means external to our site for any reconstruction of any lost data. TO THE FULLEST EXTENT PROVIDED BY LAW, WE WILL NOT BE LIABLE FOR ANY LOSS OR DAMAGE CAUSED BY A DISTRIBUTED DENIAL-OF-SERVICE ATTACK, VIRUSES, OR OTHER TECHNOLOGICALLY HARMFUL MATERIAL THAT MAY INFECT YOUR COMPUTER EQUIPMENT, COMPUTER PROGRAMS, DATA, OR OTHER PROPRIETARY MATERIAL DUE TO YOUR USE OF THE PLATFORM OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE PLATFORM OR YOUR DOWNLOADING OF ANY MATERIAL POSTED ON IT, OR ON ANY WEBSITE LINKED TO IT.</p>
+                <p>YOUR USE OF THE PLATFORM, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE PLATFORM IS AT YOUR OWN RISK. THE PLATFORM, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE PLATFORM ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. NEITHER ELIKONAS NOR ANY PERSON ASSOCIATED WITH ELIKONAS MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY, OR AVAILABILITY OF THE PLATFORM. WITHOUT LIMITING THE FOREGOING, NEITHER ELIKONAS NOR ANYONE ASSOCIATED WITH ELIKONAS REPRESENTS OR WARRANTS THAT THE PLATFORM, ITS CONTENT, OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE PLATFORM WILL BE ACCURATE, RELIABLE, ERROR-FREE, OR UNINTERRUPTED, THAT DEFECTS WILL BE CORRECTED, THAT THE WEBSITE OR THE SERVER THAT MAKES IT AVAILABLE ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS, OR THAT THE PLATFORM OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE PLATFORM WILL OTHERWISE MEET YOUR NEEDS OR EXPECTATIONS.</p>
+                <p>TO THE FULLEST EXTENT PROVIDED BY LAW, ELIKONAS HEREBY DISCLAIMS ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT, AND FITNESS FOR PARTICULAR PURPOSE.</p>
+                <p>THE FOREGOING DOES NOT AFFECT ANY WARRANTIES THAT CANNOT BE EXCLUDED OR LIMITED UNDER APPLICABLE LAW.</p>
+
+                <h2>Limitation on Liability</h2>
+                <p>TO THE FULLEST EXTENT PROVIDED BY LAW, IN NO EVENT WILL ELIKONAS, ITS AFFILIATES, OR THEIR LICENSORS, SERVICE PROVIDERS, EMPLOYEES, AGENTS, OFFICERS, OR DIRECTORS BE LIABLE FOR DAMAGES OF ANY KIND, UNDER ANY LEGAL THEORY, ARISING OUT OF OR IN CONNECTION WITH YOUR USE, OR INABILITY TO USE, THE PLATFORM, ANY PLATFORMS LINKED TO IT, ANY CONTENT ON THE PLATFORM OR SUCH OTHER PLATFORMS, INCLUDING ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO, PERSONAL INJURY, PAIN AND SUFFERING, EMOTIONAL DISTRESS, LOSS OF REVENUE, LOSS OF PROFITS, LOSS OF BUSINESS OR ANTICIPATED SAVINGS, LOSS OF USE, LOSS OF GOODWILL, LOSS OF DATA, AND WHETHER CAUSED BY TORT (INCLUDING NEGLIGENCE), BREACH OF CONTRACT, OR OTHERWISE, EVEN IF FORESEEABLE.</p>
+                <p>The limitation of liability set out above does not apply to liability resulting from our gross negligence or willful misconduct.</p>
+                <p>THE FOREGOING DOES NOT AFFECT ANY LIABILITY THAT CANNOT BE EXCLUDED OR LIMITED UNDER APPLICABLE LAW.</p>
+
+                <h2>Indemnification</h2>
+                <p>You agree to defend, indemnify, and hold harmless Elikonas, its affiliates, licensors, and service providers, and its and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms of Service or your use of the Platform, including, but not limited to, your User Contributions, any use of the Platform's content, services, and products other than as expressly authorized in these Terms of Service, or your use of any information obtained from the Platform.</p>
+
+                <h2>Subscriptions and Purchases</h2>
+                <p>Elikonas offers a freemium subscription model. Free tier users have access to basic platform features. Premium subscribers have access to the full pathway builder, editing, sharing, and progress tracking features. Current subscription pricing and tier details are described at elikonas.com/pricing.</p>
+                <p>Subscribers may cancel at any time. Upon cancellation, the subscription remains active through the end of the current paid billing period. All payments are non-refundable. If you have concerns about a charge, please contact us at support@elikonas.com.</p>
+                <p>Payment Processing. All payments are processed by Stripe. Elikonas does not store payment card data. By subscribing, you agree to Stripe's terms of service.</p>
+                <p>Merchandise. Elikonas-branded merchandise sold through the Platform is fulfilled through a third-party fulfillment platform. Merchandise purchases are subject to that platform's terms, return, and refund policies. Elikonas is not responsible for merchandise transactions or fulfillment.</p>
+
+                <h2>Governing Law and Jurisdiction</h2>
+                <p>All matters relating to the Platform and these Terms of Service, and any dispute or claim arising therefrom or related thereto (in each case, including non-contractual disputes or claims), shall be governed by and construed in accordance with the internal laws of the State of Washington without regard to its conflict of laws principles.</p>
+                <p>Any legal suit, action, or proceeding arising out of, or related to, these Terms of Service or the Platform shall be instituted exclusively in the federal courts of the United States or the courts of the State of Washington. You waive any and all objections to the exercise of jurisdiction over you by such courts and to venue in such courts.</p>
+
+                <h2>Arbitration</h2>
+                <p>At Elikonas's sole discretion, it may require you to submit any disputes arising from these Terms of Service or use of the Platform, including disputes arising from or concerning their interpretation, violation, invalidity, non-performance, or termination, to final and binding arbitration.</p>
+
+                <h2>Waiver and Severability</h2>
+                <p>No waiver by Elikonas of any term or condition set out in these Terms of Service shall be deemed a further or continuing waiver of such term or condition or a waiver of any other term or condition, and any failure of Elikonas to assert a right or provision under these Terms of Service shall not constitute a waiver of such right or provision.</p>
+                <p>If any provision of these Terms of Service is held by a court or other tribunal of competent jurisdiction to be invalid, illegal, or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent such that the remaining provisions of the Terms of Service will continue in full force and effect.</p>
+
+                <h2>Entire Agreement</h2>
+                <p>These Terms of Service, together with the policies referenced herein, constitute the sole and entire agreement between you and Elikonas regarding the Platform and supersede all prior and contemporaneous understandings, agreements, representations, and warranties, both written and oral, regarding the Platform.</p>
+
+                <h2>Your Comments and Concerns</h2>
+                <p>All feedback, comments, requests for technical support, and other communications relating to the Platform should be directed to: <a href="mailto:support@elikonas.com">support@elikonas.com</a>.</p>
+            </div>
+
+            <div class="version-history">
+                <h2 class="version-history-title">Version History</h2>
+                <div class="version-entry is-current">
+                    <div class="version-entry-header">
+                        <h3>Version 1</h3>
+                        <span class="version-badge">Current</span>
+                    </div>
+                    <div class="version-entry-date">June 24, 2026</div>
+                    <ul>
+                        <li>Initial publication of this policy.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="back-to-governance"><a href="../governance.html">&larr; Back to Governance</a></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.shape');
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.0005;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                shape.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+    <script src="https://helloskip.com/agent.js" data-agent-id="JgvQjunMZL0PD1J81u0H"></script>
+    <!-- Start of HubSpot Embed Code -->
+      <script type="text/javascript" id="hs-script-loader" async defer src="//js-na2.hs-scripts.com/245593327.js"></script>
+    <!-- End of HubSpot Embed Code -->
+<!-- SITE-FOOTER-START -->
+    <footer class="site-footer">
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h3>Mission</h3>
+                <div class="footer-divider"></div>
+                <p>Elikonas is a Public Benefit Corporation, legally committed to
+                   expanding equitable access to education and workforce development.</p>
+                <a href="../mission.html">Learn more about our mission &rarr;</a>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <div class="footer-divider"></div>
+                <ul>
+                    <li><a href="/subscribe.html">Subscribe to Our Newsletter</a></li>
+                    <li><a href="mailto:support@elikonas.com">Contact Us</a></li>
+                    <li><a href="../careers.html">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+            <div class="social-links">
+                <a href="https://x.com/elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-x.svg" alt="X (Twitter)">
+                </a>
+                <a href="https://www.facebook.com/elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-fb.svg" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com/elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-ig.svg" alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com/company/elikonas" class="social-link">
+                    <img src="../assets/images/social-in.svg" alt="LinkedIn">
+                </a>
+                <a href="https://youtube.com/@elikonasmuse" class="social-link">
+                    <img src="../assets/images/social-yt.svg" alt="YouTube">
+                </a>
+            </div>
+        <div class="footer-bottom">&copy; 2026 Elikonas Public Benefit Corporation</div>
+    </footer>
+<!-- SITE-FOOTER-END -->
+</body>
+</html>
