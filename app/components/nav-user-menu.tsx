@@ -35,7 +35,7 @@ export function NavUserMenu({ userName }: { userName: string }) {
     setOpen(false);
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/login");
+    router.push("/");
   }
 
   return (
