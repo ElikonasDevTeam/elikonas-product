@@ -101,7 +101,7 @@ export default async function Home() {
         Skip to main content
       </a>
 
-      <header className="border-b border-black/5 bg-white">
+      <header className="relative z-20 border-b border-black/5 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="text-lg font-semibold tracking-tight text-[#084c61]">
             Elikonas
