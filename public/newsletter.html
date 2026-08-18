@@ -30,19 +30,19 @@
     <link rel="apple-touch-icon" href="assets/images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- SEO-META-START -->
-    <meta name="description" content="Get Elikonas Weekly — app progress, new WYCS episodes, and other Elikonas news, all in one place.">
+    <meta name="description" content="Stay in the know — app progress, new WYCS episodes, and other Elikonas news, all in one place.">
     <link rel="canonical" href="https://elikonas.com/newsletter.html">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Elikonas Weekly">
+    <meta property="og:title" content="Elikonas Newsletter">
     <meta property="og:description" content="App progress, new WYCS episodes, and other Elikonas news, all in one place.">
     <meta property="og:url" content="https://elikonas.com/newsletter.html">
     <meta property="og:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Elikonas Weekly">
+    <meta name="twitter:title" content="Elikonas Newsletter">
     <meta name="twitter:description" content="App progress, new WYCS episodes, and other Elikonas news, all in one place.">
     <meta name="twitter:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
 <!-- SEO-META-END -->
-    <title>Elikonas Weekly</title>
+    <title>Elikonas Newsletter</title>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="global-styles.css">
     <style>
@@ -90,7 +90,7 @@
         .signup-form { max-width: 420px; margin: 0 auto; text-align: left; }
         .signup-form .field-row { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; }
         .signup-form .field-row .field { flex: 1; min-width: 0; }
-        .signup-form label.field-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--fg); }
+        .signup-form label.field-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--band-fg); }
         .signup-form input[type="text"],
         .signup-form input[type="email"],
         .signup-form input[type="tel"] {
@@ -106,8 +106,8 @@
         .sms-toggle-row input[type="checkbox"] { margin-top: 0.2rem; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
         .sms-toggle-row label { font-size: 0.92rem; line-height: 1.5; }
         .sms-fields-wrap { display: none; margin-bottom: 1rem; }
-        #wants-sms:checked ~ .sms-fields-wrap { display: block; }
-        .sms-consent-text { font-size: 0.8rem; line-height: 1.5; color: var(--fg-muted); margin-top: 0.4rem; }
+        .sms-toggle-row:has(#wants-sms:checked) ~ .sms-fields-wrap { display: block; }
+        .sms-consent-text { font-size: 0.8rem; line-height: 1.5; color: var(--band-fg-muted); margin-top: 0.4rem; }
         .signup-form .submit-btn { width: 100%; margin-top: 0.25rem; }
         .signup-btn { padding: 0.85rem 1.75rem; background: var(--red); border: none; border-radius: 50px; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; transition: filter 0.2s ease; white-space: nowrap; }
         .signup-btn:hover { filter: brightness(1.08); }
@@ -136,18 +136,17 @@
 
     <div class="gov-container">
         <div class="gov-content">
-            <div class="gov-eyebrow">Elikonas Weekly</div>
-            <h1 class="gov-title">Get the Full Story, Weekly</h1>
+            <div class="gov-eyebrow">Elikonas Newsletter</div>
+            <h1 class="gov-title">Stay in the Know</h1>
             <p class="gov-intro">
-                One email a week covering app progress, new episodes of
-                <em>What&rsquo;s Your College Story?</em>, and other Elikonas news &mdash;
-                instead of juggling separate lists. Add your details below, check
-                the box, and you&rsquo;re in.
+                App progress, new episodes of <em>What&rsquo;s Your College Story?</em>,
+                and other Elikonas news &mdash; all in one place, instead of juggling
+                separate lists. Add your details below, check the box, and you&rsquo;re in.
             </p>
 
             <div class="careers-form-card">
-                <h2>Join Elikonas Weekly</h2>
-                <p>One email a week. Unsubscribe anytime.</p>
+                <h2>Join the Elikonas Newsletter</h2>
+                <p>Unsubscribe anytime.</p>
                 <form class="signup-form" action="https://elikonas.us4.list-manage.com/subscribe/post?u=2d3e21399e1d37ecbfa72d7b8&amp;id=750f1fce6a&amp;f_id=001dc2e1f0" method="POST" id="newsletter-form" target="_blank">
                     <div class="field-row">
                         <div class="field">
@@ -181,14 +180,19 @@
 
                     <div class="sms-toggle-row" style="margin-top: 0.5rem;">
                         <input type="checkbox" id="mce-group[13974]-13974-0" name="group[13974][1]" value="">
-                        <label for="mce-group[13974]-13974-0">Sign me up for Elikonas Weekly</label>
+                        <label for="mce-group[13974]-13974-0">Sign me up for the Elikonas Newsletter</label>
                     </div>
 
                     <input type="hidden" name="tags" value="newsletter-page">
                     <div style="position: absolute; left: -5000px;" aria-hidden="true">
                         <input type="text" name="b_2d3e21399e1d37ecbfa72d7b8_750f1fce6a" tabindex="-1" value="">
                     </div>
-                    <button type="submit" class="signup-btn submit-btn">Join Elikonas Weekly</button>
+                    <button type="submit" class="signup-btn submit-btn">Join the Newsletter</button>
+                    <p style="font-size: 0.78rem; color: var(--band-fg-muted); text-align: center; margin-top: 0.75rem;">
+                        We respect your privacy. See our
+                        <a href="/governance/privacy.html" style="color: var(--band-fg); text-decoration: underline;">Privacy Policy</a>
+                        for how your information is used.
+                    </p>
                 </form>
                 <script>
                     // Pre-fills email when arriving via a personalized campaign link

@@ -90,7 +90,7 @@
         .signup-form { max-width: 420px; margin: 0 auto; text-align: left; }
         .signup-form .field-row { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; }
         .signup-form .field-row .field { flex: 1; min-width: 0; }
-        .signup-form label.field-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--fg); }
+        .signup-form label.field-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--band-fg); }
         .signup-form input[type="text"],
         .signup-form input[type="email"],
         .signup-form input[type="tel"] {
@@ -106,8 +106,8 @@
         .sms-toggle-row input[type="checkbox"] { margin-top: 0.2rem; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
         .sms-toggle-row label { font-size: 0.92rem; line-height: 1.5; }
         .sms-fields-wrap { display: none; margin-bottom: 1rem; }
-        #wants-sms:checked ~ .sms-fields-wrap { display: block; }
-        .sms-consent-text { font-size: 0.8rem; line-height: 1.5; color: var(--fg-muted); margin-top: 0.4rem; }
+        .sms-toggle-row:has(#wants-sms:checked) ~ .sms-fields-wrap { display: block; }
+        .sms-consent-text { font-size: 0.8rem; line-height: 1.5; color: var(--band-fg-muted); margin-top: 0.4rem; }
         .signup-form .submit-btn { width: 100%; margin-top: 0.25rem; }
         .signup-btn { padding: 0.85rem 1.75rem; background: var(--red); border: none; border-radius: 50px; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; transition: filter 0.2s ease; white-space: nowrap; }
         .signup-btn:hover { filter: brightness(1.08); }
@@ -183,6 +183,11 @@
                         <input type="text" name="b_2d3e21399e1d37ecbfa72d7b8_750f1fce6a" tabindex="-1" value="">
                     </div>
                     <button type="submit" class="signup-btn submit-btn">Get the Invite</button>
+                    <p style="font-size: 0.78rem; color: var(--band-fg-muted); text-align: center; margin-top: 0.75rem;">
+                        We respect your privacy. See our
+                        <a href="/governance/privacy.html" style="color: var(--band-fg); text-decoration: underline;">Privacy Policy</a>
+                        for how your information is used.
+                    </p>
                 </form>
             </div>
         </div>
