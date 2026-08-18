@@ -30,19 +30,19 @@
     <link rel="apple-touch-icon" href="assets/images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- SEO-META-START -->
-    <meta name="description" content="Sign up to hear about Elikonas' progress before you're able to create an account.">
-    <link rel="canonical" href="https://elikonas.com/subscribe.html">
+    <meta name="description" content="Get Elikonas Weekly — app progress, new WYCS episodes, and other Elikonas news, all in one place.">
+    <link rel="canonical" href="https://elikonas.com/newsletter.html">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Stay Updated - Elikonas">
-    <meta property="og:description" content="Sign up to hear about Elikonas' progress before you're able to create an account.">
-    <meta property="og:url" content="https://elikonas.com/subscribe.html">
+    <meta property="og:title" content="Elikonas Weekly">
+    <meta property="og:description" content="App progress, new WYCS episodes, and other Elikonas news, all in one place.">
+    <meta property="og:url" content="https://elikonas.com/newsletter.html">
     <meta property="og:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Stay Updated - Elikonas">
-    <meta name="twitter:description" content="Sign up to hear about Elikonas' progress before you're able to create an account.">
+    <meta name="twitter:title" content="Elikonas Weekly">
+    <meta name="twitter:description" content="App progress, new WYCS episodes, and other Elikonas news, all in one place.">
     <meta name="twitter:image" content="https://elikonas.com/assets/images/OG_logo_blu-ylw_tagline-ylw_bkgrnd-teal.png">
 <!-- SEO-META-END -->
-    <title>Stay Updated - Elikonas</title>
+    <title>Elikonas Weekly</title>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="global-styles.css">
     <style>
@@ -136,31 +136,32 @@
 
     <div class="gov-container">
         <div class="gov-content">
-            <div class="gov-eyebrow">Stay Updated</div>
-            <h1 class="gov-title">Be the First to Know</h1>
+            <div class="gov-eyebrow">Elikonas Weekly</div>
+            <h1 class="gov-title">Get the Full Story, Weekly</h1>
             <p class="gov-intro">
-                Elikonas is currently in a small, invite-only alpha. If you don't have
-                an invite code yet, leave your email below and we'll let you know as
-                soon as more spots open up.
+                One email a week covering app progress, new episodes of
+                <em>What&rsquo;s Your College Story?</em>, and other Elikonas news &mdash;
+                instead of juggling separate lists. Add your details below, check
+                the box, and you&rsquo;re in.
             </p>
 
             <div class="careers-form-card">
-                <h2>Get notified when we open up</h2>
-                <p>We'll only email you about Elikonas — nothing else.</p>
-                <form class="signup-form" action="https://elikonas.us4.list-manage.com/subscribe/post?u=2d3e21399e1d37ecbfa72d7b8&amp;id=750f1fce6a&amp;f_id=001dc2e1f0" method="POST" target="_blank">
+                <h2>Join Elikonas Weekly</h2>
+                <p>One email a week. Unsubscribe anytime.</p>
+                <form class="signup-form" action="https://elikonas.us4.list-manage.com/subscribe/post?u=2d3e21399e1d37ecbfa72d7b8&amp;id=750f1fce6a&amp;f_id=001dc2e1f0" method="POST" id="newsletter-form" target="_blank">
                     <div class="field-row">
                         <div class="field">
-                            <label class="field-label" for="subscribe-fname">First name</label>
-                            <input type="text" id="subscribe-fname" name="FNAME" required>
+                            <label class="field-label" for="mce-FNAME">First name</label>
+                            <input type="text" id="mce-FNAME" name="FNAME" required>
                         </div>
                         <div class="field">
-                            <label class="field-label" for="subscribe-lname">Last name</label>
-                            <input type="text" id="subscribe-lname" name="LNAME" required>
+                            <label class="field-label" for="mce-LNAME">Last name</label>
+                            <input type="text" id="mce-LNAME" name="LNAME" required>
                         </div>
                     </div>
                     <div class="field" style="margin-bottom: 0.75rem;">
-                        <label class="field-label" for="subscribe-email">Email</label>
-                        <input type="email" id="subscribe-email" name="EMAIL" required>
+                        <label class="field-label" for="mce-EMAIL">Email</label>
+                        <input type="email" id="mce-EMAIL" name="EMAIL" required>
                     </div>
 
                     <div class="sms-toggle-row">
@@ -168,22 +169,41 @@
                         <label for="wants-sms">I'd also like to get updates by text message</label>
                     </div>
                     <div class="sms-fields-wrap">
-                        <label class="field-label" for="subscribe-phone">Phone number</label>
-                        <input type="tel" id="subscribe-phone" name="PHONE" autocomplete="tel">
+                        <label class="field-label" for="mce-PHONE">Phone number</label>
+                        <input type="text" id="mce-PHONE" name="PHONE" autocomplete="tel" placeholder="(555) 555-5555">
                         <p class="sms-consent-text">
                             By providing your number, you consent to receive text messages
-                            from Elikonas about your invite and launch updates. Message
+                            from Elikonas about app progress and other Elikonas news. Message
                             frequency varies, message and data rates may apply, reply STOP
                             to opt out.
                         </p>
                     </div>
 
-                    <input type="hidden" name="tags" value="waitlist-interest">
+                    <div class="sms-toggle-row" style="margin-top: 0.5rem;">
+                        <input type="checkbox" id="mce-group[13974]-13974-0" name="group[13974][1]" value="">
+                        <label for="mce-group[13974]-13974-0">Sign me up for Elikonas Weekly</label>
+                    </div>
+
+                    <input type="hidden" name="tags" value="newsletter-page">
                     <div style="position: absolute; left: -5000px;" aria-hidden="true">
                         <input type="text" name="b_2d3e21399e1d37ecbfa72d7b8_750f1fce6a" tabindex="-1" value="">
                     </div>
-                    <button type="submit" class="signup-btn submit-btn">Get the Invite</button>
+                    <button type="submit" class="signup-btn submit-btn">Join Elikonas Weekly</button>
                 </form>
+                <script>
+                    // Pre-fills email when arriving via a personalized campaign link
+                    // (e.g. https://elikonas.com/newsletter.html?email=*|EMAIL|*), while
+                    // staying fully functional with a blank field for anyone who finds
+                    // this page on their own.
+                    (function () {
+                        var params = new URLSearchParams(window.location.search);
+                        var email = params.get("email");
+                        if (email) {
+                            var field = document.getElementById("mce-EMAIL");
+                            if (field) field.value = email;
+                        }
+                    })();
+                </script>
             </div>
         </div>
     </div>

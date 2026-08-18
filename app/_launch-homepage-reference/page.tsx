@@ -1,23 +1,26 @@
 // ============================================================================
-// TEMPORARY COUNTDOWN HOMEPAGE — pre-domain-reassignment.
+// PRESERVED FINAL LAUNCH VERSION of the homepage.
 //
-// This replaces the real homepage while elikonas.com is still publicly
-// accessible without an invite. The real homepage (Log in / Sign up, real
-// account creation) is preserved at app/_launch-homepage-reference/page.tsx
-// and should be restored to this file at actual public launch.
+// This is what app/page.tsx should be restored to at actual public launch,
+// replacing the temporary countdown page. Built from the original homepage
+// with site nav links added (Insights/Stories/Roadmap/Governance/Mission),
+// since those pages didn't exist in elikonas-product when the original
+// homepage was first built — they do now, after the Path A site merge.
 //
-// No hard launch date is shown yet, per an explicit decision to wait until
-// the date is certain — same reasoning as the pre-launch check-in email.
+// This file is NOT a route (folder name starts with `_`, which Next.js
+// excludes from routing) — it's a reference copy only. At launch, copy this
+// content into app/page.tsx (and delete this reference file).
 // ============================================================================
 
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Elikonas — Launching Soon",
+  title: "Elikonas — Your learning, your record, your path",
   description:
-    "A portable, learner-owned record for the skills you've built. We're getting close — leave your email and we'll let you know the moment we open up.",
+    "A portable, learner-owned record for the skills you've built — in class, on the job, and everywhere in between.",
 };
 
 const FEATURES = [
@@ -45,43 +48,6 @@ const SITE_NAV = [
   { label: "Roadmap", href: "/roadmap.html" },
   { label: "Governance", href: "/governance/index.html" },
 ];
-
-// Disabled-but-accessible account link: real anchor is removed (no href),
-// so it can't accidentally navigate anywhere, but stays keyboard-focusable
-// with a visible + screen-reader-announced "coming soon" explanation —
-// not a hover-only tooltip, which would exclude keyboard/screen-reader users.
-function ComingSoonButton({
-  label,
-  variant,
-  describedById,
-}: {
-  label: string;
-  variant: "solid" | "outline";
-  describedById: string;
-}) {
-  const base =
-    "group relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium cursor-not-allowed";
-  const solid = "bg-[#ffc857]/40 text-[#323031]/50";
-  const outline = "border border-white/20 text-white/50";
-  return (
-    <span
-      role="button"
-      tabIndex={0}
-      aria-disabled="true"
-      aria-describedby={describedById}
-      className={`${base} ${variant === "solid" ? solid : outline} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#177e89]`}
-    >
-      {label}
-      <span
-        id={describedById}
-        role="tooltip"
-        className="pointer-events-none absolute -bottom-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#323031] px-2.5 py-1 text-xs font-medium text-white opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100"
-      >
-        Coming soon
-      </span>
-    </span>
-  );
-}
 
 export default async function Home() {
   const supabase = await createClient();
@@ -117,8 +83,18 @@ export default async function Home() {
             ))}
           </nav>
           <nav aria-label="Account" className="flex items-center gap-3">
-            <ComingSoonButton label="Log in" variant="outline" describedById="tooltip-header-login" />
-            <ComingSoonButton label="Sign up" variant="solid" describedById="tooltip-header-signup" />
+            <Link
+              href="/login"
+              className="rounded-md px-4 py-2 text-sm font-medium text-[#084c61] transition-colors hover:bg-[#084c61]/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#177e89]"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/signup"
+              className="rounded-md bg-[#ffc857] px-4 py-2 text-sm font-semibold text-[#323031] transition-colors hover:bg-[#ffd57a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#084c61]"
+            >
+              Sign up
+            </Link>
           </nav>
         </div>
       </header>
@@ -128,9 +104,6 @@ export default async function Home() {
         <section className="relative overflow-hidden bg-[#084c61]">
           <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:items-center md:py-28">
             <div>
-              <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-[#ffc857]">
-                Launching soon
-              </p>
               <h1 className="text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl">
                 Your learning,
                 <br />
@@ -139,19 +112,24 @@ export default async function Home() {
                 your path.
               </h1>
               <p className="mt-6 max-w-md text-lg leading-relaxed text-white/80">
-                We&apos;re putting the finishing touches on Elikonas &mdash; a
-                home for everything you learn, gathered into one record that
-                belongs to you. Leave your email and we&apos;ll let you know
-                the moment we open up.
+                Elikonas is a home for everything you learn — in a classroom, on
+                the job, or on your own — gathered into one record that
+                belongs to you, guided by an AI companion who helps you decide
+                what&apos;s next.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <a
-                  href="/subscribe.html"
+                <Link
+                  href="/signup"
                   className="rounded-md bg-[#ffc857] px-6 py-3 text-sm font-semibold text-[#323031] transition-colors hover:bg-[#ffd57a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
-                  Get the Invite
-                </a>
-                <ComingSoonButton label="Log in" variant="outline" describedById="tooltip-hero-login" />
+                  Start your record
+                </Link>
+                <Link
+                  href="/login"
+                  className="rounded-md border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  Log in
+                </Link>
               </div>
             </div>
 
@@ -239,14 +217,14 @@ export default async function Home() {
         <section className="bg-[#084c61] py-16">
           <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 text-center">
             <h2 className="text-2xl font-semibold text-white sm:text-3xl">
-              Be the first to know when we open up.
+              Your record starts with one entry.
             </h2>
-            <a
-              href="/subscribe.html"
+            <Link
+              href="/signup"
               className="rounded-md bg-[#ffc857] px-8 py-3 text-sm font-semibold text-[#323031] transition-colors hover:bg-[#ffd57a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              Get the Invite
-            </a>
+              Create your account
+            </Link>
           </div>
         </section>
       </main>
