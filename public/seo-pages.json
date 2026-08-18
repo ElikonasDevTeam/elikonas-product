@@ -47,6 +47,9 @@
     },
     "governance/ai-usage-policy.html": {
       "description": "How Elikonas uses AI — in the platform and internally — and what we commit to as we do."
+    },
+    "governance/sms-terms.html": {
+      "description": "The terms that apply to SMS/text messages sent by Elikonas, including consent, message frequency, and how to opt out."
     }
   }
 }

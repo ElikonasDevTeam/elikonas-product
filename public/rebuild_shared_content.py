@@ -26,6 +26,7 @@ Run from the root of your elikonas-placeholder repo:
 
 from __future__ import annotations
 
+import html as html_lib
 import json
 import re
 import subprocess
@@ -264,7 +265,13 @@ def seo_entry_for(rel_path: Path, manifest: dict, seo_pages: dict) -> dict | Non
 
 def extract_title(html: str) -> str:
     m = TITLE_RE.search(html)
-    return m.group(1).strip() if m else ""
+    if not m:
+        return ""
+    # The raw <title> text may already contain HTML entities (e.g. "&amp;")
+    # as literal source characters. Unescape here so html_attr_escape()
+    # re-escapes exactly once when building the OG/Twitter meta tags below
+    # — otherwise "&amp;" becomes "&amp;amp;".
+    return html_lib.unescape(m.group(1).strip())
 
 
 def build_seo_meta_html(html: str, rel_path: Path, manifest: dict, seo_pages: dict) -> str | None:
