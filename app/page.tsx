@@ -13,6 +13,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { LaunchCountdown } from "./components/launch-countdown";
 
 export const metadata: Metadata = {
   title: "Elikonas — Launching Soon",
@@ -144,6 +145,7 @@ export default async function Home() {
                 belongs to you. Leave your email and we&apos;ll let you know
                 the moment we open up.
               </p>
+              <LaunchCountdown />
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <a
                   href="/subscribe.html"
