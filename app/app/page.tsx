@@ -1,15 +1,14 @@
 // ============================================================================
-// PRESERVED FINAL LAUNCH VERSION of the homepage.
+// REAL HOMEPAGE — live at /app during the countdown phase.
 //
-// This is what app/page.tsx should be restored to at actual public launch,
-// replacing the temporary countdown page. Built from the original homepage
-// with site nav links added (Insights/Stories/Roadmap/Governance/Mission),
-// since those pages didn't exist in elikonas-product when the original
-// homepage was first built — they do now, after the Path A site merge.
+// This is the actual, working homepage (real Sign Up / Log In, real account
+// creation) — deliberately not at "/", which shows the temporary countdown
+// page instead. Reachable directly by anyone who knows/bookmarks /app
+// (e.g. Katie, alpha testers), by design not linked from the countdown page.
 //
-// This file is NOT a route (folder name starts with `_`, which Next.js
-// excludes from routing) — it's a reference copy only. At launch, copy this
-// content into app/page.tsx (and delete this reference file).
+// At actual public launch: copy this file's content into app/page.tsx,
+// replacing the countdown page. This file can stay in place afterward too
+// (people may have it bookmarked) — no need to remove it at that point.
 // ============================================================================
 
 import type { Metadata } from "next";
