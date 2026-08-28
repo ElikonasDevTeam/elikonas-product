@@ -1,7 +1,25 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+// test.elikonas.com is retired — the app now lives at elikonas.com. This
+// catches anyone who still lands on the old domain (stale bookmark, cached
+// link, an old email) and bounces them to the same path on the real one.
+// 308 (not 301/302) preserves the request method and body across the
+// redirect, so a Server Action POST mid-flight on the old domain still
+// completes correctly instead of silently becoming a broken GET.
+const CANONICAL_HOST = "elikonas.com";
+const LEGACY_HOSTS = new Set(["test.elikonas.com"]);
+
 export async function middleware(request: NextRequest) {
+  const host = request.headers.get("host")?.split(":")[0] ?? "";
+  if (LEGACY_HOSTS.has(host)) {
+    const url = new URL(request.url);
+    url.protocol = "https:";
+    url.host = CANONICAL_HOST;
+    url.port = "";
+    return NextResponse.redirect(url, 308);
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
