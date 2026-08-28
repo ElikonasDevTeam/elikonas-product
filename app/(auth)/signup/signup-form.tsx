@@ -76,6 +76,9 @@ export function SignupForm() {
   const [privacyChecked, setPrivacyChecked] = useState(false);
   const [phoneValue, setPhoneValue] = useState("");
   const [smsOptIn, setSmsOptIn] = useState(false);
+  const [newsletterOptIn, setNewsletterOptIn] = useState(false);
+  const [newsletterSmsOptIn, setNewsletterSmsOptIn] = useState(false);
+  const [newsletterPhone, setNewsletterPhone] = useState("");
   const canSubmit = !pending && passwordsMatch && tosChecked && privacyChecked;
 
   const fieldError = (field: SignupError["field"]) =>
@@ -272,6 +275,98 @@ export function SignupForm() {
           ].join(" ")}
         />
         <FieldError message={fieldError("inviteCode")} />
+      </div>
+
+      <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="newsletterOptIn"
+            checked={newsletterOptIn}
+            onChange={(e) => {
+              setNewsletterOptIn(e.target.checked);
+              if (!e.target.checked) {
+                setNewsletterSmsOptIn(false);
+              }
+            }}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#084c61] focus:ring-[#177e89]"
+          />
+          <span className="text-sm text-[#323031]/70">
+            Sign me up for the <strong>Elikonas Newsletter</strong> — app progress, new show
+            episodes, and other Elikonas news.
+          </span>
+        </label>
+
+        {newsletterOptIn && (
+          <div className="mt-3 ml-7 space-y-2.5">
+            <label
+              className={[
+                "flex items-center gap-2.5",
+                "cursor-pointer",
+              ].join(" ")}
+            >
+              <input
+                type="checkbox"
+                name="newsletterSmsOptIn"
+                checked={newsletterSmsOptIn}
+                onChange={(e) => {
+                  setNewsletterSmsOptIn(e.target.checked);
+                  if (e.target.checked && !newsletterPhone && phoneValue) {
+                    setNewsletterPhone(phoneValue);
+                  }
+                }}
+                className="h-4 w-4 rounded border-gray-300 text-[#084c61] focus:ring-[#177e89]"
+              />
+              <span className="text-sm text-[#323031]/70">
+                I&apos;d also like to get updates by text message
+              </span>
+            </label>
+
+            {newsletterSmsOptIn && (
+              <div>
+                <label
+                  htmlFor="newsletterPhone"
+                  className="block text-xs font-medium text-[#323031]/60 mb-1"
+                >
+                  Phone number
+                </label>
+                <input
+                  id="newsletterPhone"
+                  type="tel"
+                  name="newsletterPhone"
+                  autoComplete="tel"
+                  placeholder="+1 000 000 0000"
+                  value={newsletterPhone}
+                  onChange={(e) => setNewsletterPhone(e.target.value)}
+                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#323031] placeholder-[#323031]/40 outline-none transition-all duration-150 focus:border-[#177e89] focus:ring-2 focus:ring-[#177e89]/20"
+                />
+                <p className="mt-2 text-xs leading-relaxed text-[#323031]/50">
+                  Elikonas - By providing your phone number, you agree to receive promotional
+                  and marketing messages, notifications, and customer service communications
+                  from Elikonas. Message and data rates may apply. Consent is not a condition of
+                  purchase. Message frequency varies. Text HELP for help. Text STOP to cancel.{" "}
+                  <Link
+                    href="https://elikonas.com/governance/sms-terms.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#177e89] underline"
+                  >
+                    See terms
+                  </Link>
+                  ,{" "}
+                  <Link
+                    href="https://elikonas.com/governance/privacy.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#177e89] underline"
+                  >
+                    See Privacy Policy
+                  </Link>
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="space-y-3 pt-1">

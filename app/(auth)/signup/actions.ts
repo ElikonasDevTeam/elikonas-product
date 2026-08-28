@@ -5,6 +5,57 @@ import { redirect } from "next/navigation";
 
 const ALPHA_INVITE_CODE = "FOUNDING2026";
 
+// Same public Mailchimp embedded-form endpoint used by subscribe.html and
+// newsletter.html — no API key needed, this is the unauthenticated endpoint
+// Mailchimp's own embed forms POST to. Calling it server-side (rather than
+// from the browser) avoids the CORS opacity a client-side fetch would have,
+// so failures here are actually visible in logs instead of failing silently.
+const MAILCHIMP_URL =
+  "https://elikonas.us4.list-manage.com/subscribe/post?u=2d3e21399e1d37ecbfa72d7b8&id=750f1fce6a&f_id=001dc2e1f0";
+
+async function subscribeToNewsletter({
+  firstName,
+  lastName,
+  email,
+  phone,
+}: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+}) {
+  try {
+    const body = new URLSearchParams({
+      FNAME: firstName,
+      LNAME: lastName,
+      EMAIL: email,
+      "group[13974][1]": "", // Elikonas Newsletter group — see governance/newsletter.html
+      tags: "signup-page",
+      // Honeypot — must stay empty. Real submitters never fill this in.
+      b_2d3e21399e1d37ecbfa72d7b8_750f1fce6a: "",
+    });
+    if (phone) {
+      body.set("SMSPHONE", phone);
+      body.set("SMSPHONE[country]", "US");
+    }
+
+    const res = await fetch(MAILCHIMP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    });
+
+    if (!res.ok) {
+      console.error(
+        `[signupAction] newsletter subscription failed: HTTP ${res.status} for ${email}`
+      );
+    }
+  } catch (err) {
+    // Never let a Mailchimp hiccup block or fail account creation.
+    console.error("[signupAction] newsletter subscription error:", err);
+  }
+}
+
 export type SignupError = {
   field?: "firstName" | "lastName" | "email" | "password" | "confirmPassword" | "country" | "phone" | "inviteCode";
   message: string;
@@ -23,6 +74,9 @@ export async function signupAction(
   const phone = (formData.get("phone") as string)?.trim() || null;
   const smsOptIn = formData.get("smsOptIn") === "on";
   const inviteCode = (formData.get("inviteCode") as string)?.trim().toUpperCase();
+  const newsletterOptIn = formData.get("newsletterOptIn") === "on";
+  const newsletterSmsOptIn = formData.get("newsletterSmsOptIn") === "on";
+  const newsletterPhone = (formData.get("newsletterPhone") as string)?.trim() || "";
 
   if (!firstName) {
     return { field: "firstName", message: "First name is required." };
@@ -83,6 +137,18 @@ export async function signupAction(
       tos_version: "v1",
       privacy_version: "v1",
       consented_at: new Date().toISOString(),
+    });
+  }
+
+  // Best-effort newsletter opt-in. Never blocks or fails signup — if
+  // Mailchimp is unreachable or rejects the submission, the account still
+  // gets created; we just log it so it's visible in Netlify's function logs.
+  if (newsletterOptIn) {
+    await subscribeToNewsletter({
+      firstName,
+      lastName,
+      email,
+      phone: newsletterSmsOptIn ? newsletterPhone : null,
     });
   }
 
