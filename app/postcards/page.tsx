@@ -1,7 +1,7 @@
 // Distinct real route so it shows up separately in Cloudflare Web Analytics'
 // "Top Paths" report — Cloudflare does not log query strings, so a shared
 // "/" with ?utm_source=postcard would be invisible there. Put this exact
-// URL (elikonas.com/postcard) into the postcard QR code.
+// URL (elikonas.com/postcards) into the postcard QR code.
 import type { Metadata } from "next";
 import { HomepageContent } from "@/app/components/homepage-content";
 
