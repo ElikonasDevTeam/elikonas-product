@@ -31,7 +31,7 @@ export async function saveOnboardingAction(
   const fullName: string | null = meta.full_name ?? null;
   const savedInterests: string[] = Array.isArray(meta.interests) ? meta.interests : interests;
   await supabase.from("profiles").upsert(
-    { id: user.id, full_name: fullName, email: user.email ?? null, interests: savedInterests },
+    { id: user.id, full_name: fullName, email: user.email ?? null, interests: savedInterests, role: "learner" },
     { onConflict: "id" }
   );
 
