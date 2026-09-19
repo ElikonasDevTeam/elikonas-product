@@ -5,6 +5,8 @@ import { AppShell } from "@/app/components/app-shell";
 
 export const metadata: Metadata = {
   title: "Help & Support — Elikonas",
+  description: "Get help with your Elikonas account and platform.",
+  robots: { index: false, follow: false },
 };
 
 export default async function SupportPage() {

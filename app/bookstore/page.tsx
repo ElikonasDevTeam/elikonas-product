@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BookstoreView } from "./bookstore-view";
 
-export const metadata: Metadata = { title: "Book Store — Elikonas" };
+export const metadata: Metadata = {
+  title: "Book Store — Elikonas",
+  description: "Browse books recommended for your learning path on Elikonas.",
+  robots: { index: false, follow: false },
+};
 
 export default async function BookstorePage() {
   const supabase = await createClient();

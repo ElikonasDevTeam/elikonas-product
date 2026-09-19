@@ -7,6 +7,8 @@ import type { ONetQuestion } from "@/types/onet";
 
 export const metadata: Metadata = {
   title: "Interest Assessment — Elikonas",
+  description: "Take the interest assessment to help Elikonas guide your learning path.",
+  robots: { index: false, follow: false },
 };
 
 export default async function AssessmentPage() {

@@ -3,6 +3,8 @@ import { ForgotPasswordForm } from "./forgot-password-form";
 
 export const metadata: Metadata = {
   title: "Reset password — Elikonas",
+  description: "Request a password reset link for your Elikonas account.",
+  robots: { index: false, follow: true },
 };
 
 export default function ForgotPasswordPage() {

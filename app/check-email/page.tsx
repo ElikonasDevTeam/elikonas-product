@@ -3,6 +3,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Check your email — Elikonas",
+  description: "Confirm your email address to finish setting up your Elikonas account.",
+  robots: { index: false, follow: true },
 };
 
 export default function CheckEmailPage() {

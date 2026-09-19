@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Elikonas — Your learning, your record, your path",
   description:
     "A portable, learner-owned record for the skills you've built — in class, on the job, and everywhere in between.",
+  // Same content as "/" — canonicalize so search engines don't treat this
+  // QR-tracking landing page as duplicate content.
+  alternates: { canonical: "https://elikonas.com/" },
 };
 
 export default function BookmarkLanding() {

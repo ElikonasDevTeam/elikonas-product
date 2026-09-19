@@ -3,6 +3,8 @@ import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
   title: "Sign in — Elikonas",
+  description: "Log in to your Elikonas account.",
+  robots: { index: false, follow: true },
 };
 
 export default async function LoginPage({

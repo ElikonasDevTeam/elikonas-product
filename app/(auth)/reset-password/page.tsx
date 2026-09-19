@@ -3,6 +3,8 @@ import { ResetPasswordForm } from "./reset-password-form";
 
 export const metadata: Metadata = {
   title: "Set new password — Elikonas",
+  description: "Set a new password for your Elikonas account.",
+  robots: { index: false, follow: true },
 };
 
 export default function ResetPasswordPage() {
