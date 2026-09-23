@@ -7,6 +7,8 @@ import { ProfileView } from "./profile-view";
 
 export const metadata: Metadata = {
   title: "My Profile — Elikonas",
+  description: "Your Elikonas learning profile and record.",
+  robots: { index: false, follow: false },
 };
 
 export default async function ProfilePage() {

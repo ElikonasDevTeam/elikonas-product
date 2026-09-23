@@ -238,6 +238,10 @@ export async function HomepageContent() {
             </a>
           </nav>
         </div>
+        <div className="mx-auto max-w-6xl px-6 pt-4 text-xs text-[#323031]/40">
+          Elikonas (elikonas.com) is an independent learning platform and is not affiliated with
+          the former record label, Elikonas Records.
+        </div>
       </footer>
     </>
   );

@@ -37,6 +37,8 @@ import { NotificationsView, type NotificationData } from "./notifications-view";
 
 export const metadata: Metadata = {
   title: "Notifications — Elikonas",
+  description: "Your Elikonas notifications.",
+  robots: { index: false, follow: false },
 };
 
 export default async function NotificationsPage() {

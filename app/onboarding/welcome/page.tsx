@@ -3,6 +3,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Welcome to the alpha — Elikonas",
+  description: "You're in. Welcome to the Elikonas alpha.",
+  robots: { index: false, follow: true },
 };
 
 export default function OnboardingWelcomePage() {

@@ -42,6 +42,8 @@ import { PeopleView, type ConnectionData, type IncomingRequestData } from "./peo
 
 export const metadata: Metadata = {
   title: "People — Elikonas",
+  description: "Find and connect with other learners on Elikonas.",
+  robots: { index: false, follow: false },
 };
 
 export default async function PeoplePage() {

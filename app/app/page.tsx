@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   title: "Elikonas — Your learning, your record, your path",
   description:
     "A portable, learner-owned record for the skills you've built — in class, on the job, and everywhere in between.",
+  // Same content as "/" (this route predates the extraction into
+  // homepage-content.tsx) — canonicalize so search engines consolidate
+  // signals onto the real homepage instead of treating this as duplicate.
+  alternates: { canonical: "https://elikonas.com/" },
 };
 
 const FEATURES = [
@@ -248,6 +252,10 @@ export default async function Home() {
               Mission
             </a>
           </nav>
+        </div>
+        <div className="mx-auto max-w-6xl px-6 pt-4 text-xs text-[#323031]/40">
+          Elikonas (elikonas.com) is an independent learning platform and is not affiliated with
+          the former record label, Elikonas Records.
         </div>
       </footer>
     </>

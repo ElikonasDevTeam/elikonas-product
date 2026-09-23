@@ -109,6 +109,8 @@ import { TidingsView, type ThreadData } from "./tidings-view";
 
 export const metadata: Metadata = {
   title: "✉ Tidings — Elikonas",
+  description: "Your Elikonas messages.",
+  robots: { index: false, follow: false },
 };
 
 export default async function TidingsPage() {

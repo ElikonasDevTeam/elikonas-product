@@ -3,6 +3,8 @@ import { OnboardingFlow } from "./onboarding-flow";
 
 export const metadata: Metadata = {
   title: "Get started — Elikonas",
+  description: "Set up your Elikonas profile and start your learning record.",
+  robots: { index: false, follow: true },
 };
 
 export default function OnboardingPage() {

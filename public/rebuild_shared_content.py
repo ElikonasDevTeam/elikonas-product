@@ -169,6 +169,8 @@ def build_footer_html(depth: int) -> str:
         </div>
 {social_html}
         <div class="footer-bottom">&copy; {year} Elikonas Public Benefit Corporation</div>
+        <div class="footer-disclaimer">Elikonas (elikonas.com) is an independent learning
+           platform and is not affiliated with the former record label, Elikonas Records.</div>
     </footer>
 {FOOTER_END}"""
 

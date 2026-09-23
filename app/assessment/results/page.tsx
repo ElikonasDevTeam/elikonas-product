@@ -8,6 +8,8 @@ import type { Plan } from "@/app/account/types";
 
 export const metadata: Metadata = {
   title: "Your Interest Profile — Elikonas",
+  description: "Your interest assessment results and recommended learning paths.",
+  robots: { index: false, follow: false },
 };
 
 export default async function ResultsPage({

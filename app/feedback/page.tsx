@@ -5,6 +5,8 @@ import { AppShell } from "@/app/components/app-shell";
 
 export const metadata: Metadata = {
   title: "Feedback — Elikonas",
+  description: "Share feedback with the Elikonas team.",
+  robots: { index: false, follow: false },
 };
 
 const SURVEY_EMBED_URL =

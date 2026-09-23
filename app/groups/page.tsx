@@ -147,7 +147,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { GroupsView, type GroupData, type MyMembership } from "./groups-view";
 
-export const metadata: Metadata = { title: "Groups — Elikonas" };
+export const metadata: Metadata = {
+  title: "Groups — Elikonas",
+  description: "Join learning groups with other Elikonas learners.",
+  robots: { index: false, follow: false },
+};
 
 export default async function GroupsPage() {
   const supabase = await createClient();
