@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LearningLibraryView } from "./learning-library-view";
 
-export const metadata: Metadata = { title: "Learning Library — Elikonas" };
+export const metadata: Metadata = {
+  title: "Learning Library — Elikonas",
+  description: "Browse and track your learning units on Elikonas.",
+  robots: { index: false, follow: false },
+};
 
 export default async function LearningLibraryPage() {
   const supabase = await createClient();

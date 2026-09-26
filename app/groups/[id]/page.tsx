@@ -8,7 +8,11 @@ import {
   type GroupMemberInfo,
 } from "./group-view";
 
-export const metadata: Metadata = { title: "Group — Elikonas" };
+export const metadata: Metadata = {
+  title: "Group — Elikonas",
+  description: "An Elikonas learning group.",
+  robots: { index: false, follow: false },
+};
 
 export default async function GroupPage({
   params,

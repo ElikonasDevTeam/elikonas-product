@@ -6,6 +6,8 @@ import { DEFAULT_PRIVACY, type Plan, type PrivacySettings } from "./types";
 
 export const metadata: Metadata = {
   title: "Account Settings — Elikonas",
+  description: "Manage your Elikonas account, subscription, and privacy settings.",
+  robots: { index: false, follow: false },
 };
 
 export default async function AccountPage({

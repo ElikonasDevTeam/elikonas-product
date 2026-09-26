@@ -8,6 +8,8 @@ import { AiGuideView } from "./ai-guide-view";
 
 export const metadata: Metadata = {
   title: "AI Guide — Elikonas",
+  description: "Chat with Eli, your AI guide, to find what to learn next.",
+  robots: { index: false, follow: false },
 };
 
 export default async function AiGuidePage() {

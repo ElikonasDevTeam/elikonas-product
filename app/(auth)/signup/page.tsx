@@ -3,6 +3,8 @@ import { SignupForm } from "./signup-form";
 
 export const metadata: Metadata = {
   title: "Create account — Elikonas",
+  description: "Create your Elikonas account and start your portable learning record.",
+  robots: { index: false, follow: true },
 };
 
 export default function SignupPage() {

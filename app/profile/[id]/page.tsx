@@ -25,11 +25,39 @@ import { PublicProfileView, type ConnectionStatus } from "./public-profile-view"
 import { DEFAULT_PRIVACY, type PrivacySettings } from "@/app/account/types";
 import type { EdUnit } from "@/types";
 
-export const metadata: Metadata = {
-  title: "Profile — Elikonas",
-};
-
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// This route is public (signed-out visitors can view profiles), so unlike
+// the rest of the authenticated app it's worth a real per-profile title
+// instead of a generic fallback.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id: slugOrId } = await params;
+  const admin = getAdminClient();
+  const { data: bySlug } = await admin
+    .from("profiles")
+    .select("full_name")
+    .eq("slug", slugOrId)
+    .maybeSingle();
+  const data =
+    bySlug ??
+    (UUID_RE.test(slugOrId)
+      ? (
+          await admin.from("profiles").select("full_name").eq("id", slugOrId).maybeSingle()
+        ).data
+      : null);
+
+  const name = data?.full_name?.trim();
+  const title = name ? `${name} — Elikonas` : "Profile — Elikonas";
+  const description = name
+    ? `${name}'s learning record on Elikonas.`
+    : "A learner's portable, AI-guided learning record on Elikonas.";
+
+  return { title, description };
+}
 
 export default async function PublicProfilePage({
   params,

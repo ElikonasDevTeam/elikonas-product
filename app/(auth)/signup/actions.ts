@@ -170,6 +170,7 @@ export async function signupAction(
         country,
         phone,
         sms_notifications_enabled: phone ? smsOptIn : false,
+        role: "learner",
       },
       { onConflict: "id" }
     );

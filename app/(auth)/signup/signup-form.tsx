@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import Link from "next/link";
 import { signupAction, type SignupError } from "./actions";
 import { COUNTRIES } from "./countries";
+import { NeedCodeModal } from "./need-code-modal";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -253,12 +254,15 @@ export function SignupForm() {
       </div>
 
       <div>
-        <label htmlFor="inviteCode" className="block text-sm font-medium text-[#323031] mb-1.5">
-          Invite code
-          <span className="ml-2 inline-flex items-center rounded-full bg-[#ffc857]/20 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[#084c61] uppercase">
-            Alpha access
-          </span>
-        </label>
+        <div className="flex items-center justify-between mb-1.5">
+          <label htmlFor="inviteCode" className="block text-sm font-medium text-[#323031]">
+            Invite code
+            <span className="ml-2 inline-flex items-center rounded-full bg-[#ffc857]/20 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[#084c61] uppercase">
+              Alpha access
+            </span>
+          </label>
+          <NeedCodeModal />
+        </div>
         <input
           id="inviteCode"
           name="inviteCode"
