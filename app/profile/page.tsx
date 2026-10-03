@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { EdUnit } from "@/types";
+import type { Credential, EdUnit } from "@/types";
 import type { RIASECScores } from "@/types/onet";
 import { ProfileView } from "./profile-view";
+
+const CREDENTIAL_FILE_SIGNED_URL_TTL_SECONDS = 60 * 60;
 
 export const metadata: Metadata = {
   title: "My Profile — Elikonas",
@@ -27,6 +29,7 @@ export default async function ProfilePage() {
     { count: pendingConnectionsCount },
     { data: latestAssessmentRow },
     { data: profileRow },
+    { data: credentialRows },
   ] = await Promise.all([
     supabase
       .from("ed_units")
@@ -60,7 +63,41 @@ export default async function ProfilePage() {
       .limit(1)
       .maybeSingle(),
     supabase.from("profiles").select("slug").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("credentials")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }),
   ]);
+
+  const credentials = (credentialRows ?? []) as Credential[];
+  const filePaths = credentials
+    .map((c) => c.file_url)
+    .filter((p): p is string => Boolean(p));
+
+  const signedUrlByPath = new Map<string, string>();
+  if (filePaths.length > 0) {
+    const { data: signedUrls } = await supabase.storage
+      .from("credential-files")
+      .createSignedUrls(filePaths, CREDENTIAL_FILE_SIGNED_URL_TTL_SECONDS);
+    for (const s of signedUrls ?? []) {
+      if (s.path && s.signedUrl && !s.error) signedUrlByPath.set(s.path, s.signedUrl);
+    }
+  }
+
+  // Grouped by ed_unit_id and keyed as a plain object (not a Map) so it
+  // passes cleanly as a prop to the client component below.
+  const credentialsByEdUnit: Record<
+    string,
+    (Credential & { signedUrl: string | null })[]
+  > = {};
+  for (const c of credentials) {
+    const withUrl = {
+      ...c,
+      signedUrl: c.file_url ? signedUrlByPath.get(c.file_url) ?? null : null,
+    };
+    (credentialsByEdUnit[c.ed_unit_id] ??= []).push(withUrl);
+  }
 
   const latestAssessment = latestAssessmentRow?.realistic_score != null
     ? {
@@ -80,6 +117,7 @@ export default async function ProfilePage() {
     <ProfileView
       user={user}
       edUnits={(edUnits ?? []) as EdUnit[]}
+      credentialsByEdUnit={credentialsByEdUnit}
       unreadCount={unreadCount ?? 0}
       unreadTidingsCount={unreadTidingsCount ?? 0}
       pendingConnectionsCount={pendingConnectionsCount ?? 0}

@@ -4,9 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { AppShell } from "@/app/components/app-shell";
-import type { EdUnit, EdUnitStatus } from "@/types";
+import type { Credential, EdUnit, EdUnitStatus } from "@/types";
 import type { RIASECScores } from "@/types/onet";
 import { LearningModal } from "./learning-modal";
+import { CredentialModal } from "./credential-modal";
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -86,7 +87,46 @@ function StatusBadge({ status }: { status: EdUnitStatus }) {
   );
 }
 
-function EdUnitRow({ unit, onEdit }: { unit: EdUnit; onEdit: () => void }) {
+function CredentialBadge({
+  credentials,
+}: {
+  credentials: (Credential & { signedUrl: string | null })[];
+}) {
+  if (credentials.length === 0) return null;
+  // v1 only ever creates one credential per ed_unit via the UI, but the
+  // schema allows more (e.g. a later accredited entry alongside this one) —
+  // show the most recent one.
+  const latest = credentials[0];
+
+  return (
+    <a
+      href={latest.signedUrl ?? undefined}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={latest.self_attest ? "Self-attested proof uploaded" : "Proof uploaded"}
+      className={[
+        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium",
+        latest.signedUrl
+          ? "bg-[#177e89]/10 text-[#177e89] hover:bg-[#177e89]/20"
+          : "cursor-default bg-gray-100 text-[#323031]/40",
+      ].join(" ")}
+    >
+      📎 Proof
+    </a>
+  );
+}
+
+function EdUnitRow({
+  unit,
+  credentials,
+  onEdit,
+  onAddProof,
+}: {
+  unit: EdUnit;
+  credentials: (Credential & { signedUrl: string | null })[];
+  onEdit: () => void;
+  onAddProof: () => void;
+}) {
   return (
     <div className="rounded-xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -97,6 +137,17 @@ function EdUnitRow({ unit, onEdit }: { unit: EdUnit; onEdit: () => void }) {
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <CategoryTag category={unit.category} />
           <StatusBadge status={unit.status} />
+          <CredentialBadge credentials={credentials} />
+          {credentials.length === 0 && (
+            <button
+              type="button"
+              onClick={onAddProof}
+              aria-label={`Add proof for ${unit.name}`}
+              className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-[#323031]/70 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-[#323031]"
+            >
+              Add proof
+            </button>
+          )}
           <button
             type="button"
             onClick={onEdit}
@@ -156,6 +207,7 @@ const RIASEC_NAMES: Record<string, { code: string; name: string }> = {
 export function ProfileView({
   user,
   edUnits,
+  credentialsByEdUnit,
   unreadCount,
   unreadTidingsCount,
   pendingConnectionsCount,
@@ -164,6 +216,7 @@ export function ProfileView({
 }: {
   user: User;
   edUnits: EdUnit[];
+  credentialsByEdUnit: Record<string, (Credential & { signedUrl: string | null })[]>;
   unreadCount: number;
   unreadTidingsCount: number;
   pendingConnectionsCount: number;
@@ -172,6 +225,7 @@ export function ProfileView({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUnit, setEditingUnit] = useState<EdUnit | null>(null);
+  const [addingProofForUnitId, setAddingProofForUnitId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   const meta = user.user_metadata ?? {};
@@ -372,7 +426,9 @@ export function ProfileView({
                   <EdUnitRow
                     key={unit.id}
                     unit={unit}
+                    credentials={credentialsByEdUnit[unit.id] ?? []}
                     onEdit={() => setEditingUnit(unit)}
+                    onAddProof={() => setAddingProofForUnitId(unit.id)}
                   />
                 ))}
               </div>
@@ -388,6 +444,14 @@ export function ProfileView({
           key={editingUnit.id}
           unit={editingUnit}
           onClose={() => setEditingUnit(null)}
+        />
+      )}
+
+      {addingProofForUnitId && (
+        <CredentialModal
+          key={addingProofForUnitId}
+          edUnitId={addingProofForUnitId}
+          onClose={() => setAddingProofForUnitId(null)}
         />
       )}
     </>
