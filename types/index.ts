@@ -70,4 +70,27 @@ export interface EdUnit {
   status: EdUnitStatus;
   progress_pct: number;
   created_at: string;
+  updated_at: string;
+}
+
+// Independent flags, not a single either/or classification — a credential
+// can be both self_attest and cert_upload at once (a learner's own upload),
+// or accredited and cert_upload (an institution-issued document uploaded as
+// evidence). open_cred/accredited/blockchain have no automated flow yet —
+// the schema supports them (e.g. for a manually-entered historical degree),
+// but only self_attest + cert_upload are set by any code path today.
+export interface Credential {
+  id: string;
+  ed_unit_id: string;
+  user_id: string;
+  self_attest: boolean;
+  cert_upload: boolean;
+  open_cred: boolean;
+  accredited: boolean;
+  blockchain: boolean;
+  file_url: string | null;
+  course_url: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
