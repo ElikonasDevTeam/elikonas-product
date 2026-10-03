@@ -6,7 +6,7 @@ import type { User } from "@supabase/supabase-js";
 import { AppShell } from "@/app/components/app-shell";
 import type { EdUnit, EdUnitStatus } from "@/types";
 import type { RIASECScores } from "@/types/onet";
-import { AddLearningModal } from "./add-learning-modal";
+import { LearningModal } from "./learning-modal";
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -86,7 +86,7 @@ function StatusBadge({ status }: { status: EdUnitStatus }) {
   );
 }
 
-function EdUnitRow({ unit }: { unit: EdUnit }) {
+function EdUnitRow({ unit, onEdit }: { unit: EdUnit; onEdit: () => void }) {
   return (
     <div className="rounded-xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -97,6 +97,14 @@ function EdUnitRow({ unit }: { unit: EdUnit }) {
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <CategoryTag category={unit.category} />
           <StatusBadge status={unit.status} />
+          <button
+            type="button"
+            onClick={onEdit}
+            aria-label={`Edit ${unit.name}`}
+            className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-[#323031]/70 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-[#323031]"
+          >
+            Edit
+          </button>
         </div>
       </div>
       {unit.status === "in_progress" && (
@@ -163,6 +171,7 @@ export function ProfileView({
   profileSlug: string | null;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingUnit, setEditingUnit] = useState<EdUnit | null>(null);
   const [copied, setCopied] = useState(false);
 
   const meta = user.user_metadata ?? {};
@@ -360,7 +369,11 @@ export function ProfileView({
             ) : (
               <div className="space-y-2.5">
                 {edUnits.map((unit) => (
-                  <EdUnitRow key={unit.id} unit={unit} />
+                  <EdUnitRow
+                    key={unit.id}
+                    unit={unit}
+                    onEdit={() => setEditingUnit(unit)}
+                  />
                 ))}
               </div>
             )}
@@ -368,7 +381,15 @@ export function ProfileView({
         </main>
       </AppShell>
 
-      {modalOpen && <AddLearningModal onClose={() => setModalOpen(false)} />}
+      {modalOpen && <LearningModal onClose={() => setModalOpen(false)} />}
+
+      {editingUnit && (
+        <LearningModal
+          key={editingUnit.id}
+          unit={editingUnit}
+          onClose={() => setEditingUnit(null)}
+        />
+      )}
     </>
   );
 }
