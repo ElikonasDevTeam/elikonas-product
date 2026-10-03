@@ -2,8 +2,8 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { addEdUnitAction } from "./actions";
-import { CATEGORIES } from "@/types";
+import { addEdUnitAction, editEdUnitAction } from "./actions";
+import { CATEGORIES, type EdUnit, type EdUnitStatus } from "@/types";
 
 function Label({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return (
@@ -22,10 +22,23 @@ const selectClass =
   "w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#323031] " +
   "outline-none transition-all duration-150 focus:border-[#177e89] focus:ring-2 focus:ring-[#177e89]/20";
 
-export function AddLearningModal({ onClose }: { onClose: () => void }) {
+// Handles both adding a record and editing an existing one — passing `unit`
+// switches it to edit mode. The fields are identical either way, so the two
+// flows share one form rather than drifting apart as separate components.
+export function LearningModal({
+  unit,
+  onClose,
+}: {
+  unit?: EdUnit;
+  onClose: () => void;
+}) {
+  const isEdit = unit !== undefined;
   const router = useRouter();
-  const [state, action, pending] = useActionState(addEdUnitAction, null);
-  const [status, setStatus] = useState("planned");
+  const [state, action, pending] = useActionState(
+    isEdit ? editEdUnitAction : addEdUnitAction,
+    null
+  );
+  const [status, setStatus] = useState(unit?.status ?? "planned");
 
   useEffect(() => {
     if (state && "success" in state) {
@@ -43,7 +56,9 @@ export function AddLearningModal({ onClose }: { onClose: () => void }) {
 
       <div className="relative w-full max-w-md rounded-2xl border border-gray-100 bg-white p-6 shadow-xl">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-[#323031]">Add learning</h2>
+          <h2 className="text-lg font-semibold text-[#323031]">
+            {isEdit ? "Edit learning" : "Add learning"}
+          </h2>
           <button
             type="button"
             onClick={onClose}
@@ -55,6 +70,8 @@ export function AddLearningModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <form action={action} className="space-y-4">
+          {isEdit && <input type="hidden" name="id" value={unit.id} />}
+
           {state && "error" in state && (
             <div className="rounded-lg border border-[#db3a34]/30 bg-[#db3a34]/5 px-4 py-3 text-sm text-[#db3a34]">
               {state.error}
@@ -69,6 +86,7 @@ export function AddLearningModal({ onClose }: { onClose: () => void }) {
               type="text"
               placeholder="e.g. Google Data Analytics Certificate"
               required
+              defaultValue={unit?.name}
               className={inputClass}
             />
           </div>
@@ -81,13 +99,20 @@ export function AddLearningModal({ onClose }: { onClose: () => void }) {
               type="text"
               placeholder="e.g. Coursera, MIT OpenCourseWare"
               required
+              defaultValue={unit?.provider}
               className={inputClass}
             />
           </div>
 
           <div>
             <Label htmlFor="category">Category</Label>
-            <select id="category" name="category" required className={selectClass}>
+            <select
+              id="category"
+              name="category"
+              required
+              defaultValue={unit?.category}
+              className={selectClass}
+            >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
                   {c}
@@ -103,7 +128,7 @@ export function AddLearningModal({ onClose }: { onClose: () => void }) {
               name="status"
               required
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => setStatus(e.target.value as EdUnitStatus)}
               className={selectClass}
             >
               <option value="planned">Planned</option>
@@ -121,7 +146,9 @@ export function AddLearningModal({ onClose }: { onClose: () => void }) {
                 type="number"
                 min={1}
                 max={99}
-                defaultValue={50}
+                defaultValue={
+                  unit?.status === "in_progress" ? unit.progress_pct : 50
+                }
                 required
                 className={inputClass}
               />
@@ -146,7 +173,13 @@ export function AddLearningModal({ onClose }: { onClose: () => void }) {
                   : "bg-[#084c61] hover:bg-[#177e89] active:scale-[0.99]",
               ].join(" ")}
             >
-              {pending ? "Adding…" : "Add learning"}
+              {pending
+                ? isEdit
+                  ? "Saving…"
+                  : "Adding…"
+                : isEdit
+                  ? "Save changes"
+                  : "Add learning"}
             </button>
           </div>
         </form>
