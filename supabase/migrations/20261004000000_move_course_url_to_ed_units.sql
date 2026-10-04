@@ -16,3 +16,10 @@ where c.ed_unit_id = eu.id
 
 alter table public.credentials
   drop column if exists course_url;
+
+-- When the course was actually completed, as entered by the user — distinct
+-- from created_at/updated_at, which just track row changes, not real-world
+-- completion. credentials.created_at already covers "when was the proof
+-- uploaded"; no separate timestamp is needed for that.
+alter table public.ed_units
+  add column if not exists completed_at date;

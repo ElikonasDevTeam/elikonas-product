@@ -167,6 +167,17 @@ export function LearningModal({
             />
           </div>
 
+          <div>
+            <Label htmlFor="completed_at">Completion date (optional)</Label>
+            <input
+              id="completed_at"
+              name="completed_at"
+              type="date"
+              defaultValue={unit?.completed_at ?? ""}
+              className={inputClass}
+            />
+          </div>
+
           <div className="flex gap-3 pt-2">
             <button
               type="button"
