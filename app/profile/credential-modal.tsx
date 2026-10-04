@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { addCredentialAction } from "./credential-actions";
+import { addCredentialAction, replaceCredentialFileAction } from "./credential-actions";
 
 const inputClass =
   "w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#323031] " +
@@ -17,15 +17,24 @@ function Label({ htmlFor, children }: { htmlFor: string; children: React.ReactNo
   );
 }
 
+// Handles both the first upload and replacing an existing one — passing
+// `replaceCredentialId` switches it to replace mode. Same file/validation
+// either way, so the two flows share one form rather than drifting apart.
 export function CredentialModal({
   edUnitId,
+  replaceCredentialId,
   onClose,
 }: {
-  edUnitId: string;
+  edUnitId?: string;
+  replaceCredentialId?: string;
   onClose: () => void;
 }) {
+  const isReplace = replaceCredentialId !== undefined;
   const router = useRouter();
-  const [state, action, pending] = useActionState(addCredentialAction, null);
+  const [state, action, pending] = useActionState(
+    isReplace ? replaceCredentialFileAction : addCredentialAction,
+    null
+  );
 
   useEffect(() => {
     if (state && "success" in state) {
@@ -43,7 +52,9 @@ export function CredentialModal({
 
       <div className="relative w-full max-w-md rounded-2xl border border-gray-100 bg-white p-6 shadow-xl">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-[#323031]">Add proof of completion</h2>
+          <h2 className="text-lg font-semibold text-[#323031]">
+            {isReplace ? "Replace proof" : "Add proof of completion"}
+          </h2>
           <button
             type="button"
             onClick={onClose}
@@ -55,7 +66,11 @@ export function CredentialModal({
         </div>
 
         <form action={action} className="space-y-4">
-          <input type="hidden" name="ed_unit_id" value={edUnitId} />
+          {isReplace ? (
+            <input type="hidden" name="credential_id" value={replaceCredentialId} />
+          ) : (
+            <input type="hidden" name="ed_unit_id" value={edUnitId} />
+          )}
 
           {state && "error" in state && (
             <div className="rounded-lg border border-[#db3a34]/30 bg-[#db3a34]/5 px-4 py-3 text-sm text-[#db3a34]">
@@ -96,7 +111,13 @@ export function CredentialModal({
                   : "bg-[#084c61] hover:bg-[#177e89] active:scale-[0.99]",
               ].join(" ")}
             >
-              {pending ? "Uploading…" : "Upload"}
+              {pending
+                ? isReplace
+                  ? "Replacing…"
+                  : "Uploading…"
+                : isReplace
+                  ? "Replace"
+                  : "Upload"}
             </button>
           </div>
         </form>

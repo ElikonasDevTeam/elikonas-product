@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { AppShell } from "@/app/components/app-shell";
 import type { Credential, EdUnit, EdUnitStatus } from "@/types";
 import type { RIASECScores } from "@/types/onet";
 import { LearningModal } from "./learning-modal";
 import { CredentialModal } from "./credential-modal";
+import { deleteCredentialAction } from "./credential-actions";
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -129,16 +131,48 @@ function CredentialBadge({ credentials }: { credentials: Credential[] }) {
   );
 }
 
+function DeleteCredentialButton({ credentialId }: { credentialId: string }) {
+  const router = useRouter();
+  const [state, action, pending] = useActionState(deleteCredentialAction, null);
+
+  useEffect(() => {
+    if (state && "success" in state) router.refresh();
+  }, [state, router]);
+
+  return (
+    <form
+      action={action}
+      onSubmit={(e) => {
+        if (!confirm("Delete this proof? This can't be undone.")) e.preventDefault();
+      }}
+    >
+      <input type="hidden" name="id" value={credentialId} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-[#323031]/70 transition-colors hover:border-[#db3a34]/30 hover:bg-[#db3a34]/5 hover:text-[#db3a34] disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {pending ? "Deleting…" : "Delete"}
+      </button>
+      {state && "error" in state && (
+        <p className="mt-1 text-xs text-[#db3a34]">{state.error}</p>
+      )}
+    </form>
+  );
+}
+
 function EdUnitRow({
   unit,
   credentials,
   onEdit,
   onAddProof,
+  onReplaceProof,
 }: {
   unit: EdUnit;
   credentials: Credential[];
   onEdit: () => void;
   onAddProof: () => void;
+  onReplaceProof: (credentialId: string) => void;
 }) {
   return (
     <div className="rounded-xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
@@ -162,7 +196,7 @@ function EdUnitRow({
           <CategoryTag category={unit.category} />
           <StatusBadge status={unit.status} />
           <CredentialBadge credentials={credentials} />
-          {credentials.length === 0 && (
+          {credentials.length === 0 ? (
             <button
               type="button"
               onClick={onAddProof}
@@ -171,6 +205,18 @@ function EdUnitRow({
             >
               Add proof
             </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => onReplaceProof(credentials[0].id)}
+                aria-label={`Replace proof for ${unit.name}`}
+                className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-[#323031]/70 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-[#323031]"
+              >
+                Replace
+              </button>
+              <DeleteCredentialButton credentialId={credentials[0].id} />
+            </>
           )}
           <button
             type="button"
@@ -250,6 +296,7 @@ export function ProfileView({
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUnit, setEditingUnit] = useState<EdUnit | null>(null);
   const [addingProofForUnitId, setAddingProofForUnitId] = useState<string | null>(null);
+  const [replacingCredentialId, setReplacingCredentialId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   const meta = user.user_metadata ?? {};
@@ -453,6 +500,7 @@ export function ProfileView({
                     credentials={credentialsByEdUnit[unit.id] ?? []}
                     onEdit={() => setEditingUnit(unit)}
                     onAddProof={() => setAddingProofForUnitId(unit.id)}
+                    onReplaceProof={(credentialId) => setReplacingCredentialId(credentialId)}
                   />
                 ))}
               </div>
@@ -476,6 +524,14 @@ export function ProfileView({
           key={addingProofForUnitId}
           edUnitId={addingProofForUnitId}
           onClose={() => setAddingProofForUnitId(null)}
+        />
+      )}
+
+      {replacingCredentialId && (
+        <CredentialModal
+          key={replacingCredentialId}
+          replaceCredentialId={replacingCredentialId}
+          onClose={() => setReplacingCredentialId(null)}
         />
       )}
     </>
