@@ -69,6 +69,7 @@ export interface EdUnit {
   category: Category;
   status: EdUnitStatus;
   progress_pct: number;
+  course_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -89,7 +90,6 @@ export interface Credential {
   accredited: boolean;
   blockchain: boolean;
   file_url: string | null;
-  course_url: string | null;
   completed_at: string | null;
   created_at: string;
   updated_at: string;

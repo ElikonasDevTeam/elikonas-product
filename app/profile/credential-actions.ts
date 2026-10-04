@@ -18,7 +18,6 @@
     file_url      text        nullable — the Storage object path (bucket is
                               private, so this is never a usable URL on its
                               own; a signed URL is generated at read time)
-    course_url    text        nullable
     completed_at  date        nullable
     created_at, updated_at    standard, updated_at maintained by the
                               credentials_updated_at trigger
@@ -27,6 +26,12 @@
   shape as ed_units. Storage policies on storage.objects for the
   credential-files bucket scope by path prefix ("{user_id}/...") instead,
   since storage.objects has no user_id column of its own.
+
+  course_url originally lived here too, but it was write-only (a form
+  field with nowhere that ever displayed it back) and conceptually belongs
+  to the course, not to each individual proof of completion — moved to
+  ed_units.course_url in
+  supabase/migrations/20261004000000_move_course_url_to_ed_units.sql.
 
   This action only ever sets self_attest = true, cert_upload = true — the
   other three flags exist in the schema for future flows (and for a
@@ -58,12 +63,6 @@ export async function addCredentialAction(
   const file = formData.get("file") as File | null;
   if (!file || file.size === 0) {
     return { error: "Please choose a file to upload." };
-  }
-
-  const courseUrlRaw = (formData.get("course_url") as string)?.trim();
-  const course_url = courseUrlRaw || null;
-  if (course_url && !/^https?:\/\//i.test(course_url)) {
-    return { error: "Course URL must start with http:// or https://" };
   }
 
   // Confirm ownership before touching Storage at all, rather than upload
@@ -98,7 +97,6 @@ export async function addCredentialAction(
     self_attest: true,
     cert_upload: true,
     file_url: path,
-    course_url,
   });
 
   if (insertError) {

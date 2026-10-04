@@ -78,17 +78,6 @@ export function CredentialModal({
             </p>
           </div>
 
-          <div>
-            <Label htmlFor="course_url">Course link (optional)</Label>
-            <input
-              id="course_url"
-              name="course_url"
-              type="url"
-              placeholder="https://..."
-              className={inputClass}
-            />
-          </div>
-
           <div className="flex gap-3 pt-2">
             <button
               type="button"

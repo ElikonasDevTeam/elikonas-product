@@ -11,6 +11,7 @@
     category      text        not null
     status        text        not null, check in ('completed','in_progress','planned')
     progress_pct  int         not null, default 0, check between 0 and 100
+    course_url    text        nullable
     created_at    timestamptz not null, default now()
     updated_at    timestamptz not null, default now()  -- maintained by the
                               -- ed_units_updated_at trigger (update_updated_at())
@@ -36,6 +37,26 @@ import { revalidatePath } from "next/cache";
 
 export type AddEdUnitState = { error: string } | { success: true } | null;
 export type EditEdUnitState = AddEdUnitState;
+
+// Optional on every form that sets it. Empty is valid (no course link);
+// anything non-empty must be a well-formed http(s) URL.
+function parseCourseUrl(
+  formData: FormData
+): { ok: true; value: string | null } | { ok: false; error: string } {
+  const raw = (formData.get("course_url") as string)?.trim();
+  if (!raw) return { ok: true, value: null };
+
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    return { ok: false, error: "Course link doesn't look like a valid URL." };
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    return { ok: false, error: "Course link must start with http:// or https://" };
+  }
+  return { ok: true, value: raw };
+}
 
 // The only fields a user may write, on create or on edit. id, user_id and
 // created_at are deliberately absent: ownership and creation time must not be
@@ -69,9 +90,13 @@ export async function addEdUnitAction(
 
   if (!user) return { error: "Not authenticated." };
 
+  const courseUrl = parseCourseUrl(formData);
+  if (!courseUrl.ok) return { error: courseUrl.error };
+
   const { error } = await supabase.from("ed_units").insert({
     user_id: user.id,
     ...readEdUnitFields(formData),
+    course_url: courseUrl.value,
   });
 
   if (error) return { error: error.message };
@@ -94,13 +119,16 @@ export async function editEdUnitAction(
   const id = (formData.get("id") as string)?.trim();
   if (!id) return { error: "Missing record id." };
 
+  const courseUrl = parseCourseUrl(formData);
+  if (!courseUrl.ok) return { error: courseUrl.error };
+
   // Ownership is enforced by the "Users can update their own ed_units" RLS
   // policy, not by a user_id filter here — so someone else's row simply
   // matches nothing. .select() lets us tell that apart from a DB error:
   // RLS returns success with zero rows rather than raising.
   const { data, error } = await supabase
     .from("ed_units")
-    .update(readEdUnitFields(formData))
+    .update({ ...readEdUnitFields(formData), course_url: courseUrl.value })
     .eq("id", id)
     .select("id");
 
