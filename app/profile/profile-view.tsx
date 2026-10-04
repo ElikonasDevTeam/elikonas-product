@@ -87,29 +87,23 @@ function StatusBadge({ status }: { status: EdUnitStatus }) {
   );
 }
 
-function CredentialBadge({
-  credentials,
-}: {
-  credentials: (Credential & { signedUrl: string | null })[];
-}) {
+function CredentialBadge({ credentials }: { credentials: Credential[] }) {
   if (credentials.length === 0) return null;
   // v1 only ever creates one credential per ed_unit via the UI, but the
   // schema allows more (e.g. a later accredited entry alongside this one) —
   // show the most recent one.
   const latest = credentials[0];
 
+  // Links to a route that generates a signed URL fresh on every click and
+  // redirects to it, rather than a signed URL baked in at page-render time
+  // (which would expire if this page sits open longer than that URL's TTL).
   return (
     <a
-      href={latest.signedUrl ?? undefined}
+      href={`/api/credentials/${latest.id}/file`}
       target="_blank"
       rel="noopener noreferrer"
       title={latest.self_attest ? "Self-attested proof uploaded" : "Proof uploaded"}
-      className={[
-        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium",
-        latest.signedUrl
-          ? "bg-[#177e89]/10 text-[#177e89] hover:bg-[#177e89]/20"
-          : "cursor-default bg-gray-100 text-[#323031]/40",
-      ].join(" ")}
+      className="inline-flex items-center gap-1 rounded-full bg-[#177e89]/10 px-2.5 py-1 text-xs font-medium text-[#177e89] hover:bg-[#177e89]/20"
     >
       📎 Proof
     </a>
@@ -123,7 +117,7 @@ function EdUnitRow({
   onAddProof,
 }: {
   unit: EdUnit;
-  credentials: (Credential & { signedUrl: string | null })[];
+  credentials: Credential[];
   onEdit: () => void;
   onAddProof: () => void;
 }) {
@@ -216,7 +210,7 @@ export function ProfileView({
 }: {
   user: User;
   edUnits: EdUnit[];
-  credentialsByEdUnit: Record<string, (Credential & { signedUrl: string | null })[]>;
+  credentialsByEdUnit: Record<string, Credential[]>;
   unreadCount: number;
   unreadTidingsCount: number;
   pendingConnectionsCount: number;
