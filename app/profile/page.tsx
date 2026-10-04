@@ -5,8 +5,6 @@ import type { Credential, EdUnit } from "@/types";
 import type { RIASECScores } from "@/types/onet";
 import { ProfileView } from "./profile-view";
 
-const CREDENTIAL_FILE_SIGNED_URL_TTL_SECONDS = 60 * 60;
-
 export const metadata: Metadata = {
   title: "My Profile — Elikonas",
   description: "Your Elikonas learning profile and record.",
@@ -71,32 +69,17 @@ export default async function ProfilePage() {
   ]);
 
   const credentials = (credentialRows ?? []) as Credential[];
-  const filePaths = credentials
-    .map((c) => c.file_url)
-    .filter((p): p is string => Boolean(p));
-
-  const signedUrlByPath = new Map<string, string>();
-  if (filePaths.length > 0) {
-    const { data: signedUrls } = await supabase.storage
-      .from("credential-files")
-      .createSignedUrls(filePaths, CREDENTIAL_FILE_SIGNED_URL_TTL_SECONDS);
-    for (const s of signedUrls ?? []) {
-      if (s.path && s.signedUrl && !s.error) signedUrlByPath.set(s.path, s.signedUrl);
-    }
-  }
 
   // Grouped by ed_unit_id and keyed as a plain object (not a Map) so it
-  // passes cleanly as a prop to the client component below.
-  const credentialsByEdUnit: Record<
-    string,
-    (Credential & { signedUrl: string | null })[]
-  > = {};
+  // passes cleanly as a prop to the client component below. Deliberately
+  // does NOT generate signed URLs here — a signed URL generated at render
+  // time and baked into the page would expire if the page sits open (or
+  // gets served from cache) longer than its TTL. The badge links to
+  // /api/credentials/[id]/file instead, which generates one fresh on
+  // every click.
+  const credentialsByEdUnit: Record<string, Credential[]> = {};
   for (const c of credentials) {
-    const withUrl = {
-      ...c,
-      signedUrl: c.file_url ? signedUrlByPath.get(c.file_url) ?? null : null,
-    };
-    (credentialsByEdUnit[c.ed_unit_id] ??= []).push(withUrl);
+    (credentialsByEdUnit[c.ed_unit_id] ??= []).push(c);
   }
 
   const latestAssessment = latestAssessmentRow?.realistic_score != null
