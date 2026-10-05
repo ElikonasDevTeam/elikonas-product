@@ -4,16 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-
-function initials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-}
+import { Avatar } from "@/app/components/avatar";
 
 export function NavUserMenu({ userName }: { userName: string }) {
   const [open, setOpen] = useState(false);
@@ -43,9 +34,9 @@ export function NavUserMenu({ userName }: { userName: string }) {
       <button
         onClick={() => setOpen((prev) => !prev)}
         aria-label="Account menu"
-        className="flex h-8 w-8 items-center justify-center rounded-full bg-[#ffc857] text-[11px] font-bold text-[#084c61] transition-opacity hover:opacity-85"
+        className="rounded-full transition-opacity hover:opacity-85"
       >
-        {initials(userName)}
+        <Avatar name={userName} size="h-8 w-8 text-[11px]" colorClassName="bg-[#ffc857] text-[#084c61]" />
       </button>
 
       {open && (

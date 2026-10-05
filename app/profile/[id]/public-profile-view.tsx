@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { AppShell } from "@/app/components/app-shell";
+import { Avatar } from "@/app/components/avatar";
 import { connectAction, acceptConnectionAction, declineConnectionAction } from "@/app/people/actions";
 import type { PrivacySettings } from "@/app/account/types";
 import type { EdUnit, EdUnitStatus } from "@/types";
@@ -17,12 +18,6 @@ export interface PublicProfile {
   id: string;
   full_name: string | null;
   interests: string[];
-}
-
-function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  return (parts[0]?.[0] ?? "?").toUpperCase();
 }
 
 function ProgressRing({ pct }: { pct: number }) {
@@ -252,7 +247,6 @@ export function PublicProfileView({
   viewer: ProfileViewer;
 }) {
   const displayName = profile.full_name || "Unknown";
-  const ini = getInitials(displayName);
 
   const total = edUnits.length;
   const completed = edUnits.filter((u) => u.status === "completed").length;
@@ -275,9 +269,12 @@ export function PublicProfileView({
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
           {/* Identity */}
           <div className="flex flex-col items-center gap-3 text-center sm:min-w-[200px] sm:items-start sm:text-left">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#084c61] text-2xl font-bold text-white">
-              {ini}
-            </div>
+            <Avatar
+              name={displayName}
+              size="h-20 w-20 text-2xl"
+              colorClassName="bg-[#084c61] text-white"
+              initialsStrategy="first-last"
+            />
             <div>
               <h1 className="text-xl font-semibold text-[#323031]">{displayName}</h1>
             </div>

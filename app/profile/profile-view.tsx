@@ -10,12 +10,7 @@ import type { RIASECScores } from "@/types/onet";
 import { LearningModal } from "./learning-modal";
 import { CredentialModal } from "./credential-modal";
 import { deleteCredentialAction } from "./credential-actions";
-
-function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  return (parts[0]?.[0] ?? "?").toUpperCase();
-}
+import { Avatar } from "@/app/components/avatar";
 
 function ProgressRing({ pct }: { pct: number }) {
   const r = 38;
@@ -301,7 +296,6 @@ export function ProfileView({
 
   const meta = user.user_metadata ?? {};
   const fullName: string = meta.full_name || user.email || "Learner";
-  const initials = getInitials(fullName);
   const interests: string[] = Array.isArray(meta.interests) ? meta.interests : [];
   const isFoundingMember: boolean = meta.founding_member === true;
 
@@ -345,9 +339,12 @@ export function ProfileView({
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
               {/* Identity */}
               <div className="flex flex-col items-center gap-3 text-center sm:min-w-[200px] sm:items-start sm:text-left">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#084c61] text-2xl font-bold text-white">
-                  {initials}
-                </div>
+                <Avatar
+                  name={fullName}
+                  size="h-20 w-20 text-2xl"
+                  colorClassName="bg-[#084c61] text-white"
+                  initialsStrategy="first-last"
+                />
                 <div>
                   <h1 className="text-xl font-semibold text-[#323031]">{fullName}</h1>
                   {isFoundingMember && (
