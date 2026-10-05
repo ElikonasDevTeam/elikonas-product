@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { connectAction, acceptConnectionAction, declineConnectionAction } from "./actions";
 import { AppShell } from "@/app/components/app-shell";
+import { Avatar } from "@/app/components/avatar";
 
 export interface ConnectionData {
   id: string;
@@ -32,31 +33,6 @@ interface SearchResult {
   interests: string[];
 }
 
-function initials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-}
-
-function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg" }) {
-  const dim =
-    size === "lg"
-      ? "h-12 w-12 text-base"
-      : size === "md"
-      ? "h-10 w-10 text-sm"
-      : "h-8 w-8 text-xs";
-  return (
-    <div
-      className={`${dim} shrink-0 flex items-center justify-center rounded-full bg-[#084c61] font-bold text-[#ffc857]`}
-    >
-      {initials(name)}
-    </div>
-  );
-}
 
 function PersonCard({
   userId,
@@ -78,7 +54,7 @@ function PersonCard({
     <div className="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <Link href={profileHref}>
-          <Avatar name={name} size="lg" />
+          <Avatar name={name} size="h-12 w-12 text-base" />
         </Link>
         <div className="min-w-0 flex-1">
           <Link

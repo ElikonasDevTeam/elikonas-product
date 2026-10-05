@@ -4,6 +4,7 @@ import { useEffect, useOptimistic, useRef, useState, useTransition } from "react
 import { useActionState } from "react";
 import { postMusingAction, toggleLikeAction, submitReportAction } from "./actions";
 import { AppShell } from "@/app/components/app-shell";
+import { Avatar } from "@/app/components/avatar";
 
 export interface MusingData {
   id: string;
@@ -28,16 +29,6 @@ const REPORT_REASONS = [
   { value: "other", label: "Other" },
 ] as const;
 
-function initials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-}
-
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
@@ -50,14 +41,6 @@ function relativeTime(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" }) {
-  const dim = size === "md" ? "h-10 w-10 text-sm" : "h-8 w-8 text-xs";
-  return (
-    <div className={`${dim} shrink-0 flex items-center justify-center rounded-full bg-[#084c61] font-bold text-[#ffc857]`}>
-      {initials(name)}
-    </div>
-  );
-}
 
 function HashtagBadge({
   tag,
@@ -253,7 +236,7 @@ function MusingCard({
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
       <div className="flex items-start gap-3">
-        <Avatar name={musing.author_name} />
+        <Avatar name={musing.author_name} size="h-10 w-10 text-sm" />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-semibold text-[#323031]">{musing.author_name}</span>
@@ -367,7 +350,7 @@ function ComposeBox({
     <form ref={formRef} action={formAction} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
       <input type="hidden" name="visibility" value={visibility} />
       <div className="flex gap-3">
-        <Avatar name={authorName} />
+        <Avatar name={authorName} size="h-10 w-10 text-sm" />
         <div className="flex-1">
           <textarea
             name="body"
