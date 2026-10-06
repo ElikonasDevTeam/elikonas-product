@@ -37,10 +37,10 @@ export default function UpdatesPage() {
       }}
     >
       <h1 style={{ fontSize: "2.25rem", fontWeight: 600, color: "#084c61", marginBottom: "0.5rem" }}>
-        What's new
+        What&apos;s new
       </h1>
       <p style={{ fontSize: "1.05rem", color: "#323031", opacity: 0.75, marginBottom: "3rem", maxWidth: "48ch" }}>
-        A running log of what's changed on Elikonas, in plain language.
+        A running log of what&apos;s changed on Elikonas, in plain language.
       </p>
       <div>
         {entries.map((entry, i) => (
