@@ -81,13 +81,32 @@ export default async function GroupPage({
 
   if (!groupData) redirect("/groups");
 
-  // Fetch profile names for visible members
+  // Fetch profile names + avatars for visible members and post authors
+  // together — one pair of .in() queries covers both call sites below. No
+  // FK between profiles and user_privacy_settings, so the photo flag comes
+  // from a separate query and is merged here, same pattern as every other
+  // multi-user surface.
   const memberUserIds = (memberRows ?? []).map((m) => m.user_id);
-  const { data: memberProfiles } =
-    memberUserIds.length > 0
-      ? await supabase.from("profiles").select("id, full_name").in("id", memberUserIds)
-      : { data: [] };
+  const postAuthorIds = (rawPosts ?? []).map((p) => p.user_id);
+  const allProfileIds = [...new Set([...memberUserIds, ...postAuthorIds])];
+  const [{ data: memberProfiles }, { data: privacyRows }] =
+    allProfileIds.length > 0
+      ? await Promise.all([
+          supabase.from("profiles").select("id, full_name, avatar_url").in("id", allProfileIds),
+          supabase
+            .from("user_privacy_settings")
+            .select("user_id, show_profile_photo")
+            .in("user_id", allProfileIds),
+        ])
+      : [{ data: [] }, { data: [] }];
   const profileMap = new Map((memberProfiles ?? []).map((p) => [p.id, p.full_name]));
+  const showPhotoMap = new Map((privacyRows ?? []).map((p) => [p.user_id, p.show_profile_photo]));
+  const avatarMap = new Map((memberProfiles ?? []).map((p) => [p.id, p.avatar_url as string | null]));
+  const currentUserId = user.id;
+  function avatarUrlFor(userId: string): string | null {
+    if (userId === currentUserId) return avatarMap.get(userId) ?? null;
+    return showPhotoMap.get(userId) ? avatarMap.get(userId) ?? null : null;
+  }
 
   // Fetch current user's likes
   const postIds = (rawPosts ?? []).map((p) => p.id);
@@ -115,6 +134,7 @@ export default async function GroupPage({
     id: p.id,
     user_id: p.user_id,
     author_name: p.author_name,
+    author_avatar_url: avatarUrlFor(p.user_id),
     body: p.body,
     hashtags: p.hashtags as string[],
     like_count: p.like_count,
@@ -127,6 +147,7 @@ export default async function GroupPage({
     role: m.role as "member" | "admin",
     joined_at: m.joined_at,
     full_name: profileMap.get(m.user_id) ?? "Member",
+    avatar_url: avatarUrlFor(m.user_id),
   }));
 
   const isMember = !!membership;

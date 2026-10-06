@@ -29,17 +29,40 @@ export function getInitials(
     .toUpperCase();
 }
 
+// avatar_url (as stored on profiles) is a Storage object path, not a URL —
+// the "avatars" bucket is public, so the permanent public URL is derived
+// here rather than persisted. Safe to call on both server and client since
+// NEXT_PUBLIC_SUPABASE_URL is inlined at build time either way.
+export function getAvatarPublicUrl(avatarPath: string): string {
+  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${avatarPath}`;
+}
+
 export function Avatar({
   name,
   size,
   colorClassName = "bg-[#084c61] text-[#ffc857]",
   initialsStrategy = "first-two",
+  avatarUrl,
 }: {
   name: string;
   size: string;
   colorClassName?: string;
   initialsStrategy?: "first-two" | "first-last";
+  // The caller decides visibility (owner-vs-viewer, show_profile_photo) —
+  // this component just renders whatever path it's handed, or falls back
+  // to initials when there's nothing to show.
+  avatarUrl?: string | null;
 }) {
+  if (avatarUrl) {
+    return (
+      <img
+        src={getAvatarPublicUrl(avatarUrl)}
+        alt={name}
+        className={`${size} shrink-0 rounded-full object-cover`}
+      />
+    );
+  }
+
   return (
     <div
       className={`${size} ${colorClassName} shrink-0 flex items-center justify-center rounded-full font-bold`}

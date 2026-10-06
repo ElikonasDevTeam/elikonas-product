@@ -12,6 +12,7 @@ export interface ConnectionData {
   other_user_id: string;
   other_user_slug: string | null;
   other_user_name: string;
+  other_user_avatar_url: string | null;
   interests: string[];
   connection_type: string | null;
   created_at: string;
@@ -22,6 +23,7 @@ export interface IncomingRequestData {
   requester_id: string;
   requester_slug: string | null;
   requester_name: string;
+  requester_avatar_url: string | null;
   interests: string[];
   created_at: string;
 }
@@ -30,6 +32,7 @@ interface SearchResult {
   id: string;
   slug: string | null;
   full_name: string | null;
+  avatar_url: string | null;
   interests: string[];
 }
 
@@ -38,6 +41,7 @@ function PersonCard({
   userId,
   slug,
   name,
+  avatarUrl,
   interests,
   connectionType,
   footer,
@@ -45,6 +49,7 @@ function PersonCard({
   userId: string;
   slug: string | null;
   name: string;
+  avatarUrl?: string | null;
   interests: string[];
   connectionType?: string | null;
   footer: React.ReactNode;
@@ -54,7 +59,7 @@ function PersonCard({
     <div className="flex flex-col gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <Link href={profileHref}>
-          <Avatar name={name} size="h-12 w-12 text-base" />
+          <Avatar name={name} size="h-12 w-12 text-base" avatarUrl={avatarUrl} />
         </Link>
         <div className="min-w-0 flex-1">
           <Link
@@ -123,15 +128,26 @@ export function PeopleView({
       const supabase = createClient();
       const { data } = await supabase
         .from("profiles")
-        .select("id, full_name, interests, slug")
+        .select("id, full_name, interests, slug, avatar_url")
         .neq("id", currentUserId)
         .ilike("full_name", `%${searchQuery.trim()}%`)
         .limit(20);
+      const ids = (data ?? []).map((p) => p.id);
+      // No FK between profiles and user_privacy_settings — a second query,
+      // merged client-side, same as the server-rendered lists above.
+      const { data: privacyData } =
+        ids.length > 0
+          ? await supabase.from("user_privacy_settings").select("user_id, show_profile_photo").in("user_id", ids)
+          : { data: [] };
+      const showPhotoMap = Object.fromEntries(
+        (privacyData ?? []).map((p) => [p.user_id, p.show_profile_photo])
+      );
       setSearchResults(
         (data ?? []).map((p) => ({
           id: p.id,
           slug: (p.slug as string | null) ?? null,
           full_name: p.full_name ?? null,
+          avatar_url: showPhotoMap[p.id] ? (p.avatar_url as string | null) ?? null : null,
           interests: Array.isArray(p.interests) ? p.interests : [],
         }))
       );
@@ -156,6 +172,7 @@ export function PeopleView({
       other_user_id: req.requester_id,
       other_user_slug: req.requester_slug,
       other_user_name: req.requester_name,
+      other_user_avatar_url: req.requester_avatar_url,
       interests: req.interests,
       connection_type: null,
       created_at: new Date().toISOString(),
@@ -208,6 +225,7 @@ export function PeopleView({
                   userId={req.requester_id}
                   slug={req.requester_slug}
                   name={req.requester_name}
+                  avatarUrl={req.requester_avatar_url}
                   interests={req.interests}
                   footer={
                     <div className="flex gap-2">
@@ -277,6 +295,7 @@ export function PeopleView({
                     userId={result.id}
                     slug={result.slug}
                     name={displayName}
+                    avatarUrl={result.avatar_url}
                     interests={result.interests}
                     footer={
                       isConnected ? (
@@ -331,6 +350,7 @@ export function PeopleView({
                     userId={conn.other_user_id}
                     slug={conn.other_user_slug}
                     name={conn.other_user_name}
+                    avatarUrl={conn.other_user_avatar_url}
                     interests={conn.interests}
                     connectionType={conn.connection_type}
                     footer={

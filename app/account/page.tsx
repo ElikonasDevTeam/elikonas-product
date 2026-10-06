@@ -62,7 +62,7 @@ export default async function AccountPage({
     supabase
       .from("user_privacy_settings")
       .select(
-        "show_interests, show_edunits_count, show_progress_pct, show_planned_units, show_learning_record"
+        "show_interests, show_edunits_count, show_progress_pct, show_planned_units, show_learning_record, show_profile_photo"
       )
       .eq("user_id", user.id)
       .maybeSingle(),
@@ -77,6 +77,7 @@ export default async function AccountPage({
         show_progress_pct: privacyData.show_progress_pct,
         show_planned_units: privacyData.show_planned_units,
         show_learning_record: privacyData.show_learning_record,
+        show_profile_photo: privacyData.show_profile_photo,
       }
     : DEFAULT_PRIVACY;
 

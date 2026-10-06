@@ -42,3 +42,39 @@ export async function validateUploadedFile(file: File): Promise<FileValidationRe
 
   return { ok: true, mime: detected.mime, ext: detected.ext };
 }
+
+// Mirrors the "avatars" Storage bucket's own allowed_mime_types — see
+// supabase/migrations/20261005070000_add_avatar_upload.sql. Deliberately
+// narrower than credential-files: no PDF (an avatar isn't a document), and
+// no HEIC/HEIF — sharp's build here has no HEIF decoder, so a HEIC avatar
+// would fail at the processing step with a confusing error. Caught and
+// named explicitly below instead.
+const ALLOWED_AVATAR_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const ALLOWED_AVATAR_HEIC_MIME_TYPES = new Set(["image/heic", "image/heif"]);
+
+const MAX_AVATAR_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB, matches the avatars bucket's file_size_limit
+
+export async function validateAvatarUpload(file: File): Promise<FileValidationResult> {
+  if (file.size === 0) {
+    return { ok: false, error: "The selected file is empty." };
+  }
+  if (file.size > MAX_AVATAR_FILE_SIZE_BYTES) {
+    return { ok: false, error: "File is too large. Maximum size is 5MB." };
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const detected = await fileTypeFromBuffer(buffer);
+
+  if (detected && ALLOWED_AVATAR_HEIC_MIME_TYPES.has(detected.mime)) {
+    return {
+      ok: false,
+      error: "HEIC/HEIF photos aren't supported yet. Please upload a JPEG or PNG.",
+    };
+  }
+
+  if (!detected || !ALLOWED_AVATAR_MIME_TYPES.has(detected.mime)) {
+    return { ok: false, error: "Unsupported file type. Upload a JPEG, PNG, or WebP image." };
+  }
+
+  return { ok: true, mime: detected.mime, ext: detected.ext };
+}
