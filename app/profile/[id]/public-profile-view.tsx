@@ -97,6 +97,25 @@ function CategoryTag({ category }: { category: string }) {
   );
 }
 
+function ExternalLinkIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      className="h-3 w-3"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+      />
+    </svg>
+  );
+}
+
 // completed_at is a plain "YYYY-MM-DD" date with no time component — parsed
 // via Date(y, m, d) rather than new Date(isoString), which would parse as
 // UTC midnight and can render as the previous day in negative-UTC-offset
@@ -117,11 +136,24 @@ function EdUnitRow({ unit }: { unit: EdUnit }) {
         <div className="min-w-0 flex-1">
           <p className="font-medium text-[#323031]">{unit.name}</p>
           <p className="mt-0.5 text-xs text-[#323031]/50">{unit.provider}</p>
-          {unit.completed_at && (
-            <p className="mt-1 text-xs text-[#323031]/50">
-              Completed {formatCompletedDate(unit.completed_at)}
-            </p>
-          )}
+          <div className="mt-1 flex flex-wrap items-center gap-3">
+            {unit.course_url && (
+              <a
+                href={unit.course_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-[#177e89] hover:text-[#084c61]"
+              >
+                <ExternalLinkIcon />
+                Course Link
+              </a>
+            )}
+            {unit.completed_at && (
+              <span className="text-xs text-[#323031]/50">
+                Completed {formatCompletedDate(unit.completed_at)}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <CategoryTag category={unit.category} />
