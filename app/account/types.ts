@@ -5,7 +5,8 @@ export type PrivacyField =
   | "show_edunits_count"
   | "show_progress_pct"
   | "show_planned_units"
-  | "show_learning_record";
+  | "show_learning_record"
+  | "show_profile_photo";
 
 export interface PrivacySettings {
   show_interests: boolean;
@@ -13,6 +14,7 @@ export interface PrivacySettings {
   show_progress_pct: boolean;
   show_planned_units: boolean;
   show_learning_record: boolean;
+  show_profile_photo: boolean;
 }
 
 export const DEFAULT_PRIVACY: PrivacySettings = {
@@ -21,4 +23,5 @@ export const DEFAULT_PRIVACY: PrivacySettings = {
   show_progress_pct: false,
   show_planned_units: false,
   show_learning_record: false,
+  show_profile_photo: false,
 };

@@ -77,6 +77,11 @@ function SectionCard({
 
 const PRIVACY_FIELDS: { field: PrivacyField; label: string; description: string }[] = [
   {
+    field: "show_profile_photo",
+    label: "Show my photo to others",
+    description: "Your profile photo, visible on your public profile and wherever your name appears to other users",
+  },
+  {
     field: "show_interests",
     label: "Show my interests on my public profile",
     description: "Your learning focus areas and interest tags",

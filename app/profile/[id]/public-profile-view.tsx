@@ -18,6 +18,9 @@ export interface PublicProfile {
   id: string;
   full_name: string | null;
   interests: string[];
+  // Already gated server-side (null unless show_profile_photo is on) — see
+  // app/profile/[id]/page.tsx. Never pass the raw column through untouched.
+  avatar_url: string | null;
 }
 
 function ProgressRing({ pct }: { pct: number }) {
@@ -274,6 +277,7 @@ export function PublicProfileView({
               size="h-20 w-20 text-2xl"
               colorClassName="bg-[#084c61] text-white"
               initialsStrategy="first-last"
+              avatarUrl={profile.avatar_url}
             />
             <div>
               <h1 className="text-xl font-semibold text-[#323031]">{displayName}</h1>

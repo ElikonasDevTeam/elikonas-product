@@ -28,6 +28,7 @@ export default async function ProfilePage() {
     { data: latestAssessmentRow },
     { data: profileRow },
     { data: credentialRows },
+    { data: privacyRow },
   ] = await Promise.all([
     supabase
       .from("ed_units")
@@ -60,12 +61,17 @@ export default async function ProfilePage() {
       .order("completed_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    supabase.from("profiles").select("slug").eq("id", user.id).maybeSingle(),
+    supabase.from("profiles").select("slug, avatar_url").eq("id", user.id).maybeSingle(),
     supabase
       .from("credentials")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("user_privacy_settings")
+      .select("show_profile_photo")
+      .eq("user_id", user.id)
+      .maybeSingle(),
   ]);
 
   const credentials = (credentialRows ?? []) as Credential[];
@@ -106,6 +112,8 @@ export default async function ProfilePage() {
       pendingConnectionsCount={pendingConnectionsCount ?? 0}
       latestAssessment={latestAssessment}
       profileSlug={profileRow?.slug ?? null}
+      avatarUrl={profileRow?.avatar_url ?? null}
+      showProfilePhoto={privacyRow?.show_profile_photo ?? false}
     />
   );
 }

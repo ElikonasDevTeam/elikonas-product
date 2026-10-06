@@ -11,6 +11,7 @@ import { LearningModal } from "./learning-modal";
 import { CredentialModal } from "./credential-modal";
 import { deleteCredentialAction } from "./credential-actions";
 import { Avatar } from "@/app/components/avatar";
+import { AvatarModal } from "./avatar-modal";
 
 function ProgressRing({ pct }: { pct: number }) {
   const r = 38;
@@ -278,6 +279,8 @@ export function ProfileView({
   pendingConnectionsCount,
   latestAssessment,
   profileSlug,
+  avatarUrl,
+  showProfilePhoto,
 }: {
   user: User;
   edUnits: EdUnit[];
@@ -287,12 +290,15 @@ export function ProfileView({
   pendingConnectionsCount: number;
   latestAssessment: { id: string; riasec_scores: RIASECScores } | null;
   profileSlug: string | null;
+  avatarUrl: string | null;
+  showProfilePhoto: boolean;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUnit, setEditingUnit] = useState<EdUnit | null>(null);
   const [addingProofForUnitId, setAddingProofForUnitId] = useState<string | null>(null);
   const [replacingCredentialId, setReplacingCredentialId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
   const meta = user.user_metadata ?? {};
   const fullName: string = meta.full_name || user.email || "Learner";
@@ -339,12 +345,23 @@ export function ProfileView({
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
               {/* Identity */}
               <div className="flex flex-col items-center gap-3 text-center sm:min-w-[200px] sm:items-start sm:text-left">
-                <Avatar
-                  name={fullName}
-                  size="h-20 w-20 text-2xl"
-                  colorClassName="bg-[#084c61] text-white"
-                  initialsStrategy="first-last"
-                />
+                <button
+                  type="button"
+                  onClick={() => setAvatarModalOpen(true)}
+                  className="group relative rounded-full"
+                  aria-label="Edit profile photo"
+                >
+                  <Avatar
+                    name={fullName}
+                    size="h-20 w-20 text-2xl"
+                    colorClassName="bg-[#084c61] text-white"
+                    initialsStrategy="first-last"
+                    avatarUrl={avatarUrl}
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 text-[10px] font-medium text-white opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
+                    Edit
+                  </span>
+                </button>
                 <div>
                   <h1 className="text-xl font-semibold text-[#323031]">{fullName}</h1>
                   {isFoundingMember && (
@@ -529,6 +546,15 @@ export function ProfileView({
           key={replacingCredentialId}
           replaceCredentialId={replacingCredentialId}
           onClose={() => setReplacingCredentialId(null)}
+        />
+      )}
+
+      {avatarModalOpen && (
+        <AvatarModal
+          name={fullName}
+          currentAvatarUrl={avatarUrl}
+          currentShowProfilePhoto={showProfilePhoto}
+          onClose={() => setAvatarModalOpen(false)}
         />
       )}
     </>

@@ -1,12 +1,34 @@
 export type UserRole = "learner" | "provider" | "admin";
 
+// Previously claimed a shape (id/email/role/full_name/avatar_url/created_at/
+// updated_at) that never matched the real public.profiles table — no code
+// imported it, so it went unnoticed. Rewritten to match the live schema,
+// now that avatar_url is a real column rather than an invented one.
+// avatar_url is the Storage object path (the "avatars" bucket is public —
+// see supabase/migrations/20261005070000_add_avatar_upload.sql — so the
+// public URL is derived at render time, not stored).
 export interface Profile {
   id: string;
-  email: string;
-  role: UserRole;
   full_name: string | null;
+  email: string | null;
+  interests: string[];
+  role: UserRole;
+  first_name: string | null;
+  last_name: string | null;
+  country: string | null;
+  phone: string | null;
+  sms_notifications_enabled: boolean | null;
+  profile_slug: string | null;
   avatar_url: string | null;
-  created_at: string;
+  is_founding_member: boolean | null;
+  founding_member_since: string | null;
+  subscription_tier: string | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  founding_member_tier: string | null;
+  founding_member: boolean;
+  founding_member_number: number | null;
+  slug: string | null;
   updated_at: string;
 }
 

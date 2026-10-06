@@ -63,6 +63,7 @@ export default async function MusingsPage() {
     { count: unreadCount },
     { count: unreadTidingsCount },
     { count: pendingConnectionsCount },
+    { data: ownProfile },
   ] = await Promise.all([
     supabase
       .from("notifications")
@@ -79,6 +80,7 @@ export default async function MusingsPage() {
       .select("*", { count: "exact", head: true })
       .eq("addressee_id", user.id)
       .eq("status", "pending"),
+    supabase.from("profiles").select("avatar_url").eq("id", user.id).maybeSingle(),
   ]);
 
   let musings: MusingData[] = [];
@@ -109,10 +111,33 @@ export default async function MusingsPage() {
         if (like.user_id === user.id) userLikedSet.add(like.musing_id);
       }
 
+      // musings.author_name is denormalized onto the row — avatar_url isn't,
+      // so it's fetched here the same way as every other multi-user surface:
+      // two separate .in() queries (no FK between profiles and
+      // user_privacy_settings) merged in application code. Own musings
+      // always show the photo regardless of the flag.
+      const authorIds = [...new Set(rawMusings.map((m) => m.user_id))];
+      const [{ data: authorProfiles }, { data: authorPrivacy }] = await Promise.all([
+        supabase.from("profiles").select("id, avatar_url").in("id", authorIds),
+        supabase.from("user_privacy_settings").select("user_id, show_profile_photo").in("user_id", authorIds),
+      ]);
+      const showPhotoMap = Object.fromEntries(
+        (authorPrivacy ?? []).map((p) => [p.user_id, p.show_profile_photo])
+      );
+      const avatarMap = Object.fromEntries(
+        (authorProfiles ?? []).map((p) => [p.id, p.avatar_url as string | null])
+      );
+      const currentUserId = user.id;
+      function authorAvatarUrl(authorId: string): string | null {
+        if (authorId === currentUserId) return avatarMap[authorId] ?? null;
+        return showPhotoMap[authorId] ? avatarMap[authorId] ?? null : null;
+      }
+
       musings = rawMusings.map((m) => ({
         id: m.id,
         user_id: m.user_id,
         author_name: m.author_name,
+        author_avatar_url: authorAvatarUrl(m.user_id),
         author_tagline: m.author_tagline ?? null,
         hashtags: Array.isArray(m.hashtags) ? m.hashtags : [],
         body: m.body,
@@ -145,6 +170,7 @@ export default async function MusingsPage() {
       initialMusings={musings}
       currentUserId={user.id}
       authorName={authorName}
+      authorAvatarUrl={ownProfile?.avatar_url ?? null}
       unreadCount={unreadCount ?? 0}
       unreadTidingsCount={unreadTidingsCount ?? 0}
       pendingConnectionsCount={pendingConnectionsCount ?? 0}
