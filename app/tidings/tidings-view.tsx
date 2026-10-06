@@ -4,11 +4,13 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { sendMessageAction, startThreadAction, markThreadReadAction } from "./actions";
 import { AppShell } from "@/app/components/app-shell";
+import { Avatar } from "@/app/components/avatar";
 
 export interface ThreadData {
   id: string;
   other_user_id: string;
   other_user_name: string;
+  other_user_avatar_url: string | null;
   last_message_preview: string | null;
   last_message_at: string | null;
   unread_count: number;
@@ -27,16 +29,7 @@ export interface MessageData {
 interface ProfileResult {
   id: string;
   full_name: string | null;
-}
-
-function initials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
+  avatar_url: string | null;
 }
 
 function relativeTime(iso: string | null): string {
@@ -52,21 +45,6 @@ function relativeTime(iso: string | null): string {
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg" }) {
-  const dim =
-    size === "lg"
-      ? "h-10 w-10 text-sm"
-      : size === "md"
-      ? "h-8 w-8 text-xs"
-      : "h-6 w-6 text-[10px]";
-  return (
-    <div
-      className={`${dim} shrink-0 flex items-center justify-center rounded-full bg-[#084c61] font-bold text-[#ffc857]`}
-    >
-      {initials(name)}
-    </div>
-  );
-}
 
 function ThreadItem({
   thread,
@@ -86,7 +64,7 @@ function ThreadItem({
         isActive ? "bg-[#084c61]/10" : "hover:bg-gray-50",
       ].join(" ")}
     >
-      <Avatar name={thread.other_user_name} size="md" />
+      <Avatar name={thread.other_user_name} size="h-8 w-8 text-xs" avatarUrl={thread.other_user_avatar_url} />
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-1">
           <p
@@ -272,11 +250,26 @@ export function TidingsView({
       const supabase = createClient();
       const { data } = await supabase
         .from("profiles")
-        .select("id, full_name")
+        .select("id, full_name, avatar_url")
         .ilike("full_name", `%${searchQuery.trim()}%`)
         .neq("id", currentUserId)
         .limit(8);
-      setSearchResults((data ?? []) as ProfileResult[]);
+      const ids = (data ?? []).map((p) => p.id);
+      // No FK between profiles and user_privacy_settings — merged here.
+      const { data: privacyData } =
+        ids.length > 0
+          ? await supabase.from("user_privacy_settings").select("user_id, show_profile_photo").in("user_id", ids)
+          : { data: [] };
+      const showPhotoMap = Object.fromEntries(
+        (privacyData ?? []).map((p) => [p.user_id, p.show_profile_photo])
+      );
+      setSearchResults(
+        (data ?? []).map((p) => ({
+          id: p.id,
+          full_name: p.full_name ?? null,
+          avatar_url: showPhotoMap[p.id] ? (p.avatar_url as string | null) ?? null : null,
+        }))
+      );
       setSearchLoading(false);
     }, 300);
     return () => clearTimeout(timer);
@@ -360,6 +353,7 @@ export function TidingsView({
           id: threadId,
           other_user_id: profile.id,
           other_user_name: name,
+          other_user_avatar_url: profile.avatar_url,
           last_message_preview: null,
           last_message_at: null,
           unread_count: 0,
@@ -419,7 +413,7 @@ export function TidingsView({
                       onClick={() => handleStartThread(p)}
                       className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-gray-50"
                     >
-                      <Avatar name={p.full_name || "?"} size="sm" />
+                      <Avatar name={p.full_name || "?"} size="h-6 w-6 text-[10px]" avatarUrl={p.avatar_url} />
                       <span className="text-sm text-[#323031]">
                         {p.full_name || "Unknown"}
                       </span>
@@ -462,7 +456,7 @@ export function TidingsView({
             <>
               {/* Conversation header */}
               <div className="shrink-0 flex items-center gap-3 border-b border-gray-200 bg-white px-5 py-4 shadow-sm">
-                <Avatar name={activeThread.other_user_name} size="lg" />
+                <Avatar name={activeThread.other_user_name} size="h-10 w-10 text-sm" avatarUrl={activeThread.other_user_avatar_url} />
                 <div>
                   <p className="font-semibold text-[#323031]">
                     {activeThread.other_user_name}

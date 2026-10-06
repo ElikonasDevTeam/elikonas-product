@@ -3,6 +3,7 @@
 import { useState, useTransition, useOptimistic } from "react";
 import Link from "next/link";
 import { AppShell } from "@/app/components/app-shell";
+import { Avatar } from "@/app/components/avatar";
 import {
   joinGroupAction,
   leaveGroupAction,
@@ -28,6 +29,7 @@ export interface GroupPostData {
   id: string;
   user_id: string;
   author_name: string;
+  author_avatar_url: string | null;
   body: string;
   hashtags: string[];
   like_count: number;
@@ -40,15 +42,12 @@ export interface GroupMemberInfo {
   role: "member" | "admin";
   joined_at: string;
   full_name: string;
+  avatar_url: string | null;
 }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function initials(name: string): string {
-  return name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
-}
 
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -60,20 +59,6 @@ function relativeTime(iso: string): string {
   const days = Math.floor(hrs / 24);
   if (days < 7) return `${days}d ago`;
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg" }) {
-  const cls =
-    size === "lg"
-      ? "h-12 w-12 text-base"
-      : size === "sm"
-      ? "h-7 w-7 text-[11px]"
-      : "h-9 w-9 text-sm";
-  return (
-    <div className={`${cls} shrink-0 flex items-center justify-center rounded-full bg-[#084c61] font-bold text-[#ffc857]`}>
-      {initials(name)}
-    </div>
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -247,7 +232,7 @@ function PostCard({
   return (
     <div className="rounded-xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
       <div className="flex gap-3">
-        <Avatar name={post.author_name} />
+        <Avatar name={post.author_name} size="h-9 w-9 text-sm" avatarUrl={post.author_avatar_url} />
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div>
@@ -356,7 +341,7 @@ function MemberListCard({
       <ul className="space-y-2.5">
         {members.map((m) => (
           <li key={m.user_id} className="flex items-center gap-2.5">
-            <Avatar name={m.full_name} size="sm" />
+            <Avatar name={m.full_name} size="h-7 w-7 text-[11px]" avatarUrl={m.avatar_url} />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-[#323031]">{m.full_name}</p>
               {m.role === "admin" && (

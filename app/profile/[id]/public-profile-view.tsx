@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { AppShell } from "@/app/components/app-shell";
+import { Avatar } from "@/app/components/avatar";
 import { connectAction, acceptConnectionAction, declineConnectionAction } from "@/app/people/actions";
 import type { PrivacySettings } from "@/app/account/types";
 import type { EdUnit, EdUnitStatus } from "@/types";
@@ -17,12 +18,9 @@ export interface PublicProfile {
   id: string;
   full_name: string | null;
   interests: string[];
-}
-
-function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  return (parts[0]?.[0] ?? "?").toUpperCase();
+  // Already gated server-side (null unless show_profile_photo is on) — see
+  // app/profile/[id]/page.tsx. Never pass the raw column through untouched.
+  avatar_url: string | null;
 }
 
 function ProgressRing({ pct }: { pct: number }) {
@@ -99,6 +97,38 @@ function CategoryTag({ category }: { category: string }) {
   );
 }
 
+function ExternalLinkIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      className="h-3 w-3"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+      />
+    </svg>
+  );
+}
+
+// completed_at is a plain "YYYY-MM-DD" date with no time component — parsed
+// via Date(y, m, d) rather than new Date(isoString), which would parse as
+// UTC midnight and can render as the previous day in negative-UTC-offset
+// timezones.
+function formatCompletedDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 function EdUnitRow({ unit }: { unit: EdUnit }) {
   return (
     <div className="rounded-xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
@@ -106,6 +136,24 @@ function EdUnitRow({ unit }: { unit: EdUnit }) {
         <div className="min-w-0 flex-1">
           <p className="font-medium text-[#323031]">{unit.name}</p>
           <p className="mt-0.5 text-xs text-[#323031]/50">{unit.provider}</p>
+          <div className="mt-1 flex flex-wrap items-center gap-3">
+            {unit.course_url && (
+              <a
+                href={unit.course_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-[#177e89] hover:text-[#084c61]"
+              >
+                <ExternalLinkIcon />
+                Course Link
+              </a>
+            )}
+            {unit.completed_at && (
+              <span className="text-xs text-[#323031]/50">
+                Completed {formatCompletedDate(unit.completed_at)}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <CategoryTag category={unit.category} />
@@ -252,7 +300,6 @@ export function PublicProfileView({
   viewer: ProfileViewer;
 }) {
   const displayName = profile.full_name || "Unknown";
-  const ini = getInitials(displayName);
 
   const total = edUnits.length;
   const completed = edUnits.filter((u) => u.status === "completed").length;
@@ -275,9 +322,13 @@ export function PublicProfileView({
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
           {/* Identity */}
           <div className="flex flex-col items-center gap-3 text-center sm:min-w-[200px] sm:items-start sm:text-left">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#084c61] text-2xl font-bold text-white">
-              {ini}
-            </div>
+            <Avatar
+              name={displayName}
+              size="h-20 w-20 text-2xl"
+              colorClassName="bg-[#084c61] text-white"
+              initialsStrategy="first-last"
+              avatarUrl={profile.avatar_url}
+            />
             <div>
               <h1 className="text-xl font-semibold text-[#323031]">{displayName}</h1>
             </div>

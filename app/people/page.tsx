@@ -111,13 +111,25 @@ export default async function PeoplePage() {
     const incomingRequesterIds = (incomingRaw ?? []).map((c) => c.requester_id);
     const allProfileIds = [...new Set([...acceptedOtherIds, ...incomingRequesterIds])];
 
-    const { data: profilesData } =
+    const [{ data: profilesData }, { data: privacyData }] =
       allProfileIds.length > 0
-        ? await supabase
-            .from("profiles")
-            .select("id, full_name, interests, slug")
-            .in("id", allProfileIds)
-        : { data: [] };
+        ? await Promise.all([
+            supabase
+              .from("profiles")
+              .select("id, full_name, interests, slug, avatar_url")
+              .in("id", allProfileIds),
+            supabase
+              .from("user_privacy_settings")
+              .select("user_id, show_profile_photo")
+              .in("user_id", allProfileIds),
+          ])
+        : [{ data: [] }, { data: [] }];
+
+    // No FK between profiles and user_privacy_settings, so these come from
+    // two separate queries and are merged here rather than embedded.
+    const showPhotoMap = Object.fromEntries(
+      (privacyData ?? []).map((p) => [p.user_id, p.show_profile_photo])
+    );
 
     const profileMap = Object.fromEntries(
       (profilesData ?? []).map((p) => [
@@ -126,6 +138,7 @@ export default async function PeoplePage() {
           name: p.full_name ?? "Unknown",
           interests: Array.isArray(p.interests) ? (p.interests as string[]) : [],
           slug: (p.slug as string | null) ?? null,
+          avatarUrl: showPhotoMap[p.id] ? (p.avatar_url as string | null) ?? null : null,
         },
       ])
     );
@@ -133,12 +146,14 @@ export default async function PeoplePage() {
     connections = (acceptedRaw ?? []).map((c) => {
       const otherId =
         c.requester_id === user.id ? c.addressee_id : c.requester_id;
-      const profile = profileMap[otherId] ?? { name: "Unknown", interests: [], slug: null };
+      const profile =
+        profileMap[otherId] ?? { name: "Unknown", interests: [], slug: null, avatarUrl: null };
       return {
         id: c.id,
         other_user_id: otherId,
         other_user_slug: profile.slug,
         other_user_name: profile.name,
+        other_user_avatar_url: profile.avatarUrl,
         interests: profile.interests,
         connection_type: (c.connection_type as string | null) ?? null,
         created_at: c.created_at,
@@ -150,12 +165,14 @@ export default async function PeoplePage() {
         name: "Unknown",
         interests: [],
         slug: null,
+        avatarUrl: null,
       };
       return {
         id: c.id,
         requester_id: c.requester_id,
         requester_slug: profile.slug,
         requester_name: profile.name,
+        requester_avatar_url: profile.avatarUrl,
         interests: profile.interests,
         created_at: c.created_at,
       };

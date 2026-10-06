@@ -78,7 +78,7 @@ export default async function PublicProfilePage({
 
   const { data: bySlug } = await admin
     .from("profiles")
-    .select("id, full_name, interests, slug")
+    .select("id, full_name, interests, slug, avatar_url")
     .eq("slug", slugOrId)
     .maybeSingle();
 
@@ -88,7 +88,7 @@ export default async function PublicProfilePage({
   if (!profileRow && UUID_RE.test(slugOrId)) {
     const { data: byId } = await admin
       .from("profiles")
-      .select("id, full_name, interests, slug")
+      .select("id, full_name, interests, slug, avatar_url")
       .eq("id", slugOrId)
       .maybeSingle();
     if (byId) {
@@ -111,7 +111,7 @@ export default async function PublicProfilePage({
     admin
       .from("user_privacy_settings")
       .select(
-        "show_interests, show_edunits_count, show_progress_pct, show_planned_units, show_learning_record"
+        "show_interests, show_edunits_count, show_progress_pct, show_planned_units, show_learning_record, show_profile_photo"
       )
       .eq("user_id", profileId)
       .maybeSingle(),
@@ -124,13 +124,20 @@ export default async function PublicProfilePage({
         show_progress_pct: privacyData.show_progress_pct,
         show_planned_units: privacyData.show_planned_units,
         show_learning_record: privacyData.show_learning_record,
+        show_profile_photo: privacyData.show_profile_photo,
       }
     : DEFAULT_PRIVACY;
 
+  // The owner viewing their own slug is redirected to /profile above (line
+  // ~103), so viewer-is-owner can never actually be true by the time this
+  // runs — show_profile_photo alone decides it. Gating here anyway (rather
+  // than always trusting the flag) keeps the component's contract honest if
+  // that redirect is ever relaxed.
   const profile = {
     id: profileRow.id,
     full_name: profileRow.full_name ?? null,
     interests: Array.isArray(profileRow.interests) ? (profileRow.interests as string[]) : [],
+    avatar_url: privacySettings.show_profile_photo ? profileRow.avatar_url ?? null : null,
   };
   const edUnits = (edUnitsData ?? []) as EdUnit[];
 

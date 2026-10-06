@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { AppShell } from "@/app/components/app-shell";
-import type { EdUnit, EdUnitStatus } from "@/types";
+import type { Credential, EdUnit, EdUnitStatus } from "@/types";
 import type { RIASECScores } from "@/types/onet";
 import { LearningModal } from "./learning-modal";
-
-function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  return (parts[0]?.[0] ?? "?").toUpperCase();
-}
+import { CredentialModal } from "./credential-modal";
+import { deleteCredentialAction } from "./credential-actions";
+import { Avatar } from "@/app/components/avatar";
+import { AvatarModal } from "./avatar-modal";
 
 function ProgressRing({ pct }: { pct: number }) {
   const r = 38;
@@ -86,17 +85,155 @@ function StatusBadge({ status }: { status: EdUnitStatus }) {
   );
 }
 
-function EdUnitRow({ unit, onEdit }: { unit: EdUnit; onEdit: () => void }) {
+// completed_at is a plain "YYYY-MM-DD" date with no time component — parsed
+// via Date(y, m, d) rather than new Date(isoString), which would parse as
+// UTC midnight and can render as the previous day in negative-UTC-offset
+// timezones.
+function formatCompletedDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function ExternalLinkIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      className="h-3 w-3"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+      />
+    </svg>
+  );
+}
+
+function CredentialBadge({ credentials }: { credentials: Credential[] }) {
+  if (credentials.length === 0) return null;
+  // v1 only ever creates one credential per ed_unit via the UI, but the
+  // schema allows more (e.g. a later accredited entry alongside this one) —
+  // show the most recent one.
+  const latest = credentials[0];
+
+  // Links to a route that generates a signed URL fresh on every click and
+  // redirects to it, rather than a signed URL baked in at page-render time
+  // (which would expire if this page sits open longer than that URL's TTL).
+  return (
+    <a
+      href={`/api/credentials/${latest.id}/file`}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={latest.self_attest ? "Self-attested proof uploaded" : "Proof uploaded"}
+      className="inline-flex items-center gap-1 rounded-full bg-[#177e89]/10 px-2.5 py-1 text-xs font-medium text-[#177e89] hover:bg-[#177e89]/20"
+    >
+      📎 Proof
+    </a>
+  );
+}
+
+function DeleteCredentialButton({ credentialId }: { credentialId: string }) {
+  const router = useRouter();
+  const [state, action, pending] = useActionState(deleteCredentialAction, null);
+
+  useEffect(() => {
+    if (state && "success" in state) router.refresh();
+  }, [state, router]);
+
+  return (
+    <form
+      action={action}
+      onSubmit={(e) => {
+        if (!confirm("Delete this proof? This can't be undone.")) e.preventDefault();
+      }}
+    >
+      <input type="hidden" name="id" value={credentialId} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-[#323031]/70 transition-colors hover:border-[#db3a34]/30 hover:bg-[#db3a34]/5 hover:text-[#db3a34] disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {pending ? "Deleting…" : "Delete"}
+      </button>
+      {state && "error" in state && (
+        <p className="mt-1 text-xs text-[#db3a34]">{state.error}</p>
+      )}
+    </form>
+  );
+}
+
+function EdUnitRow({
+  unit,
+  credentials,
+  onEdit,
+  onAddProof,
+  onReplaceProof,
+}: {
+  unit: EdUnit;
+  credentials: Credential[];
+  onEdit: () => void;
+  onAddProof: () => void;
+  onReplaceProof: (credentialId: string) => void;
+}) {
   return (
     <div className="rounded-xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
           <p className="font-medium text-[#323031]">{unit.name}</p>
           <p className="mt-0.5 text-xs text-[#323031]/50">{unit.provider}</p>
+          <div className="mt-1 flex flex-wrap items-center gap-3">
+            {unit.course_url && (
+              <a
+                href={unit.course_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-[#177e89] hover:text-[#084c61]"
+              >
+                <ExternalLinkIcon />
+                Course Link
+              </a>
+            )}
+            {unit.completed_at && (
+              <span className="text-xs text-[#323031]/50">
+                Completed {formatCompletedDate(unit.completed_at)}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <CategoryTag category={unit.category} />
           <StatusBadge status={unit.status} />
+          <CredentialBadge credentials={credentials} />
+          {credentials.length === 0 ? (
+            <button
+              type="button"
+              onClick={onAddProof}
+              aria-label={`Add proof for ${unit.name}`}
+              className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-[#323031]/70 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-[#323031]"
+            >
+              Add proof
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => onReplaceProof(credentials[0].id)}
+                aria-label={`Replace proof for ${unit.name}`}
+                className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-[#323031]/70 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-[#323031]"
+              >
+                Replace
+              </button>
+              <DeleteCredentialButton credentialId={credentials[0].id} />
+            </>
+          )}
           <button
             type="button"
             onClick={onEdit}
@@ -156,27 +293,35 @@ const RIASEC_NAMES: Record<string, { code: string; name: string }> = {
 export function ProfileView({
   user,
   edUnits,
+  credentialsByEdUnit,
   unreadCount,
   unreadTidingsCount,
   pendingConnectionsCount,
   latestAssessment,
   profileSlug,
+  avatarUrl,
+  showProfilePhoto,
 }: {
   user: User;
   edUnits: EdUnit[];
+  credentialsByEdUnit: Record<string, Credential[]>;
   unreadCount: number;
   unreadTidingsCount: number;
   pendingConnectionsCount: number;
   latestAssessment: { id: string; riasec_scores: RIASECScores } | null;
   profileSlug: string | null;
+  avatarUrl: string | null;
+  showProfilePhoto: boolean;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUnit, setEditingUnit] = useState<EdUnit | null>(null);
+  const [addingProofForUnitId, setAddingProofForUnitId] = useState<string | null>(null);
+  const [replacingCredentialId, setReplacingCredentialId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
   const meta = user.user_metadata ?? {};
   const fullName: string = meta.full_name || user.email || "Learner";
-  const initials = getInitials(fullName);
   const interests: string[] = Array.isArray(meta.interests) ? meta.interests : [];
   const isFoundingMember: boolean = meta.founding_member === true;
 
@@ -220,9 +365,23 @@ export function ProfileView({
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
               {/* Identity */}
               <div className="flex flex-col items-center gap-3 text-center sm:min-w-[200px] sm:items-start sm:text-left">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#084c61] text-2xl font-bold text-white">
-                  {initials}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setAvatarModalOpen(true)}
+                  className="group relative rounded-full"
+                  aria-label="Edit profile photo"
+                >
+                  <Avatar
+                    name={fullName}
+                    size="h-20 w-20 text-2xl"
+                    colorClassName="bg-[#084c61] text-white"
+                    initialsStrategy="first-last"
+                    avatarUrl={avatarUrl}
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 text-[10px] font-medium text-white opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
+                    Edit
+                  </span>
+                </button>
                 <div>
                   <h1 className="text-xl font-semibold text-[#323031]">{fullName}</h1>
                   {isFoundingMember && (
@@ -372,7 +531,10 @@ export function ProfileView({
                   <EdUnitRow
                     key={unit.id}
                     unit={unit}
+                    credentials={credentialsByEdUnit[unit.id] ?? []}
                     onEdit={() => setEditingUnit(unit)}
+                    onAddProof={() => setAddingProofForUnitId(unit.id)}
+                    onReplaceProof={(credentialId) => setReplacingCredentialId(credentialId)}
                   />
                 ))}
               </div>
@@ -388,6 +550,31 @@ export function ProfileView({
           key={editingUnit.id}
           unit={editingUnit}
           onClose={() => setEditingUnit(null)}
+        />
+      )}
+
+      {addingProofForUnitId && (
+        <CredentialModal
+          key={addingProofForUnitId}
+          edUnitId={addingProofForUnitId}
+          onClose={() => setAddingProofForUnitId(null)}
+        />
+      )}
+
+      {replacingCredentialId && (
+        <CredentialModal
+          key={replacingCredentialId}
+          replaceCredentialId={replacingCredentialId}
+          onClose={() => setReplacingCredentialId(null)}
+        />
+      )}
+
+      {avatarModalOpen && (
+        <AvatarModal
+          name={fullName}
+          currentAvatarUrl={avatarUrl}
+          currentShowProfilePhoto={showProfilePhoto}
+          onClose={() => setAvatarModalOpen(false)}
         />
       )}
     </>

@@ -169,13 +169,28 @@ export default async function TidingsPage() {
         t.participant_a === user.id ? t.participant_b : t.participant_a
       );
 
-      const { data: profilesData } = await supabase
-        .from("profiles")
-        .select("id, full_name")
-        .in("id", otherIds);
+      const [{ data: profilesData }, { data: privacyData }] = await Promise.all([
+        supabase.from("profiles").select("id, full_name, avatar_url").in("id", otherIds),
+        supabase
+          .from("user_privacy_settings")
+          .select("user_id, show_profile_photo")
+          .in("user_id", otherIds),
+      ]);
 
+      // No FK between profiles and user_privacy_settings — merged here.
+      // These are always the OTHER participant, never the viewer, so the
+      // flag alone decides visibility (no owner-exception needed).
+      const showPhotoMap = Object.fromEntries(
+        (privacyData ?? []).map((p) => [p.user_id, p.show_profile_photo])
+      );
       const profileMap = Object.fromEntries(
-        (profilesData ?? []).map((p) => [p.id, p.full_name ?? "Unknown"])
+        (profilesData ?? []).map((p) => [
+          p.id,
+          {
+            name: p.full_name ?? "Unknown",
+            avatarUrl: showPhotoMap[p.id] ? (p.avatar_url as string | null) ?? null : null,
+          },
+        ])
       );
 
       const unreadMap: Record<string, number> = {};
@@ -186,10 +201,12 @@ export default async function TidingsPage() {
       threads = rawThreads.map((t) => {
         const otherId =
           t.participant_a === user.id ? t.participant_b : t.participant_a;
+        const otherProfile = profileMap[otherId] ?? { name: "Unknown", avatarUrl: null };
         return {
           id: t.id,
           other_user_id: otherId,
-          other_user_name: profileMap[otherId] ?? "Unknown",
+          other_user_name: otherProfile.name,
+          other_user_avatar_url: otherProfile.avatarUrl,
           last_message_preview: t.last_message_preview ?? null,
           last_message_at: t.last_message_at ?? null,
           unread_count: unreadMap[t.id] ?? 0,

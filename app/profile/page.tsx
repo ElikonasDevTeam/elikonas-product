@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { EdUnit } from "@/types";
+import type { Credential, EdUnit } from "@/types";
 import type { RIASECScores } from "@/types/onet";
 import { ProfileView } from "./profile-view";
 
@@ -27,6 +27,8 @@ export default async function ProfilePage() {
     { count: pendingConnectionsCount },
     { data: latestAssessmentRow },
     { data: profileRow },
+    { data: credentialRows },
+    { data: privacyRow },
   ] = await Promise.all([
     supabase
       .from("ed_units")
@@ -59,8 +61,32 @@ export default async function ProfilePage() {
       .order("completed_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    supabase.from("profiles").select("slug").eq("id", user.id).maybeSingle(),
+    supabase.from("profiles").select("slug, avatar_url").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("credentials")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("user_privacy_settings")
+      .select("show_profile_photo")
+      .eq("user_id", user.id)
+      .maybeSingle(),
   ]);
+
+  const credentials = (credentialRows ?? []) as Credential[];
+
+  // Grouped by ed_unit_id and keyed as a plain object (not a Map) so it
+  // passes cleanly as a prop to the client component below. Deliberately
+  // does NOT generate signed URLs here — a signed URL generated at render
+  // time and baked into the page would expire if the page sits open (or
+  // gets served from cache) longer than its TTL. The badge links to
+  // /api/credentials/[id]/file instead, which generates one fresh on
+  // every click.
+  const credentialsByEdUnit: Record<string, Credential[]> = {};
+  for (const c of credentials) {
+    (credentialsByEdUnit[c.ed_unit_id] ??= []).push(c);
+  }
 
   const latestAssessment = latestAssessmentRow?.realistic_score != null
     ? {
@@ -80,11 +106,14 @@ export default async function ProfilePage() {
     <ProfileView
       user={user}
       edUnits={(edUnits ?? []) as EdUnit[]}
+      credentialsByEdUnit={credentialsByEdUnit}
       unreadCount={unreadCount ?? 0}
       unreadTidingsCount={unreadTidingsCount ?? 0}
       pendingConnectionsCount={pendingConnectionsCount ?? 0}
       latestAssessment={latestAssessment}
       profileSlug={profileRow?.slug ?? null}
+      avatarUrl={profileRow?.avatar_url ?? null}
+      showProfilePhoto={privacyRow?.show_profile_photo ?? false}
     />
   );
 }
