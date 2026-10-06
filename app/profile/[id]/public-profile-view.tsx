@@ -97,6 +97,19 @@ function CategoryTag({ category }: { category: string }) {
   );
 }
 
+// completed_at is a plain "YYYY-MM-DD" date with no time component — parsed
+// via Date(y, m, d) rather than new Date(isoString), which would parse as
+// UTC midnight and can render as the previous day in negative-UTC-offset
+// timezones.
+function formatCompletedDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 function EdUnitRow({ unit }: { unit: EdUnit }) {
   return (
     <div className="rounded-xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
@@ -104,6 +117,11 @@ function EdUnitRow({ unit }: { unit: EdUnit }) {
         <div className="min-w-0 flex-1">
           <p className="font-medium text-[#323031]">{unit.name}</p>
           <p className="mt-0.5 text-xs text-[#323031]/50">{unit.provider}</p>
+          {unit.completed_at && (
+            <p className="mt-1 text-xs text-[#323031]/50">
+              Completed {formatCompletedDate(unit.completed_at)}
+            </p>
+          )}
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <CategoryTag category={unit.category} />

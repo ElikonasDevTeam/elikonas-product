@@ -85,6 +85,19 @@ function StatusBadge({ status }: { status: EdUnitStatus }) {
   );
 }
 
+// completed_at is a plain "YYYY-MM-DD" date with no time component — parsed
+// via Date(y, m, d) rather than new Date(isoString), which would parse as
+// UTC midnight and can render as the previous day in negative-UTC-offset
+// timezones.
+function formatCompletedDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 function ExternalLinkIcon() {
   return (
     <svg
@@ -176,17 +189,24 @@ function EdUnitRow({
         <div className="min-w-0 flex-1">
           <p className="font-medium text-[#323031]">{unit.name}</p>
           <p className="mt-0.5 text-xs text-[#323031]/50">{unit.provider}</p>
-          {unit.course_url && (
-            <a
-              href={unit.course_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[#177e89] hover:text-[#084c61]"
-            >
-              <ExternalLinkIcon />
-              Course Link
-            </a>
-          )}
+          <div className="mt-1 flex flex-wrap items-center gap-3">
+            {unit.course_url && (
+              <a
+                href={unit.course_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-[#177e89] hover:text-[#084c61]"
+              >
+                <ExternalLinkIcon />
+                Course Link
+              </a>
+            )}
+            {unit.completed_at && (
+              <span className="text-xs text-[#323031]/50">
+                Completed {formatCompletedDate(unit.completed_at)}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <CategoryTag category={unit.category} />
