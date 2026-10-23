@@ -6,6 +6,17 @@ type Entry = {
 
 const entries: Entry[] = [
   {
+    version: "1.1.0",
+    date: "October 5, 2026",
+    items: [
+      "Add a profile photo — upload one, swap it for a new one anytime, or remove it whenever you like.",
+      "You choose who sees it: your photo only shows to other people once you turn on \"Show my photo to others.\" Until then, you'll just see your initials, same as before.",
+      "Made a mistake with a proof file you uploaded? You can now replace it with the right one or delete it, no need to start over.",
+      "Added a link to an online course? It now shows up right on your learning record so you (or anyone you share your profile with) can click straight through.",
+      "Set a completion date for something you finished? That now shows up on your learning record too.",
+    ],
+  },
+  {
     version: "1.0.0",
     date: "August 28, 2026",
     items: [
@@ -26,10 +37,10 @@ export default function UpdatesPage() {
       }}
     >
       <h1 style={{ fontSize: "2.25rem", fontWeight: 600, color: "#084c61", marginBottom: "0.5rem" }}>
-        What's new
+        What&apos;s new
       </h1>
       <p style={{ fontSize: "1.05rem", color: "#323031", opacity: 0.75, marginBottom: "3rem", maxWidth: "48ch" }}>
-        A running log of what's changed on Elikonas, in plain language.
+        A running log of what&apos;s changed on Elikonas, in plain language.
       </p>
       <div>
         {entries.map((entry, i) => (
